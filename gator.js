@@ -503,7 +503,7 @@ function minimize(dif, atZone) {
 			maxedAmals = true;
 		}
 		fuelStart -= 1;
-		changeFuelStart(fuelStart);
+		if (fuelStart >= 230) changeFuelStart(fuelStart);
 		if (atZone) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ));
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
 		if (maxedAmals == true && maxAmals < bestAmals) break;
