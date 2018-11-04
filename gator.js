@@ -618,3 +618,5 @@ function loadSettings() {
 		document.getElementById("minimizeZone").value = minimizeZone;
 	}
 }
+
+//Copyright Nohmou, 2018
