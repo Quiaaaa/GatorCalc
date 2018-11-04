@@ -1,0 +1,90 @@
+
+body {
+	background-color: grey;
+	color: white;
+}
+
+.hidden {
+	display: none;
+}
+
+textarea {
+	width: 40%;
+}
+
+input {
+	width: 40%;
+}
+
+#invalid {
+	color: orange;
+}
+
+#calculate {
+	position: absolute;
+	left: 45%;
+	width: 30%;
+	height: 5%;
+	border-radius: 12px;
+	
+}
+
+.filler {
+	height: 5px;
+}
+
+.filler2 {
+	width: 100px;
+}
+
+.select {
+	width: 40%;
+	text-align-last: center;
+}
+
+#inputs {
+	position: absolute;
+	width: 30%;
+	height: 98%;
+	left: 5%;
+}
+
+#macros {
+	position: absolute;
+	width: 20%;
+	height: 100%;
+	left: 35%;
+	top: 0%;
+	background-color: #999999;
+}
+
+.macro {
+	position: relative;
+	width: 60%;
+	height: 5%;
+	left: 20%;
+	border-radius: 8px;
+}
+
+#minimizeZone {
+	position: relative;
+	width: 58%;
+	left: 20%;
+	
+}
+
+#results {
+	position: absolute;
+	width: 40%;
+	height: 100%;
+	left: 55%;
+	top: 0%;
+	background-color: #666666;
+	padding-left: 5px;
+}
+
+#resultsTable {
+	border-style: solid;
+	border-width: 1px;
+}
+

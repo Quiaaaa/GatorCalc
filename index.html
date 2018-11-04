@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Fueling and Amalgamator Calculator</title>
+		<script src="lz-string.js"></script>
+		<script type="text/javascript" src="gator.js"></script>
+		<link rel="stylesheet" type="text/css" href="stylish.css" />
+		<meta charset="utf-8" />
+	</head>
+
+	<body>
+		<div id="inputs">
+			<br>
+			<textarea placeholder="Paste your save here" onpaste="pasteSave(event)" type="text" ></textarea>
+			<button class="hidden" id="calculate" onclick="calculateCurrentPop()">Calculate</button>
+			<br>
+			<span id="invalid"></span>
+			<br><br>
+			Run Stats<br>
+			<label title="Zone to begin fueling">
+				<input id="fuelStart" type="number" onchange="changeFuelStart(this.value)">&nbspFuel Start Zone
+			</label>
+			<br>
+			<div class="filler"></div>
+			<label title="Zone to end fueling">
+				<input id="fuelEnd" type="number" onchange="changeFuelEnd(this.value)">&nbspFuel End Zone
+			</label>
+			<br>
+			<div class="filler"></div>
+			<label title="Number of zones to fuel">
+				<input id="fuelZones" type="number" onchange="changeFuelZones(this.value)">&nbspZones to Fuel
+			</label>
+			<br>
+			<div class="filler"></div>
+			<label title="Zone you end the run on">
+				<input id="runEnd" type="number" onchange="changeRunEnd(this.value)">&nbspRun End Zone
+			</label>
+			<br>
+			<div class="filler"></div>
+			<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8">
+				<input id="housingMod" type="number" onchange="changeHousingMod(this.value)">&nbspHousing Mod
+			</label>
+			<br>
+			<div class="filler"></div>
+			<label title="Spires cleared *this run*">
+				<input id="spiresCleared" type="number" onchange="changeSpiresCleared(this.value)">&nbsp#Spires Cleared
+			</label>
+			<br><br><br>
+			Perk Levels<br>
+			<input id="carp" type="number" onchange="changeCarp(this.value)">&nbspCarpentry
+			<br>
+			<div class="filler"></div>
+			<input id="carp2" type="number" onchange="changeCarp2(this.value)">&nbspCarpentry II
+			<br>
+			<div class="filler"></div>
+			<input id="coord" type="number" onchange="changeCoord(this.value)">&nbspCoordinated
+			<br><br><br>
+			DG Levels<br>
+			<input id="efficiency" type="number" onchange="changeEfficiency(this.value)">&nbspEfficiency
+			<br>
+			<div class="filler"></div>
+			<input id="capacity" type="number" onchange="changeCapacity(this.value)">&nbspCapacity
+			<br>
+			<div class="filler"></div>
+			<input id="supply" type="number" onchange="changeSupply(this.value)">&nbspSupply
+			<br>
+			<div class="filler"></div>
+			<input id="overclocker" type="number" onchange="changeOverclocker(this.value)">&nbspOverclocker
+			<br><br><br>
+			DG Upgrades<br>
+			<select class="select" id="storage" onchange="changeStorage(this.value)">
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</select>&nbspStorage
+			<div class="filler"></div>
+			<select class="select" id="slowburn" onchange="changeSlowburn(this.value)">
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</select>&nbspSlowburn
+			<div class="filler"></div>
+			<select class="select" id="magmaFlow" onchange="changeMagmaFlow(this.value)">
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</select>&nbspMagma Flow
+		</div>
+		<div id="macros">
+			<br><br><br><br>
+			<button class="macro" id="optimize" onclick="optimize()">Optimize</button><br>
+			<div class="filler"></div>
+			<button class="macro" id="minimize" onclick="minimize(0)">Minimize</button><br>
+			<div class="filler"></div>
+			<button class="macro" id="minimize-1" onclick="minimize(1)">Minimize - 1</button><br>
+			<div class="filler"></div>
+			<button class="macro" id="minimizeAtZone" onclick="minimize(0, true)">Minimize At Zone:</button><br>
+			<input id="minimizeZone" type="number" onchange="changeMinimizeZone(this.value)"><br>
+			<div class="filler"></div>
+			<button class="macro hidden" id="minimizeCapacity" onclick="minimizeCapacity()">Minimize Capacity</button><br>
+		</div>
+		<div id="results">
+			<br><br>Results<br>
+			<table id="resultsTable" cellSpacing="5" cellPadding="0">
+				<tr><td>Total Population</td><td id="totalPop">0</td>
+					<td class="filler2"></td>
+					<td>Final Amals</td><td id="finalAmals">0</td>
+				</tr>
+				<tr><td>% from Tauntimps</td><td id="tauntimpPercent">0</td>
+					<td></td>
+					<td>Max Amals</td><td id="maxAmals">0</td>
+				</tr>
+				<tr><td>Last Coord</td><td id="lastCoord">-</td>
+					<td></td>
+					<td>@ Zone</td><td id="finalAmalZone">0</td>
+				</tr>
+				<tr><td>Needed Pop</td><td id="neededPop">0</td>
+					<td></td>
+					<td>Final Army Size</td><td id="finalArmySize">0</td>
+				</tr>
+				<tr><td>Increase per Coord</td><td id="coordIncrease">0</td>
+					<td></td>
+					<td>Final Amal Ratio</td><td id="finalAmalRatio">0</td>
+				</tr>
+				<tr><td></td><td></td>
+					<td></td>
+					<td>Your Final Ratio</td><td id="yourFinalRatio">0</td>
+				</tr>
+				<tr><td>Zones of MI</td><td id="zonesOfMI">0</td>
+					<td></td>
+					<td></td><td></td>
+				</tr>
+				<tr><td>Zones of Fuel</td><td id="zonesOfFuel">0</td>
+					<td></td>
+					<td></td><td></td>
+				</tr>
+				<tr><td>Magma Zones</td><td id="zonesOfMagma">0</td>
+					<td></td>
+					<td></td><td></td>
+				</tr>
+				<tr><td>Total MI Earned</td><td id="totalMI">0</td>
+					<td></td>
+					<td></td><td></td>
+				</tr>
+				<tr><td>Max Supply @ Zone</td><td id="maxSupplyZone">0</td>
+					<td></td>
+					<td></td><td></td>
+				</tr>
+			</table>
+			<br>
+			<table id="extraGators" cellSpacing="5">
+				<tr><td>Range</td><td>Extra Gator</td><td>Needed Pop Mult</td><td>Unbought Coords</td></tr>
+				<tr><td>230-300</td><td id="ex1"></td><td id="npm1"></td><td id="uc1"></td></tr>
+				<tr><td>301-400</td><td id="ex2"></td><td id="npm2"></td><td id="uc2"></td></tr>
+				<tr><td>401-500</td><td id="ex3"></td><td id="npm3"></td><td id="uc3"></td></tr>
+				<tr><td>501-600</td><td id="ex4"></td><td id="npm4"></td><td id="uc4"></td></tr>
+				<tr><td>601+</td><td id="ex5"></td><td id="npm5"></td><td id="uc5"></td></tr>
+			</table>
+		</div>
+	</body>
+	
