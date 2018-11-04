@@ -1,4 +1,5 @@
 window.onload = setup;
+var ticked = false;
 var fuelStart = 230;
 var fuelEnd = 230;
 var fuelZones = fuelEnd - fuelStart;
@@ -401,6 +402,7 @@ function calculateCurrentPop() {
 }
 
 function pasteSave(save) {
+	ticked = document.getElementById("lockRun").checked;
 	var saveString = save.clipboardData.getData("text/plain").replace(/\s/g, '');
 	game = JSON.parse(LZString.decompressFromBase64(saveString));
 	if (game == null) {
@@ -438,25 +440,27 @@ function pasteSave(save) {
 	if (game.talents.magmaFlow.purchased) changeMagmaFlow("Yes");
 	else changeMagmaFlow("No");
 	
-	runEnd = game.global.lastPortal;
-	changeRunEnd(runEnd);
-	document.getElementById("runEnd").value = runEnd;
-	spiresCleared = game.global.spiresCompleted;
-	changeSpiresCleared(spiresCleared);
-	document.getElementById("spiresCleared").value = spiresCleared;
-	if (game.global.genStateConfig.length == 0) fuelStart = 230;
-	else fuelStart = game.global.genStateConfig[0][1];
-	changeFuelStart(fuelStart);
-	document.getElementById("fuelStart").value = fuelStart;
-	if (game.global.genStateConfig.length == 0) fuelEnd = runEnd;
-	else fuelEnd = game.global.genStateConfig[1][1];
-	changeFuelEnd(fuelEnd);
-	document.getElementById("fuelEnd").value = fuelEnd;
-	if (game.global.dailyChallenge.large != undefined) {
-		housingMod = 1 - (game.global.dailyChallenge.large.strength / 100)
-	} else housingMod = 1;
-	changeHousingMod(housingMod);
-	document.getElementById("housingMod").value = housingMod.toFixed(2);
+	if (!ticked) {
+		runEnd = game.global.lastPortal;
+		changeRunEnd(runEnd);
+		document.getElementById("runEnd").value = runEnd;
+		spiresCleared = game.global.spiresCompleted;
+		changeSpiresCleared(spiresCleared);
+		document.getElementById("spiresCleared").value = spiresCleared;
+		if (game.global.genStateConfig.length == 0) fuelStart = 230;
+		else fuelStart = game.global.genStateConfig[0][1];
+		changeFuelStart(fuelStart);
+		document.getElementById("fuelStart").value = fuelStart;
+		if (game.global.genStateConfig.length == 0) fuelEnd = runEnd;
+		else fuelEnd = game.global.genStateConfig[1][1];
+		changeFuelEnd(fuelEnd);
+		document.getElementById("fuelEnd").value = fuelEnd;
+		if (game.global.dailyChallenge.large != undefined) {
+			housingMod = 1 - (game.global.dailyChallenge.large.strength / 100)
+		} else housingMod = 1;
+		changeHousingMod(housingMod);
+		document.getElementById("housingMod").value = housingMod.toFixed(2);
+	}
 	//console.log(game);
 }
 
@@ -532,7 +536,7 @@ function minimize(dif, atZone) {
 	document.getElementById("fuelStart").value = fuelStart;
 	document.getElementById("fuelEnd").value = fuelEnd;
 	document.getElementById("fuelZones").value = fuelZones;
-	console.log("Minimized!");
+	//console.log("Minimized!");
 }
 
 function changeMinimizeZone(value) {
@@ -549,6 +553,7 @@ function minimizeCapacity() {
 
 function saveSettings() {
 	var settings = {
+		ticked : ticked,
 		fuelStart : fuelStart,
 		fuelEnd : fuelEnd,
 		fuelZones : fuelZones,
@@ -573,6 +578,7 @@ function saveSettings() {
 function loadSettings() {
 	var settings = JSON.parse(localStorage.getItem("GatorSettings"));
 	if (settings != null) {
+		if (typeof settings.ticked != "undefined") ticked = settings.ticked;
 		if (typeof settings.fuelStart != "undefined") fuelStart = settings.fuelStart;
 		if (typeof settings.fuelEnd != "undefined") fuelEnd = settings.fuelEnd;
 		if (typeof settings.fuelZones != "undefined") fuelZones = settings.fuelZones;
@@ -590,6 +596,7 @@ function loadSettings() {
 		if (typeof settings.slowburn != "undefined") slowburn = settings.slowburn;
 		if (typeof settings.magmaFlow != "undefined") magmaFlow = settings.magmaFlow;
 		if (typeof settings.minimizeZone != "undefined") minimizeZone = settings.minimizeZone;
+		document.getElementById("lockRun").checked = ticked;
 		changeFuelStart(fuelStart);
 		document.getElementById("fuelStart").value = fuelStart;
 		changeFuelEnd(fuelEnd);
