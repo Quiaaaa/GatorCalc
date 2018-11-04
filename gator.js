@@ -324,7 +324,8 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	document.getElementById("npm1").innerHTML = (ar1 / x).toPrecision(5);
+	if (x == -1) document.getElementById("npm1").innerHTML = "N/A";
+	else document.getElementById("npm1").innerHTML = (ar1 / x).toPrecision(5);
 	document.getElementById("ex1").innerHTML = y;
 	document.getElementById("uc1").innerHTML = z;
 	
@@ -340,7 +341,8 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	document.getElementById("npm2").innerHTML = (ar2 / x).toPrecision(5);
+	if (x == -1) document.getElementById("npm2").innerHTML = "N/A";
+	else document.getElementById("npm2").innerHTML = (ar2 / x).toPrecision(5);
 	document.getElementById("ex2").innerHTML = y;
 	document.getElementById("uc2").innerHTML = z;
 	
@@ -356,7 +358,8 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	document.getElementById("npm3").innerHTML = (ar3 / x).toPrecision(5);
+	if (x == -1) document.getElementById("npm3").innerHTML = "N/A";
+	else document.getElementById("npm3").innerHTML = (ar3 / x).toPrecision(5);
 	document.getElementById("ex3").innerHTML = y;
 	document.getElementById("uc3").innerHTML = z;
 	
@@ -372,7 +375,8 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	document.getElementById("npm4").innerHTML = (ar4 / x).toPrecision(5);
+	if (x == -1) document.getElementById("npm4").innerHTML = "N/A";
+	else document.getElementById("npm4").innerHTML = (ar4 / x).toPrecision(5);
 	document.getElementById("ex4").innerHTML = y;
 	document.getElementById("uc4").innerHTML = z;
 	
@@ -388,7 +392,8 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	document.getElementById("npm5").innerHTML = (ar5 / x).toPrecision(5);
+	if (x == -1) document.getElementById("npm5").innerHTML = "N/A";
+	else document.getElementById("npm5").innerHTML = (ar5 / x).toPrecision(5);
 	document.getElementById("ex5").innerHTML = y;
 	document.getElementById("uc5").innerHTML = z;
 	
