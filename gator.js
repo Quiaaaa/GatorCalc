@@ -495,7 +495,7 @@ function minimize(dif, atZone) {
 	changeFuelZones(0);
 	
 	while(fuelStart >= 230) {
-		while (maxAmals == bestAmals) {
+		while (maxAmals == bestAmals && fuelZones >= 0) {
 			bestI = fuelStart;
 			bestJ = fuelZones;
 			fuelZones -= 1;
@@ -532,6 +532,7 @@ function minimize(dif, atZone) {
 	document.getElementById("fuelStart").value = fuelStart;
 	document.getElementById("fuelEnd").value = fuelEnd;
 	document.getElementById("fuelZones").value = fuelZones;
+	console.log("Minimized!");
 }
 
 function changeMinimizeZone(value) {
