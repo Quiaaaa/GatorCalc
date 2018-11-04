@@ -444,10 +444,12 @@ function pasteSave(save) {
 	spiresCleared = game.global.spiresCompleted;
 	changeSpiresCleared(spiresCleared);
 	document.getElementById("spiresCleared").value = spiresCleared;
-	fuelStart = game.global.genStateConfig[0][1];
+	if (game.global.genStateConfig[0][1] == "undefined") fuelStart = 230;
+	else fuelStart = game.global.genStateConfig[0][1];
 	changeFuelStart(fuelStart);
 	document.getElementById("fuelStart").value = fuelStart;
-	fuelEnd = game.global.genStateConfig[1][1];
+	if (game.global.genStateConfig[1][1] == "undefined") fuelEnd = runEnd;
+	else fuelEnd = game.global.genStateConfig[1][1];
 	changeFuelEnd(fuelEnd);
 	document.getElementById("fuelEnd").value = fuelEnd;
 	if (game.global.dailyChallenge.large != undefined) {
