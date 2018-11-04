@@ -100,7 +100,7 @@
 		</div>
 		<div id="results">
 			<br><br>Results<br>
-			<table id="resultsTable" cellSpacing="5" cellPadding="0">
+			<table class="table" id="resultsTable" cellSpacing="5" cellPadding="0">
 				<tr><td>Total Population</td><td id="totalPop">0</td>
 					<td class="filler2"></td>
 					<td>Final Amals</td><td id="finalAmals">0</td>
@@ -147,7 +147,7 @@
 				</tr>
 			</table>
 			<br>
-			<table id="extraGators" cellSpacing="5">
+			<table class="table" id="extraGators" cellSpacing="5">
 				<tr><td>Range</td><td>Extra Gator</td><td>Needed Pop Mult</td><td>Unbought Coords</td></tr>
 				<tr><td>230-300</td><td id="ex1"></td><td id="npm1"></td><td id="uc1"></td></tr>
 				<tr><td>301-400</td><td id="ex2"></td><td id="npm2"></td><td id="uc2"></td></tr>
@@ -155,6 +155,64 @@
 				<tr><td>501-600</td><td id="ex4"></td><td id="npm4"></td><td id="uc4"></td></tr>
 				<tr><td>601+</td><td id="ex5"></td><td id="npm5"></td><td id="uc5"></td></tr>
 			</table>
+		</div>
+		<button id="faq" onclick="goFaq()">FAQ</button>
+		<div class="hidden" id="faqScreen" tabindex="0">
+			<br>
+			<center>FAQ</center><br>
+			What does this do?
+			<span class="answer">
+			You can use this calculator to determine the number of amalgamators that are obtainable depending on how much, and when you fuel.
+			Since each Gator grants up to 1.5x attack along with a 40x health boost, it can be beneficial to get as many as are easily obtainable.
+			</span>
+			<br>
+			How do I use this?
+			<span class="answer">
+			Simply enter your stats or paste your save file to fill in the left-hand side of the screen. The right side results will automatically be calculated. 
+			The most important value will likely be the Max number of Amals you can get in a run. 
+			</span>
+			<br>
+			What does the table below the Results table mean?
+			<span class="answer">
+			This table lists how many coordinations you would have to hold off buying in order to squeeze out an extra Amalgamator. 
+			So if the upper table told you to expect hitting 5 Amals at zone 501, it may be possible to keep your population:army ratio lower by withholding coordinations in order to get a 6th gator in the 501-600 range, or in the 600+ range. 
+			Keep in mind that this uses the "#Spires Cleared" value to determine if the needed ratio decreases after each spire.
+			</span>
+			<br>
+			What do the buttons in the middle column do?
+			<span class="answer">
+			These buttons are used to determine when it is optimal to fuel. The "Optimize" button will take the number of zones to fuel currently shown, and figure out the best starting zone to fuel in order to maximize population.
+			The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order to get the maximum number of Amalgamators possible, thus maximizing MI gains. The "Minimize - 1" button will do the same thing, 
+			but with getting 1 less Gator. This can be useful if you'd need to fuel for an entire run in order to get your Max number of gators, and you'd rather keep the MI gains.
+			The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run otherwise, as you will 
+			get the benefit of the extra Gator earlier.
+			</span>
+			<br>
+			What assumptions are being made?
+			<span class="answer">
+			This calculator assumes no population before you begin fueling. The population received before your first DG tick is inconsequential to your total population, and won't affect the results shown for the intended users of this page.
+			<div class="filler"></div>
+			The calculator assumes exactly 2.97 tauntimps received per zone. This averages out to the expected value, but it is possible to have good/bad luck with tauntimps, and have your population thrive/suffer accordingly.
+			<div class="filler"></div>
+			The calculator assumes all DG ticks made are overclocks. This slightly affects the final results, especially for those with lower overclocker levels, as those non-OC ticks will be stronger that OC ticks, and happen earlier, therefore 
+			benefitting more from tauntimp compounding. However, the differences are still small, and largely unnoticable for fueling more than a couple of zones.
+			<div class="filler"></div>
+			This calculator assumes all fuel still in the tank after you stop fueling (and therefore stop overclocking) disappears. This causes the calculator to underestimate your total population by a bit, especially for fueling a smaller number 
+			of zones. This can be useful, as it provides a small cushion of extra pop to help ensure you get all the Gators you expect, even with poor tauntimp luck. However, with higher capacity values, it may determine that you need to fuel for longer 
+			in order to begin overclocking, in which case it may be best to use the in-game capacity slider to limit your max fuel and adjust the values of the calculator accordingly.
+			</span>
+			<br>
+			I found an error, what can I do?
+			<span class="answer">
+			Please contact me on reddit (u/Nohmou) or discord (@Nohmou#5097) and I'll look at it right away! Screenshots of your settings are helpful in diagnosing any technical issues.
+			</span>
+			<br>
+			Is this up to date?
+			<span class="answer">
+			This was last updated on November 4, 2018.
+			</span>
+			<br>
+			<br>
 		</div>
 	</body>
 	

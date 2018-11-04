@@ -634,4 +634,10 @@ function loadSettings() {
 	}
 }
 
+function goFaq() {
+	if (document.getElementById("faqScreen").style.display == "inline") document.getElementById("faqScreen").style.display = "none";
+	else document.getElementById("faqScreen").style.display = "inline";
+	document.getElementById("faqScreen").focus();
+}
+
 //Copyright Nohmou, 2018
