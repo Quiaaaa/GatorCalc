@@ -110,6 +110,10 @@ function changeRunEnd(value) {
 
 function changeHousingMod(value) {
 	housingMod = parseFloat(value);
+	if (housingMod < 0) {
+		housingMod = 1 + (housingMod / 100);
+		document.getElementById("housingMod").value = housingMod.toFixed(2);
+	}
 	calculateCurrentPop();
 }
 
@@ -467,7 +471,6 @@ function pasteSave(save) {
 function optimize() {
 	var myFuelZones = fuelZones;
 	changeFuelStart(230);
-	//changeFuelZones(myFuelZones);
 	var bestPop = 0;
 	var bestAmals = maxAmals;
 	var myFuelStart = 230;
@@ -485,21 +488,33 @@ function optimize() {
 	document.getElementById("fuelZones").value = fuelZones;
 }
 
-function minimize(dif, atZone) {
-	changeFuelStart(230);
+function minimize(dif, variant) {
+	changeFuelStart(230); 
 	var myEnd = runEnd;
-	if (atZone) changeRunEnd(minimizeZone);
+	if (variant == 1) changeRunEnd(minimizeZone);
 	changeFuelEnd(runEnd);
 	var bestAmals = maxAmals - dif;
 	var bestJ = fuelZones;
 	var maxedAmals = false;
 	
-	if (atZone) changeFuelStart(minimizeZone);
+	if (variant == 1) changeFuelStart(minimizeZone);
 	else changeFuelStart(runEnd);
 	changeFuelZones(0);
+	if (variant == 2) var myCapacity = capacity;
 	
-	while(fuelStart >= 230) {
+	while (fuelStart >= 230) {
 		while (maxAmals == bestAmals && fuelZones >= 0) {
+			if (variant == 2) {
+				var myPop = totalPop;
+				while (totalPop >= myPop) {
+					changeCapacity(capacity - 1);
+					if (totalPop >= myPop) myPop = totalPop;
+					else {
+						changeCapacity(capacity + 1);
+						break;
+					}
+				}
+			}
 			bestJ = fuelZones;
 			fuelZones -= 1;
 			changeFuelZones(fuelZones);
@@ -507,17 +522,28 @@ function minimize(dif, atZone) {
 		}
 		fuelStart -= 1;
 		if (fuelStart >= 230) changeFuelStart(fuelStart);
-		if (atZone) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ));
+		if (variant == 1) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ));
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
 		if (maxedAmals == true && maxAmals < bestAmals) break;
 	}
-	if (atZone) {
+	if (variant == 1) {
 		changeRunEnd(myEnd);
 		document.getElementById("runEnd").value = runEnd;
 	}
 	changeFuelZones(bestJ);
 	document.getElementById("fuelZones").value = fuelZones;
 	optimize();
+	if (variant == 2) {
+		myPop = totalPop;
+		changeCapacity(capacity + 1);
+		while (totalPop >= myPop && maxAmals >= bestAmals && capacity <= myCapacity) {
+			myPop = totalPop;
+			changeCapacity(capacity + 1);
+		}
+		changeCapacity(capacity - 1);
+		document.getElementById("capacity").value = capacity;
+		optimize();
+	}
 }
 
 function changeMinimizeZone(value) {

@@ -39,7 +39,7 @@
 			</label>
 			<br>
 			<div class="filler"></div>
-			<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8">
+			<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8, or -20">
 				<input id="housingMod" type="number" onchange="changeHousingMod(this.value)">&nbspHousing Mod
 			</label>
 			<br>
@@ -93,10 +93,10 @@
 			<div class="filler"></div>
 			<button class="macro" id="minimize-1" onclick="minimize(1)">Minimize - 1</button><br>
 			<div class="filler"></div>
-			<button class="macro" id="minimizeAtZone" onclick="minimize(0, true)">Minimize At Zone:</button><br>
+			<button class="macro" id="minimizeAtZone" onclick="minimize(0, 1)">Minimize At Zone:</button><br>
 			<input id="minimizeZone" type="number" onchange="changeMinimizeZone(this.value)"><br>
 			<div class="filler"></div>
-			<button class="macro hidden" id="minimizeCapacity" onclick="minimizeCapacity()">Minimize Capacity</button><br>
+			<button class="macro" id="minimizeCapacity" onclick="minimize(0, 2)">Minimize Capacity</button><br>
 		</div>
 		<div id="results">
 			<br><br>Results<br>
@@ -185,7 +185,7 @@
 			The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order to get the maximum number of Amalgamators possible, thus maximizing MI gains. The "Minimize - 1" button will do the same thing, 
 			but with getting 1 less Gator. This can be useful if you'd need to fuel for an entire run in order to get your Max number of gators, and you'd rather keep the MI gains.
 			The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run otherwise, as you will 
-			get the benefit of the extra Gator earlier.
+			get the benefit of the extra Gator earlier. The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel. You'll need to use the in-game capacity slider to adjust to the recommended value. 
 			</span>
 			<br>
 			What assumptions are being made?
@@ -209,7 +209,7 @@
 			<br>
 			Is this up to date?
 			<span class="answer">
-			This was last updated on November 4, 2018.
+			This was last updated on November 5, 2018.
 			</span>
 			<br>
 			<br>
