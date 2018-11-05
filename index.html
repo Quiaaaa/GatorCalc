@@ -94,11 +94,17 @@
 			<button class="macro" id="minimize-1" onclick="minimize(1)">Minimize - 1</button><br>
 			<div class="filler"></div>
 			<button class="macro" id="minimizeAtZone" onclick="minimize(0, 1)">Minimize At Zone:</button><br>
-			<input id="minimizeZone" type="number" onchange="changeMinimizeZone(this.value)"><br>
+			<input class="macroZone" id="minimizeZone" type="number" onchange="changeMinimizeZone(this.value)"><br>
 			<div class="filler"></div>
 			<button class="macro" id="minimizeCapacity" onclick="minimize(0, 2)">Minimize Capacity</button><br>
 			<div class="filler"></div>
+			<button class="macro" id="forceGator" onclick="forceGator()">Force Gator At Zone:</button><br>
+			<input class="macroZone" id="gatorZone" type="number" onchange="changeGatorZone(this.value)"><br>
+			<div class="filler"></div>
 			<button class="macro hidden" id="minimizeCapacity-1" onclick="minimize(1, 2)">Minimize Capacity - 1</button><br>
+			<div class="filler"></div>
+			<button class="macro hidden" id="minimizeAtZone-1" onclick="minimize(1, 1)">Minimize At Zone - 1</button><br>
+			<div class="filler"></div>
 		</div>
 		<div id="results">
 			<br><br>Results<br>

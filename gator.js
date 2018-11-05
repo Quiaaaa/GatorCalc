@@ -66,6 +66,7 @@ var adjustedRatio = [];
 var currentAmals = [];
 
 var minimizeZone = 0;
+var gatorZone = 0;
 
 function setup() {
 	loadSettings();
@@ -557,8 +558,52 @@ function changeMinimizeZone(value) {
 	if (minimizeZone == 2151) document.getElementById("minimizeCapacity-1").style.display = "inline";
 }
 
-function minimizeCapacity() {
-	
+function forceGator() {
+	var x = adjustedRatio[minimizeZone - 230];
+	var y = gatorZone;
+	var z = "N/A";
+	if (y < 230) {
+		
+	} else if (y < 301) {
+		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
+			z = Math.ceil(Math.log(ar1 / x) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm1").innerHTML = (ar1 / x).toPrecision(5);
+			document.getElementById("ex1").innerHTML = y;
+			document.getElementById("uc1").innerHTML = z;
+		}
+	} else if (y < 401) {
+		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
+			z = Math.ceil(Math.log(ar2 / x) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm2").innerHTML = (ar2 / x).toPrecision(5);
+			document.getElementById("ex2").innerHTML = y;
+			document.getElementById("uc2").innerHTML = z;
+		}
+	} else if (y < 501) {
+		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
+			z = Math.ceil(Math.log(ar3 / x) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm3").innerHTML = (ar3 / x).toPrecision(5);
+			document.getElementById("ex3").innerHTML = y;
+			document.getElementById("uc3").innerHTML = z;
+		}
+	} else if (y < 601) {
+		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
+			z = Math.ceil(Math.log(ar4 / x) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm4").innerHTML = (ar4 / x).toPrecision(5);
+			document.getElementById("ex4").innerHTML = y;
+			document.getElementById("uc4").innerHTML = z;
+		}
+	} else {
+		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
+			z = Math.ceil(Math.log(ar5 / x) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm5").innerHTML = (ar5 / x).toPrecision(5);
+			document.getElementById("ex5").innerHTML = y;
+			document.getElementById("uc5").innerHTML = z;
+		}
+	}
+}
+
+function changeGatorZone(value) {
+	gatorZone = parseInt(value);
 }
 
 function saveSettings() {

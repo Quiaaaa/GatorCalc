@@ -66,11 +66,10 @@ input {
 	border-radius: 8px;
 }
 
-#minimizeZone {
+.macroZone {
 	position: relative;
 	width: 58%;
 	left: 20%;
-	
 }
 
 #results {
