@@ -552,6 +552,7 @@ function changeMinimizeZone(value) {
 		minimizeZone = 230;
 		document.getElementById("minimizeZone").value = minimizeZone;
 	}
+	if (minimizeZone == 2151) document.getElementById("minimizeCapacity-1").style.display = "inline";
 }
 
 function minimizeCapacity() {
