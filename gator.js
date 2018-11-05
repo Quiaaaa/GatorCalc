@@ -252,7 +252,7 @@ function calculateCurrentPop() {
 		if (i == 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, 0.2 + (supply * 0.02));
 		if ((i + 230) >= fuelStart && (i + 230) <= fuelEnd) {
-			if (i == 0) fuelThisZone[0] = 0.2;
+			if (i == 0) totalFuel[0] = 0.2;
 			else totalFuel[i] = (magmaCells * fuelThisZone[i]) + totalFuel[i - 1];
 		} else totalFuel[i] = 0;
 		overclockTicks[i] = Math.max((totalFuel[i] - (storage * maxCapacity)) / slowburn, 0);
@@ -559,45 +559,45 @@ function changeMinimizeZone(value) {
 }
 
 function forceGator() {
-	var x = adjustedRatio[gatorZone - 230];
-	var y = gatorZone;
-	var z = "N/A";
-	if (y < 230) {
+	var x1 = adjustedRatio[gatorZone - 230];
+	var y1 = gatorZone;
+	var z1 = "N/A";
+	if (y1 < 230) {
 		
-	} else if (y < 301) {
-		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
-			z = Math.ceil(Math.log(ar1 / x) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm1").innerHTML = (ar1 / x).toPrecision(5);
-			document.getElementById("ex1").innerHTML = y;
-			document.getElementById("uc1").innerHTML = z;
+	} else if (y1 < 301) {
+		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
+			z1 = Math.ceil(Math.log(ar1 / x1) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm1").innerHTML = (ar1 / x1).toPrecision(5);
+			document.getElementById("ex1").innerHTML = y1;
+			document.getElementById("uc1").innerHTML = z1;
 		}
-	} else if (y < 401) {
-		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
-			z = Math.ceil(Math.log(ar2 / x) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm2").innerHTML = (ar2 / x).toPrecision(5);
-			document.getElementById("ex2").innerHTML = y;
-			document.getElementById("uc2").innerHTML = z;
+	} else if (y1 < 401) {
+		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
+			z1 = Math.ceil(Math.log(ar2 / x1) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm2").innerHTML = (ar2 / x1).toPrecision(5);
+			document.getElementById("ex2").innerHTML = y1;
+			document.getElementById("uc2").innerHTML = z1;
 		}
-	} else if (y < 501) {
-		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
-			z = Math.ceil(Math.log(ar3 / x) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm3").innerHTML = (ar3 / x).toPrecision(5);
-			document.getElementById("ex3").innerHTML = y;
-			document.getElementById("uc3").innerHTML = z;
+	} else if (y1 < 501) {
+		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
+			z1 = Math.ceil(Math.log(ar3 / x1) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm3").innerHTML = (ar3 / x1).toPrecision(5);
+			document.getElementById("ex3").innerHTML = y1;
+			document.getElementById("uc3").innerHTML = z1;
 		}
-	} else if (y < 601) {
-		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
-			z = Math.ceil(Math.log(ar4 / x) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm4").innerHTML = (ar4 / x).toPrecision(5);
-			document.getElementById("ex4").innerHTML = y;
-			document.getElementById("uc4").innerHTML = z;
+	} else if (y1 < 601) {
+		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
+			z1 = Math.ceil(Math.log(ar4 / x1) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm4").innerHTML = (ar4 / x1).toPrecision(5);
+			document.getElementById("ex4").innerHTML = y1;
+			document.getElementById("uc4").innerHTML = z1;
 		}
 	} else {
-		if (currentAmals[y - 230] >= maxAmals && y > finalAmalZone) {
-			z = Math.ceil(Math.log(ar5 / x) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm5").innerHTML = (ar5 / x).toPrecision(5);
-			document.getElementById("ex5").innerHTML = y;
-			document.getElementById("uc5").innerHTML = z;
+		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
+			z1 = Math.ceil(Math.log(ar5 / x1) / Math.log(1 + (coordIncrease / 100)));
+			document.getElementById("npm5").innerHTML = (ar5 / x1).toPrecision(5);
+			document.getElementById("ex5").innerHTML = y1;
+			document.getElementById("uc5").innerHTML = z1;
 		}
 	}
 }
@@ -629,7 +629,8 @@ function saveSettings() {
 		storage : storage,
 		slowburn : slowburn,
 		magmaFlow : magmaFlow,
-		minimizeZone : minimizeZone
+		minimizeZone : minimizeZone,
+		gatorZone : gatorZone
 	}
 	localStorage.setItem("GatorSettings", JSON.stringify(settings));
 }
@@ -655,6 +656,7 @@ function loadSettings() {
 		if (typeof settings.slowburn != "undefined") slowburn = settings.slowburn;
 		if (typeof settings.magmaFlow != "undefined") magmaFlow = settings.magmaFlow;
 		if (typeof settings.minimizeZone != "undefined") minimizeZone = settings.minimizeZone;
+		if (typeof settings.gatorZone != "undefined") gatorZone = settings.gatorZone;
 		document.getElementById("lockRun").checked = ticked;
 		changeFuelStart(fuelStart);
 		document.getElementById("fuelStart").value = fuelStart;
