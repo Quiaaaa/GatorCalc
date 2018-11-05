@@ -65,8 +65,8 @@ var amalRatio = [];
 var adjustedRatio = [];
 var currentAmals = [];
 
-var minimizeZone = 0;
-var gatorZone = 0;
+var minimizeZone = 230;
+var gatorZone = 230;
 
 function setup() {
 	loadSettings();
@@ -604,6 +604,10 @@ function forceGator() {
 
 function changeGatorZone(value) {
 	gatorZone = parseInt(value);
+	if (gatorZone < 230) {
+		gatorZone = 230;
+		document.getElementById("gatorZone").value = gatorZone;
+	}
 }
 
 function saveSettings() {
