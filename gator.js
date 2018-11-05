@@ -559,7 +559,7 @@ function changeMinimizeZone(value) {
 }
 
 function forceGator() {
-	var x = adjustedRatio[minimizeZone - 230];
+	var x = adjustedRatio[gatorZone - 230];
 	var y = gatorZone;
 	var z = "N/A";
 	if (y < 230) {
