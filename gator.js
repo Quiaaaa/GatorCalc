@@ -298,7 +298,7 @@ function calculateCurrentPop() {
 	finalAmals = currentAmals[runEnd - 230];
 	document.getElementById("finalAmals").innerHTML = finalAmals;
 	maxAmals = 0;
-	for (i = 0; i < (runEnd - 230); i++) {
+	for (i = 0; i <= (runEnd - 230); i++) {
 		if (currentAmals[i] > maxAmals) {
 			maxAmals = currentAmals[i];
 			finalAmalZone = i + 230;
@@ -487,10 +487,10 @@ function optimize() {
 
 function minimize(dif, atZone) {
 	changeFuelStart(230);
-	if (atZone) changeFuelEnd(minimizeZone);
-	else changeFuelEnd(runEnd);
+	var myEnd = runEnd;
+	if (atZone) changeRunEnd(minimizeZone);
+	changeFuelEnd(runEnd);
 	var bestAmals = maxAmals - dif;
-	var bestI = fuelStart;
 	var bestJ = fuelZones;
 	var maxedAmals = false;
 	
@@ -500,7 +500,6 @@ function minimize(dif, atZone) {
 	
 	while(fuelStart >= 230) {
 		while (maxAmals == bestAmals && fuelZones >= 0) {
-			bestI = fuelStart;
 			bestJ = fuelZones;
 			fuelZones -= 1;
 			changeFuelZones(fuelZones);
@@ -512,31 +511,13 @@ function minimize(dif, atZone) {
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
 		if (maxedAmals == true && maxAmals < bestAmals) break;
 	}
-	changeFuelStart(bestI);
-	changeFuelZones(bestJ);
-	
-	var bestPop = totalPop;
-	bestI++;
-	changeFuelStart(bestI);
 	if (atZone) {
-		while (totalPop > bestPop && maxAmals >= bestAmals && (bestI + bestJ) < minimizeZone) {
-			bestPop = totalPop;
-			bestI++;
-			changeFuelStart(bestI);
-		}
-	} else {
-		while (totalPop > bestPop && maxAmals >= bestAmals) {
-			bestPop = totalPop;
-			bestI++;
-			changeFuelStart(bestI);
-		}
+		changeRunEnd(myEnd);
+		document.getElementById("runEnd").value = runEnd;
 	}
-	bestI--;
-	changeFuelStart(bestI);
-	document.getElementById("fuelStart").value = fuelStart;
-	document.getElementById("fuelEnd").value = fuelEnd;
+	changeFuelZones(bestJ);
 	document.getElementById("fuelZones").value = fuelZones;
-	//console.log("Minimized!");
+	optimize();
 }
 
 function changeMinimizeZone(value) {
