@@ -4,7 +4,7 @@ var fuelStart = 230;
 var fuelEnd = 230;
 var fuelZones = fuelEnd - fuelStart;
 var runEnd = 230;
-var maxZone = 700; //Put this higher if there's a change for someone to reach this high.
+var maxZone = 701; //Put this higher if there's a change for someone to reach this high.
 var housingMod = 1;
 var spiresCleared = 0;
 var carp = 0;
@@ -67,6 +67,7 @@ var currentAmals = [];
 
 var minimizeZone = 230;
 var gatorZone = 230;
+var offset = false;
 
 function setup() {
 	loadSettings();
@@ -247,6 +248,7 @@ function calculateMaxTick() {
 }
 
 function calculateCurrentPop() {
+	offset = document.getElementById("offset5").checked;
 	var sum = [];
 	for (i = 0; i <= (maxZone - 230); i++) {
 		if (i == 0) fuelThisZone[0] = 0.2;
@@ -272,7 +274,9 @@ function calculateCurrentPop() {
 		else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
 		amalRatio[i] = (popWithTauntimp[i] * housingMod) / (coordPop[i] / 3);
 		if (i == 0) currentAmals[0] = 0;
-		else if (i <= 70) {
+		else if ((offset && ((i - 1) % 5) != 0) || (offset && ((i - 71) % 100) == 0)) {
+			currentAmals[i] = currentAmals[i - 1];
+		} else if (i <= 70) {
 			if (adjustedRatio[i - 1] > Math.max(ar1, finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
 			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
 			else currentAmals[i] = currentAmals[i - 1];
@@ -436,15 +440,27 @@ function pasteSave(save) {
 	overclocker = game.generatorUpgrades.Overclocker.upgrades;
 	changeOverclocker(overclocker);
 	document.getElementById("overclocker").value = overclock;
-	if (game.permanentGeneratorUpgrades.Storage.owned) changeStorage("Yes");
-	else changeStorage("No");
-	
-	if (game.permanentGeneratorUpgrades.Slowburn.owned) changeSlowburn("Yes");
-	else changeSlowburn("No");
-	
-	if (game.talents.magmaFlow.purchased) changeMagmaFlow("Yes");
-	else changeMagmaFlow("No");
-	
+	if (game.permanentGeneratorUpgrades.Storage.owned) {
+		changeStorage("Yes");
+		document.getElementById("storage").value = "Yes";
+	} else {
+		changeStorage("No");
+		document.getElementById("storage").value = "No";
+	}
+	if (game.permanentGeneratorUpgrades.Slowburn.owned) {
+		changeSlowburn("Yes");
+		document.getElementById("slowburn").value = "Yes";
+	} else {
+		changeSlowburn("No");
+		document.getElementById("slowburn").value = "No";
+	}
+	if (game.talents.magmaFlow.purchased) {
+		changeMagmaFlow("Yes");
+		document.getElementById("magmaFlow").value = "Yes";
+	} else {
+		changeMagmaFlow("No");
+		document.getElementById("magmaFlow").value = "No";
+	}
 	if (!ticked) {
 		runEnd = game.global.lastPortal;
 		changeRunEnd(runEnd);
@@ -555,7 +571,10 @@ function changeMinimizeZone(value) {
 		minimizeZone = 230;
 		document.getElementById("minimizeZone").value = minimizeZone;
 	}
-	if (minimizeZone == 2151) document.getElementById("minimizeCapacity-1").style.display = "inline";
+	if (minimizeZone == 2151) {
+		document.getElementById("minimizeCapacity-1").style.display = "inline";
+		document.getElementById("minimizeAtZone-1").style.display = "inline";
+	}
 }
 
 function forceGator() {
@@ -630,7 +649,8 @@ function saveSettings() {
 		slowburn : slowburn,
 		magmaFlow : magmaFlow,
 		minimizeZone : minimizeZone,
-		gatorZone : gatorZone
+		gatorZone : gatorZone,
+		offset : offset
 	}
 	localStorage.setItem("GatorSettings", JSON.stringify(settings));
 }
@@ -657,7 +677,9 @@ function loadSettings() {
 		if (typeof settings.magmaFlow != "undefined") magmaFlow = settings.magmaFlow;
 		if (typeof settings.minimizeZone != "undefined") minimizeZone = settings.minimizeZone;
 		if (typeof settings.gatorZone != "undefined") gatorZone = settings.gatorZone;
+		if (typeof settings.offset != "undefined") offset = settings.offset;
 		document.getElementById("lockRun").checked = ticked;
+		document.getElementById("offset5").checked = offset;
 		changeFuelStart(fuelStart);
 		document.getElementById("fuelStart").value = fuelStart;
 		changeFuelEnd(fuelEnd);
@@ -685,13 +707,18 @@ function loadSettings() {
 		changeOverclocker(overclock);
 		document.getElementById("overclocker").value = overclock;
 		changeStorage(storage);
-		//document.getElementById("storage").value = storage;
+		if (storage == 2) document.getElementById("storage").value = "Yes";
+		else document.getElementById("storage").value = "No";
 		changeSlowburn(slowburn);
-		//document.getElementById("slowburn").value = slowburn;
+		if (slowburn == 0.4) document.getElementById("slowburn").value = "Yes";
+		else document.getElementById("slowburn").value = "No";
 		changeMagmaFlow(magmaFlow);
-		//document.getElementById("magmaFlow").value = magmaFlow;
+		if (magmaFlow) document.getElementById("magmaFlow").value = "Yes";
+		else document.getElementById("magmaFlow").value = "No";
 		changeMinimizeZone(minimizeZone);
 		document.getElementById("minimizeZone").value = minimizeZone;
+		changeGatorZone(gatorZone);
+		document.getElementById("gatorZone").value = gatorZone;
 	}
 }
 

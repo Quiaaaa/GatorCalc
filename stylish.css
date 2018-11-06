@@ -72,6 +72,13 @@ input {
 	left: 20%;
 }
 
+#offset5Label {
+	display: block;
+	position: relative;
+	float: left;
+	white-space: nowrap;
+}
+
 #results {
 	position: absolute;
 	width: 40%;
