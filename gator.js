@@ -1,10 +1,10 @@
 window.onload = setup;
+var version = "1.4";
 var ticked = false;
 var fuelStart = 230;
 var fuelEnd = 230;
 var fuelZones = fuelEnd - fuelStart;
 var runEnd = 230;
-var maxZone = 701; //Put this higher if there's a change for someone to reach this high.
 var housingMod = 1;
 var spiresCleared = 0;
 var carp = 0;
@@ -27,6 +27,11 @@ var minTick = 0;
 var maxTick = 0;
 var tickRatio = 0;
 
+var efficiencyCost = 8;
+var capacityCost = 32;
+var supplyCost = 64;
+var overclockerCost = 512;
+
 var totalPop = 0;
 var currentPop = [];
 var finalAmals = 0;
@@ -43,7 +48,6 @@ var yourFinalRatio = 0;
 var zonesOfMI = 0;
 var magmaZones = 0;
 var totalMI = 0;
-var maxSupplyZone = 0;
 
 var ar1 = 10000000000;
 var ar2;
@@ -71,6 +75,7 @@ var offset = false;
 
 function setup() {
 	loadSettings();
+	document.getElementById("version").innerHTML = version;
 }
 
 function changeFuelStart(value) {
@@ -155,6 +160,7 @@ function changeEfficiency(value) {
 	efficiency = parseInt(value);
 	calculateMinTick();
 	calculateMaxTick();
+	efficiencyCost = (efficiency + 1) * 8;
 	calculateCurrentPop();
 }
 
@@ -162,13 +168,15 @@ function changeCapacity(value) {
 	capacity = parseInt(value);
 	maxCapacity = 3 + (capacity * 0.4);
 	calculateMaxTick();
+	capacityCost = (capacity + 1) * 32;
 	calculateCurrentPop();
 }
 
 function changeSupply(value) {
 	supply = parseInt(value);
 	maxSupply = 0.2 + (supply * 0.02);
-	calculateMaxSupplyZone();
+	document.getElementById("maxSupplyZone").innerHTML = (230 + (2 * supply));
+	supplyCost = (supply + 1) * 64;
 	calculateCurrentPop();
 }
 
@@ -177,7 +185,110 @@ function changeOverclocker(value) {
 	overclock = overclocker;
 	if (overclocker < 1) overclocker = 1;
 	else overclocker = 1 - (0.5 * Math.pow(0.99, overclocker - 1));
+	overclockerCost = (overclock * 32) + 512;
 	calculateCurrentPop();
+}
+
+function checkDGUpgrades() {
+	var myStart = fuelStart;
+	var myEnd = fuelEnd;
+	var myMI = totalMI;
+	if (myMI == 0) return;
+	changeFuelStart(230);
+	changeFuelEnd(runEnd);
+	var myPop = totalPop;
+	
+	changeEfficiency(efficiency + 1);
+	var efficiencyEfficiency = totalPop / myPop;
+	changeEfficiency(efficiency - 1);
+	changeCapacity(capacity + 1);
+	var capacityEfficiency = totalPop / myPop;
+	changeCapacity(capacity - 1);
+	changeSupply(supply + 1);
+	var supplyEfficiency = totalPop / myPop;
+	changeSupply(supply - 1);
+	changeOverclocker(overclock + 1);
+	var overclockerEfficiency = totalPop / myPop;
+	changeOverclocker(overclock - 1);
+	
+	var eCost = efficiencyCost;
+	var cCost = capacityCost;
+	var sCost = supplyCost;
+	var oCost = overclockerCost;
+	
+	if (eCost <= myMI) {
+		efficiencyCost += (myMI - eCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (eCost > myMI) {
+			efficiencyCost += myMI;
+			eCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 10) {
+				console.log("Too many runs needed!");
+				break;
+			}
+		}
+		efficiencyCost += (myMI - eCost) * 0.2;
+	}
+	if (cCost <= myMI) {
+		capacityCost += (myMI - cCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (cCost > myMI) {
+			capacityCost += myMI;
+			cCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 10) {
+				console.log("Too many runs needed!");
+				break;
+			}
+		}
+		capacityCost += (myMI - cCost) * 0.2;
+	}
+	if (sCost <= myMI) {
+		supplyCost += (myMI - sCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (sCost > myMI) {
+			supplyCost += myMI;
+			sCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 10) {
+				console.log("Too many runs needed!");
+				break;
+			}
+		}
+		supplyCost += (myMI - sCost) * 0.2;
+	}
+	if (oCost <= myMI) {
+		overclockerCost += (myMI - oCost) * 0.2;
+	} else {
+		var runsNeeded = 1;
+		while (oCost > myMI) {
+			overclockerCost += myMI;
+			oCost -= myMI * Math.pow(0.8, runsNeeded);
+			runsNeeded++;
+			if (runsNeeded > 10) {
+				console.log("Too many runs needed!");
+				break;
+			}
+		}
+		overclockerCost += (myMI - oCost) * 0.2;
+	}
+	
+	efficiencyEfficiency /= efficiencyCost;
+	capacityEfficiency /= capacityCost;
+	supplyEfficiency /= supplyCost;
+	overclockerEfficiency /= overclockerCost;
+	
+	document.getElementById("efficiencyEfficiency").innerHTML = "1";
+	document.getElementById("capacityEfficiency").innerHTML = (capacityEfficiency / efficiencyEfficiency).toFixed(4);
+	document.getElementById("supplyEfficiency").innerHTML = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
+	document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
+	
+	changeFuelStart(myStart);
+	changeFuelEnd(myEnd);
 }
 
 function changeStorage(value) {
@@ -210,10 +321,6 @@ function calculateMagma() {
 	if (magmaFlow) totalMI = zonesOfMI * 18;
 	else totalMI = zonesOfMI * 16;
 	document.getElementById("totalMI").innerHTML = totalMI;
-}
-
-function calculateMaxSupplyZone() {
-	document.getElementById("maxSupplyZone").innerHTML = (230 + (2 * supply));
 }
 
 function calculateCoordIncrease() {
@@ -250,9 +357,9 @@ function calculateMaxTick() {
 function calculateCurrentPop() {
 	offset = document.getElementById("offset5").checked;
 	var sum = [];
-	for (i = 0; i <= (maxZone - 230); i++) {
+	for (i = 0; i <= (runEnd - 230); i++) {
 		if (i == 0) fuelThisZone[0] = 0.2;
-		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, 0.2 + (supply * 0.02));
+		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, maxSupply);
 		if ((i + 230) >= fuelStart && (i + 230) <= fuelEnd) {
 			if (i == 0) totalFuel[0] = 0.2;
 			else totalFuel[i] = (magmaCells * fuelThisZone[i]) + totalFuel[i - 1];
@@ -482,6 +589,7 @@ function pasteSave(save) {
 		changeHousingMod(housingMod);
 		document.getElementById("housingMod").value = housingMod.toFixed(2);
 	}
+	checkDGUpgrades();
 	//console.log(game);
 }
 
@@ -719,6 +827,7 @@ function loadSettings() {
 		document.getElementById("minimizeZone").value = minimizeZone;
 		changeGatorZone(gatorZone);
 		document.getElementById("gatorZone").value = gatorZone;
+		checkDGUpgrades();
 	}
 }
 

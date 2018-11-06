@@ -57,18 +57,24 @@
 			<div class="filler"></div>
 			<input id="coord" type="number" onchange="changeCoord(this.value)">&nbspCoordinated
 			<br><br><br>
-			DG Levels<br>
+			DG Levels<span class="efficiency">Next Upgrade</span><br>
 			<input id="efficiency" type="number" onchange="changeEfficiency(this.value)">&nbspEfficiency
+			<span class="efficiency" id="efficiencyEfficiency"></span>
 			<br>
 			<div class="filler"></div>
 			<input id="capacity" type="number" onchange="changeCapacity(this.value)">&nbspCapacity
+			<span class="efficiency" id="capacityEfficiency"></span>
 			<br>
 			<div class="filler"></div>
 			<input id="supply" type="number" onchange="changeSupply(this.value)">&nbspSupply
+			<span class="efficiency" id="supplyEfficiency"></span>
 			<br>
 			<div class="filler"></div>
 			<input id="overclocker" type="number" onchange="changeOverclocker(this.value)">&nbspOverclocker
-			<br><br><br>
+			<span class="efficiency" id="overclockerEfficiency"></span>
+			<br>
+			<button class="efficiency" id="checkDG" onclick="checkDGUpgrades()">Update</button>
+			<br><br>
 			DG Upgrades<br>
 			<select class="select" id="storage" onchange="changeStorage(this.value)">
 				<option value="Yes">Yes</option>
@@ -86,7 +92,9 @@
 			</select>&nbspMagma Flow
 		</div>
 		<div id="macros">
-			<br><br><br><br>
+			<br>
+			<center>Version <span id="version"></span></center>
+			<br><br>
 			<button class="macro" id="optimize" onclick="optimize()">Optimize</button><br>
 			<div class="filler"></div>
 			<button class="macro" id="minimize" onclick="minimize(0)">Minimize</button><br>
@@ -219,7 +227,7 @@
 			<br>
 			Is this up to date?
 			<span class="answer">
-			This was last updated on November 5, 2018.
+			This was last updated on November 6, 2018.
 			</span>
 			<br>
 			<br>

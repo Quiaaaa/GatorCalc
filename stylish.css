@@ -49,6 +49,11 @@ input {
 	left: 5%;
 }
 
+.efficiency {
+	float: right;
+	padding-right: 1px;
+}
+
 #macros {
 	position: absolute;
 	width: 20%;
