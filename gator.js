@@ -216,7 +216,8 @@ function checkDGUpgrades() {
 	var sCost = supplyCost;
 	var oCost = overclockerCost;
 	
-	if (eCost <= myMI) {
+	if ((eCost * 2) + 8 <= myMI);
+	else if (eCost <= myMI) {
 		efficiencyCost += (myMI - eCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
@@ -231,7 +232,8 @@ function checkDGUpgrades() {
 		}
 		efficiencyCost += (myMI - eCost) * 0.2;
 	}
-	if (cCost <= myMI) {
+	if ((cCost * 2) + 32 <= myMI);
+	else if (cCost <= myMI) {
 		capacityCost += (myMI - cCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
@@ -246,7 +248,8 @@ function checkDGUpgrades() {
 		}
 		capacityCost += (myMI - cCost) * 0.2;
 	}
-	if (sCost <= myMI) {
+	if ((sCost * 2) + 64 <= myMI);
+	else if (sCost <= myMI) {
 		supplyCost += (myMI - sCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
@@ -261,7 +264,8 @@ function checkDGUpgrades() {
 		}
 		supplyCost += (myMI - sCost) * 0.2;
 	}
-	if (oCost <= myMI) {
+	if ((oCost * 2) + 32 <= myMI);
+	else if (oCost <= myMI) {
 		overclockerCost += (myMI - oCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
