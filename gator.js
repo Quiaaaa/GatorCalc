@@ -199,16 +199,16 @@ function checkDGUpgrades() {
 	var myPop = totalPop;
 	
 	changeEfficiency(efficiency + 1);
-	var efficiencyEfficiency = totalPop / myPop;
+	var efficiencyEfficiency = totalPop - myPop;
 	changeEfficiency(efficiency - 1);
 	changeCapacity(capacity + 1);
-	var capacityEfficiency = totalPop / myPop;
+	var capacityEfficiency = totalPop - myPop;
 	changeCapacity(capacity - 1);
 	changeSupply(supply + 1);
-	var supplyEfficiency = totalPop / myPop;
+	var supplyEfficiency = totalPop - myPop;
 	changeSupply(supply - 1);
 	changeOverclocker(overclock + 1);
-	var overclockerEfficiency = totalPop / myPop;
+	var overclockerEfficiency = totalPop - myPop;
 	changeOverclocker(overclock - 1);
 	
 	var eCost = efficiencyCost;
@@ -216,7 +216,8 @@ function checkDGUpgrades() {
 	var sCost = supplyCost;
 	var oCost = overclockerCost;
 	
-	if ((eCost * 2) + 8 <= myMI);
+	if (eCost > myMI * 4.9) efficiencyCost = -1;
+	else if ((eCost * 2) + 8 <= myMI);
 	else if (eCost <= myMI) {
 		efficiencyCost += (myMI - eCost) * 0.2;
 	} else {
@@ -225,14 +226,14 @@ function checkDGUpgrades() {
 			efficiencyCost += myMI;
 			eCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 10) {
-				console.log("Too many runs needed!");
+			if (runsNeeded > 20) {
 				break;
 			}
 		}
 		efficiencyCost += (myMI - eCost) * 0.2;
 	}
-	if ((cCost * 2) + 32 <= myMI);
+	if (cCost > myMI * 4.9) capacityCost = -1;
+	else if ((cCost * 2) + 32 <= myMI);
 	else if (cCost <= myMI) {
 		capacityCost += (myMI - cCost) * 0.2;
 	} else {
@@ -241,14 +242,14 @@ function checkDGUpgrades() {
 			capacityCost += myMI;
 			cCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 10) {
-				console.log("Too many runs needed!");
+			if (runsNeeded > 20) {
 				break;
 			}
 		}
 		capacityCost += (myMI - cCost) * 0.2;
 	}
-	if ((sCost * 2) + 64 <= myMI);
+	if (sCost > myMI * 4.9) supplyCost = -1;
+	else if ((sCost * 2) + 64 <= myMI);
 	else if (sCost <= myMI) {
 		supplyCost += (myMI - sCost) * 0.2;
 	} else {
@@ -257,14 +258,14 @@ function checkDGUpgrades() {
 			supplyCost += myMI;
 			sCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 10) {
-				console.log("Too many runs needed!");
+			if (runsNeeded > 20) {
 				break;
 			}
 		}
 		supplyCost += (myMI - sCost) * 0.2;
 	}
-	if ((oCost * 2) + 32 <= myMI);
+	if (oCost > myMI * 4.9) overclockerCost = -1;
+	else if ((oCost * 2) + 32 <= myMI);
 	else if (oCost <= myMI) {
 		overclockerCost += (myMI - oCost) * 0.2;
 	} else {
@@ -273,8 +274,7 @@ function checkDGUpgrades() {
 			overclockerCost += myMI;
 			oCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
-			if (runsNeeded > 10) {
-				console.log("Too many runs needed!");
+			if (runsNeeded > 20) {
 				break;
 			}
 		}
@@ -286,10 +286,14 @@ function checkDGUpgrades() {
 	supplyEfficiency /= supplyCost;
 	overclockerEfficiency /= overclockerCost;
 	
-	document.getElementById("efficiencyEfficiency").innerHTML = "1";
-	document.getElementById("capacityEfficiency").innerHTML = (capacityEfficiency / efficiencyEfficiency).toFixed(4);
-	document.getElementById("supplyEfficiency").innerHTML = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
-	document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
+	if (efficiencyCost < 0) document.getElementById("efficiencyEfficiency").innerHTML = "-----";
+	else document.getElementById("efficiencyEfficiency").innerHTML = "1";
+	if (capacityCost < 0) document.getElementById("capacityEfficiency").innerHTML = "-----";
+	else document.getElementById("capacityEfficiency").innerHTML = (capacityEfficiency / efficiencyEfficiency).toFixed(4);
+	if (supplyCost < 0) document.getElementById("supplyEfficiency").innerHTML = "-----";
+	else document.getElementById("supplyEfficiency").innerHTML = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
+	if (overclockerCost < 0) document.getElementById("overclockerEfficiency").innerHTML = "-----";
+	else document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 	
 	changeFuelStart(myStart);
 	changeFuelEnd(myEnd);
