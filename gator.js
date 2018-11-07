@@ -1,5 +1,6 @@
 window.onload = setup;
-var version = "1.4a";
+var version = "1.4c";
+var hze = 0;
 var ticked = false;
 var fuelStart = 230;
 var fuelEnd = 230;
@@ -156,60 +157,71 @@ function changeCoord(value) {
 	calculateCurrentPop();
 }
 
-function changeEfficiency(value) {
+function changeEfficiency(value, mod) {
 	efficiency = parseInt(value);
 	calculateMinTick();
 	calculateMaxTick();
 	efficiencyCost = (efficiency + 1) * 8;
 	calculateCurrentPop();
+	if (mod == undefined) checkDGUpgrades();
 }
 
-function changeCapacity(value) {
+function changeCapacity(value, mod) {
 	capacity = parseInt(value);
 	maxCapacity = 3 + (capacity * 0.4);
 	calculateMaxTick();
 	capacityCost = (capacity + 1) * 32;
 	calculateCurrentPop();
+	if (mod == undefined) checkDGUpgrades();
 }
 
-function changeSupply(value) {
+function changeSupply(value, mod) {
 	supply = parseInt(value);
 	maxSupply = 0.2 + (supply * 0.02);
 	document.getElementById("maxSupplyZone").innerHTML = (230 + (2 * supply));
 	supplyCost = (supply + 1) * 64;
 	calculateCurrentPop();
+	if (mod == undefined) checkDGUpgrades();
 }
 
-function changeOverclocker(value) {
+function changeOverclocker(value, mod) {
 	overclocker = parseInt(value);
 	overclock = overclocker;
 	if (overclocker < 1) overclocker = 1;
 	else overclocker = 1 - (0.5 * Math.pow(0.99, overclocker - 1));
 	overclockerCost = (overclock * 32) + 512;
 	calculateCurrentPop();
+	if (mod == undefined) checkDGUpgrades();
 }
 
 function checkDGUpgrades() {
 	var myStart = fuelStart;
 	var myEnd = fuelEnd;
+	var myRunEnd = runEnd;
 	var myMI = totalMI;
 	if (myMI == 0) return;
 	changeFuelStart(230);
-	changeFuelEnd(runEnd);
+	if (hze > 0) {
+		changeRunEnd(hze);
+		changeFuelEnd(hze);
+	}
+	else {
+		changeFuelEnd(runEnd);
+	}
 	var myPop = totalPop;
 	
-	changeEfficiency(efficiency + 1);
+	changeEfficiency(efficiency + 1, 1);
 	var efficiencyEfficiency = totalPop - myPop;
-	changeEfficiency(efficiency - 1);
-	changeCapacity(capacity + 1);
+	changeEfficiency(efficiency - 1, 1);
+	changeCapacity(capacity + 1, 1);
 	var capacityEfficiency = totalPop - myPop;
-	changeCapacity(capacity - 1);
-	changeSupply(supply + 1);
+	changeCapacity(capacity - 1, 1);
+	changeSupply(supply + 1, 1);
 	var supplyEfficiency = totalPop - myPop;
-	changeSupply(supply - 1);
-	changeOverclocker(overclock + 1);
+	changeSupply(supply - 1, 1);
+	changeOverclocker(overclock + 1, 1);
 	var overclockerEfficiency = totalPop - myPop;
-	changeOverclocker(overclock - 1);
+	changeOverclocker(overclock - 1, 1);
 	
 	var eCost = efficiencyCost;
 	var cCost = capacityCost;
@@ -295,8 +307,14 @@ function checkDGUpgrades() {
 	if (overclockerCost < 0) document.getElementById("overclockerEfficiency").innerHTML = "-----";
 	else document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 	
+	changeRunEnd(myRunEnd);
 	changeFuelStart(myStart);
 	changeFuelEnd(myEnd);
+}
+
+function changeHZE(value) {
+	hze = parseInt(value);
+	checkDGUpgrades();
 }
 
 function changeStorage(value) {
@@ -577,6 +595,8 @@ function pasteSave(save) {
 		document.getElementById("magmaFlow").value = "No";
 	}
 	if (!ticked) {
+		hze = game.global.highestLevelCleared;
+		document.getElementById("hze").value = hze;
 		runEnd = game.global.lastPortal;
 		changeRunEnd(runEnd);
 		document.getElementById("runEnd").value = runEnd;
@@ -598,6 +618,7 @@ function pasteSave(save) {
 		document.getElementById("housingMod").value = housingMod.toFixed(2);
 	}
 	checkDGUpgrades();
+	document.getElementById("message").innerHTML = "Stats populated!";
 	//console.log(game);
 }
 
@@ -619,9 +640,11 @@ function optimize() {
 	document.getElementById("fuelStart").value = fuelStart;
 	changeFuelZones(myFuelZones);
 	document.getElementById("fuelZones").value = fuelZones;
+	document.getElementById("message").innerHTML = "Starting fuel zone optimized!";
 }
 
 function minimize(dif, variant) {
+	if (variant == 2) document.getElementById("message").innerHTML = "Calculating...";
 	changeFuelStart(230); 
 	var myEnd = runEnd;
 	if (variant == 1) changeRunEnd(minimizeZone);
@@ -679,6 +702,8 @@ function minimize(dif, variant) {
 			optimize();
 		}
 	}
+	document.getElementById("message").innerHTML = "Zones to fuel minimized!";
+	if (variant == 2) document.getElementById("message").innerHTML = "Ideal slider setting: " + (3 + capacity * slowburn) + " max fuel";
 }
 
 function changeMinimizeZone(value) {
@@ -735,6 +760,8 @@ function forceGator() {
 			document.getElementById("uc5").innerHTML = z1;
 		}
 	}
+	document.getElementById("message").innerHTML = "Extra Gator box updated!";
+	if (gatorZone <= finalAmalZone) document.getElementById("message").innerHTML = "Zone too low!";
 }
 
 function changeGatorZone(value) {
@@ -747,6 +774,7 @@ function changeGatorZone(value) {
 
 function saveSettings() {
 	var settings = {
+		hze : hze,
 		ticked : ticked,
 		fuelStart : fuelStart,
 		fuelEnd : fuelEnd,
@@ -774,6 +802,7 @@ function saveSettings() {
 function loadSettings() {
 	var settings = JSON.parse(localStorage.getItem("GatorSettings"));
 	if (settings != null) {
+		if (typeof settings.hze != "undefined") hze = settings.hze;
 		if (typeof settings.ticked != "undefined") ticked = settings.ticked;
 		if (typeof settings.fuelStart != "undefined") fuelStart = settings.fuelStart;
 		if (typeof settings.fuelEnd != "undefined") fuelEnd = settings.fuelEnd;
@@ -822,6 +851,8 @@ function loadSettings() {
 		document.getElementById("supply").value = supply;
 		changeOverclocker(overclock);
 		document.getElementById("overclocker").value = overclock;
+		changeHZE(hze);
+		document.getElementById("hze").value = hze;
 		changeStorage(storage);
 		if (storage == 2) document.getElementById("storage").value = "Yes";
 		else document.getElementById("storage").value = "No";
@@ -836,6 +867,7 @@ function loadSettings() {
 		changeGatorZone(gatorZone);
 		document.getElementById("gatorZone").value = gatorZone;
 		checkDGUpgrades();
+		document.getElementById("message").innerHTML = "Settings loaded!";
 	}
 }
 

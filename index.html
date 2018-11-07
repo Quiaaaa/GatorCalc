@@ -73,7 +73,8 @@
 			<input id="overclocker" type="number" onchange="changeOverclocker(this.value)">&nbspOverclocker
 			<span class="efficiency" id="overclockerEfficiency"></span>
 			<br>
-			<button class="efficiency" id="checkDG" onclick="checkDGUpgrades()">Update</button>
+			<button class="hidden" id="checkDG" onclick="checkDGUpgrades()">Update</button>
+			<input class="efficiency" id="hze" type="number" onchange="changeHZE(this.value)"><span class="efficiency">Push Run Goal:&nbsp</span>
 			<br><br>
 			DG Upgrades<br>
 			<select class="select" id="storage" onchange="changeStorage(this.value)">
@@ -115,6 +116,8 @@
 			<div class="filler"></div>
 			<label id="offset5Label" title="Check this to only have gators updated every 5 zones when you'd die from an omnipotrimp explosion">
 				<input id="offset5" type="checkbox">Use 5 zone breakpoints</label> 
+			<br><br><br>
+			<center><span id="message"></span></center>
 		</div>
 		<div id="results">
 			<br><br>Results<br>

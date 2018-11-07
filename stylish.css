@@ -54,6 +54,10 @@ input {
 	padding-right: 1px;
 }
 
+#hze {
+	width: 10%;
+}
+
 #macros {
 	position: absolute;
 	width: 20%;
