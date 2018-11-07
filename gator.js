@@ -541,6 +541,7 @@ function calculateCurrentPop() {
 	document.getElementById("uc5").innerHTML = z;
 	
 	saveSettings();
+	document.getElementById("message").innerHTML = "";
 }
 
 function pasteSave(save) {
