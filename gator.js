@@ -383,7 +383,9 @@ function calculateMaxTick() {
 function calculateCurrentPop() {
 	offset = document.getElementById("offset5").checked;
 	var sum = [];
-	for (i = 0; i <= (runEnd - 230); i++) {
+	var myHze = runEnd;
+	if (hze > myHze) myHze = hze;
+	for (i = 0; i <= (myHze - 230); i++) {
 		if (i == 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, maxSupply);
 		if ((i + 230) >= fuelStart && (i + 230) <= fuelEnd) {
@@ -425,7 +427,7 @@ function calculateCurrentPop() {
 			if (adjustedRatio[i - 1] > Math.max(ar4, finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
 			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
 			else currentAmals[i] = currentAmals[i - 1];
-		} else if (i <= 470) {
+		} else {
 			if (adjustedRatio[i - 1] > Math.max(ar5, finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
 			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
 			else currentAmals[i] = currentAmals[i - 1];

@@ -20,32 +20,32 @@
 			<br><br>
 			Run Stats<br>
 			<label title="Zone to begin fueling">
-				<input id="fuelStart" type="number" onchange="changeFuelStart(this.value)">&nbspFuel Start Zone
+				<input id="fuelStart" type="number" min="230" onchange="changeFuelStart(this.value)">&nbspFuel Start Zone
 			</label>
 			<br>
 			<div class="filler"></div>
 			<label title="Zone to end fueling">
-				<input id="fuelEnd" type="number" onchange="changeFuelEnd(this.value)">&nbspFuel End Zone
+				<input id="fuelEnd" type="number" min="230" onchange="changeFuelEnd(this.value)">&nbspFuel End Zone
 			</label>
 			<br>
 			<div class="filler"></div>
 			<label title="Number of zones to fuel">
-				<input id="fuelZones" type="number" onchange="changeFuelZones(this.value)">&nbspZones to Fuel
+				<input id="fuelZones" type="number" min="0" onchange="changeFuelZones(this.value)">&nbspZones to Fuel
 			</label>
 			<br>
 			<div class="filler"></div>
 			<label title="Zone you end the run on">
-				<input id="runEnd" type="number" onchange="changeRunEnd(this.value)">&nbspRun End Zone
+				<input id="runEnd" type="number" min="0" onchange="changeRunEnd(this.value)">&nbspRun End Zone
 			</label>
 			<br>
 			<div class="filler"></div>
 			<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8, or -20">
-				<input id="housingMod" type="number" onchange="changeHousingMod(this.value)">&nbspHousing Mod
+				<input id="housingMod" type="number" step="0.01" max="1" min="0.4" onchange="changeHousingMod(this.value)">&nbspHousing Mod
 			</label>
 			<br>
 			<div class="filler"></div>
 			<label title="Spires cleared *this run*">
-				<input id="spiresCleared" type="number" onchange="changeSpiresCleared(this.value)">&nbsp#Spires Cleared
+				<input id="spiresCleared" type="number" min="0" max="6" onchange="changeSpiresCleared(this.value)">&nbsp#Spires Cleared
 			</label>
 			<br><br><br>
 			Perk Levels<br>
