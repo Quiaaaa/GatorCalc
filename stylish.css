@@ -10,10 +10,12 @@ body {
 
 textarea {
 	width: 40%;
+	height: 4%;
 }
 
 input {
 	width: 40%;
+	height: 15px;
 }
 
 #invalid {
