@@ -193,6 +193,14 @@
 			The most important value will likely be the Max number of Amals you can get in a run. 
 			</span>
 			<br>
+			What do the numbers to the right of the DG levels mean?
+			<span class="answer">
+			The numbers represent the efficiency of the next DG purchase. A higher number means you should purchase that upgrade first. This calculation uses your current run stats to 
+			determine how much MI is gained per run in order to determine how many runs are needed to afford each upgrade, and how much MI is lost through decay in the process. It then considers 
+			how much population gain each upgrade is worth on a push run (where population is fully utilized) and determines a Population gain per MI spent value for each upgrade. Results are 
+			finally each divided by the value of the Efficiency value for a normalized result. 
+			</span>
+			<br>
 			What does the table below the Results table mean?
 			<span class="answer">
 			This table lists how many coordinations you would have to hold off buying in order to squeeze out an extra Amalgamator. 
@@ -206,7 +214,12 @@
 			The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order to get the maximum number of Amalgamators possible, thus maximizing MI gains. The "Minimize - 1" button will do the same thing, 
 			but with getting 1 less Gator. This can be useful if you'd need to fuel for an entire run in order to get your Max number of gators, and you'd rather keep the MI gains.
 			The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run otherwise, as you will 
-			get the benefit of the extra Gator earlier. The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel. You'll need to use the in-game capacity slider to adjust to the recommended value. 
+			get the benefit of the extra Gator earlier. The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel. You'll need to use the in-game capacity slider to adjust to the recommended value. The 
+			"Force Gator At Zone" button will determine how many coordinations you'd need to withhold from buying in order to get an extra gator on the zone specified. This will update the row of the corresponding zone in the table below the 
+			results table, but won't change anything else. Finally, the "Use 5 zone breakpoints" tick will calculate updates to your Amalgamators only after every 5th zone when they would die from an Omnipotrimp explosion. Without this option 
+			checked, most of the time new Amalgamators will show up on the zone after a spire, due to the ratio needed decreasing. However, as Gators are only updated on trimp death, if you survive after beating a spire for the next 5 zones (which 
+			you are likely to do if you're strong enough to have beaten it), then you would get 5 more coordination upgrades before your next death, which will increase your army size, and therefore the needed population for your next Gator, possibly 
+			pushing it beyond the population you've amassed. 
 			</span>
 			<br>
 			What assumptions are being made?
@@ -220,7 +233,8 @@
 			<div class="filler"></div>
 			This calculator assumes all fuel still in the tank after you stop fueling (and therefore stop overclocking) disappears. This causes the calculator to underestimate your total population by a bit, especially for fueling a smaller number 
 			of zones. This can be useful, as it provides a small cushion of extra pop to help ensure you get all the Gators you expect, even with poor tauntimp luck. However, with higher capacity values, it may determine that you need to fuel for longer 
-			in order to begin overclocking, in which case it may be best to use the in-game capacity slider to limit your max fuel and adjust the values of the calculator accordingly.
+			in order to begin overclocking, in which case it may be best to use the in-game capacity slider to limit your max fuel and adjust the values of the calculator accordingly. Players with very high capacity levels may find the Minimize Capacity 
+			function useful, as this will suggest a setting for the fuel slider in order to maximize MI.
 			</span>
 			<br>
 			I found an error, what can I do?
@@ -230,7 +244,7 @@
 			<br>
 			Is this up to date?
 			<span class="answer">
-			This was last updated on November 6, 2018.
+			This was last updated on November 7, 2018.
 			</span>
 			<br>
 			<br>
