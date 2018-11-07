@@ -664,10 +664,10 @@ function minimize(dif, variant) {
 			if (variant == 2) {
 				var myPop = totalPop;
 				while (totalPop >= myPop) {
-					changeCapacity(capacity - 1);
+					changeCapacity(capacity - 1, 2);
 					if (totalPop >= myPop) myPop = totalPop;
 					else {
-						changeCapacity(capacity + 1);
+						changeCapacity(capacity + 1, 2);
 						break;
 					}
 				}
@@ -693,10 +693,10 @@ function minimize(dif, variant) {
 	if (variant == 2) {
 		myPop = totalPop;
 		for (b = 0; b < 4; b++) { //run this a bunch or something
-			changeCapacity(capacity + 1);
+			changeCapacity(capacity + 1, 2);
 			while (totalPop >= myPop && maxAmals >= bestAmals && capacity <= myCapacity) {
 				myPop = totalPop;
-				changeCapacity(capacity + 1);
+				changeCapacity(capacity + 1, 2);
 			}
 			changeCapacity(capacity - 1);
 			document.getElementById("capacity").value = capacity;
