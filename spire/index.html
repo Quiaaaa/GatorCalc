@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Build a Spire Workshop</title>
+		<script type="text/javascript" src="bas.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<meta charset="utf-8" />
+	</head>
+
+	<body>
+		<div id="left">
+			<table id="board" cellSpacing="0" cellPadding="0">
+				<tr>
+				<th></th>
+				<th>1</th>
+				<th>2</th>
+				<th>3</th>
+				<th>4</th>
+				<th>5</th>
+				<th>6</th>
+				<th>7</th>
+				</tr>
+				<tr><th>9</th><td id="95" onclick="placeTower(this.id)"></td><td id="94" onclick="placeTower(this.id)"></td><td id="93" onclick="placeTower(this.id)"></td><td id="92" onclick="placeTower(this.id)"></td><td id="91" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>8</th><td id="85" onclick="placeTower(this.id)"></td><td id="84" onclick="placeTower(this.id)"></td><td id="83" onclick="placeTower(this.id)"></td><td id="82" onclick="placeTower(this.id)"></td><td id="81" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>7</th><td id="75" onclick="placeTower(this.id)"></td><td id="74" onclick="placeTower(this.id)"></td><td id="73" onclick="placeTower(this.id)"></td><td id="72" onclick="placeTower(this.id)"></td><td id="71" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>6</th><td id="65" onclick="placeTower(this.id)"></td><td id="64" onclick="placeTower(this.id)"></td><td id="63" onclick="placeTower(this.id)"></td><td id="62" onclick="placeTower(this.id)"></td><td id="61" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>5</th><td id="55" onclick="placeTower(this.id)"></td><td id="54" onclick="placeTower(this.id)"></td><td id="53" onclick="placeTower(this.id)"></td><td id="52" onclick="placeTower(this.id)"></td><td id="51" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>4</th><td id="45" onclick="placeTower(this.id)"></td><td id="44" onclick="placeTower(this.id)"></td><td id="43" onclick="placeTower(this.id)"></td><td id="42" onclick="placeTower(this.id)"></td><td id="41" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>3</th><td id="35" onclick="placeTower(this.id)"></td><td id="34" onclick="placeTower(this.id)"></td><td id="33" onclick="placeTower(this.id)"></td><td id="32" onclick="placeTower(this.id)"></td><td id="31" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>2</th><td id="25" onclick="placeTower(this.id)"></td><td id="24" onclick="placeTower(this.id)"></td><td id="23" onclick="placeTower(this.id)"></td><td id="22" onclick="placeTower(this.id)"></td><td id="21" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>1</th><td id="15" onclick="placeTower(this.id)"></td><td id="14" onclick="placeTower(this.id)"></td><td id="13" onclick="placeTower(this.id)"></td><td id="12" onclick="placeTower(this.id)"></td><td id="11" onclick="placeTower(this.id)"></td></tr><br>
+				<tr><th>0</th><td id="05" onclick="placeTower(this.id)"></td><td id="04" onclick="placeTower(this.id)"></td><td id="03" onclick="placeTower(this.id)"></td><td id="02" onclick="placeTower(this.id)"></td><td id="01" onclick="placeTower(this.id)"></td></tr><br>
+			</table>
+			<div id="info">
+				Trap Info: <br>
+				Number: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapNum"></span><br>
+				Type: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapType"></span><br>
+				Boosted? &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapBoosted"></span><br>
+				Chilled? &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapChilled"></span><br>
+				Frozen? &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapFrozen"></span><br>
+				Strengthened? &nbsp<span class="trapInfo" id="trapStrength"></span><br>
+				Toxicity: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapTox"></span><br>
+				Damage: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span class="trapInfo" id="trapDamage"></span><br>
+				Total Damage: <span class="trapInfo" id="trapTotalDamage"></span><br>
+			</div>
+		</div>
+		
+		<div id="right">
+			<span id="version">Version: 0.1</span>
+			<div id="damage">Minimum Damage: <span id="totalDamage">0</span></div>
+			<div id="total">Runestones: <span id="totalStones">10000</span></div>
+			<div id="spent">Spent: <span id="spentStones">0</span></div>
+			<div id="remaining">Remaining: <span id="remainingStones">10000</span></div>
+			<div id="rps">Max Runestones per second: <span id="numRps">-</span></div>
+			<div id="difficulty">Max Average Difficulty: <span id="numDifficulty">-</span></div>
+			<button id="resetSpire" onclick="resetSpire()">Reset Spire</button>
+			<button id="sellTrap" onclick="selectTower(0)">Sell a Trap</button>
+			<button id="trapInfo" onclick="selectTower(8)">Trap Info</button>
+			<div id="line"></div>
+			<button id="selectFire" onclick="selectTower(1)">Fire Trap (<span id="fireCost">100</span> Rs)</button>
+			<button id="selectFrost" onclick="selectTower(2)">Frost Trap (<span id="frostCost">100</span> Rs)</button>
+			<button id="selectPoison" onclick="selectTower(3)">Poison Trap (<span id="poisonCost">500</span> Rs)</button>
+			<button id="selectLightning" onclick="selectTower(4)">Lightning Trap (<span id="lightningCost">1000</span> Rs)</button>
+			<button id="selectStrength" onclick="selectTower(5)">Strength Tower (<span id="strengthCost">5000</span> Rs)</button>
+			<button id="selectCondenser" onclick="selectTower(6)">Condenser Tower (<span id="condenserCost">5000</span> Rs)</button>
+			<button id="selectKnowledge" onclick="selectTower(7)">Knowledge Tower (<span id="knowledgeCost">5000</span> Rs)</button>
+			<button id="save" onclick="save()">Save Setup</button>
+			<button id="load" onclick="load()">Load Setup</button>
+		</div>
+	</body>
+</html>
