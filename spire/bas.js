@@ -209,7 +209,7 @@ function updateSpire() {
 				else if (j == 3) currentCell.totalTox *= 1.25;
 				currentCell.toxicity = currentCell.totalTox - prevCell.totalTox;
 			} else if (currentCell.name == "knowledge") {
-				if (currentCell.isChilled) {
+				if (currentCell.isChilled || currentCell.isFrozen) {
 					if (currentCell.isPowered && j == 1) {
 						for (freezy = i + 1; freezy <= plus10; freezy++) {
 							cells[freezy].isFrozen = true;
