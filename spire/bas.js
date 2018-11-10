@@ -151,8 +151,8 @@ function updateSpire() {
 		var currentCell = cells[i];
 		var prevCell = cells[i - 1];
 		var repeat = 1;
-		if (currentCell.isChilled) repeat = 2;
-		if (currentCell.isFrozen) repeat = 3;
+		if (currentCell.isChilled && currentCell.name != "knowledge") repeat = 2;
+		if (currentCell.isFrozen && currentCell.name != "knowledge") repeat = 3;
 		//if (currentCell.isBlocked) repeat += 1;
 		var plus10 = i + 10;
 		if (plus10 > maxCells) plus10 = maxCells;
@@ -184,6 +184,7 @@ function updateSpire() {
 				
 			} else if (currentCell.name == "lightning") {
 				cells[i + 1].isPowered = true;
+				if (j == 2 || j == 3) currentCell.damage += 10;
 				currentCell.damage += 10;
 			} else if (currentCell.name == "strength") {
 				currentCell.damage += 20;
@@ -205,9 +206,9 @@ function updateSpire() {
 					}
 				}
 			}
+			currentCell.totalTox = prevCell.totalTox + currentCell.toxicity;
+			currentCell.damage += currentCell.totalTox;
 		}
-		currentCell.totalTox = prevCell.totalTox + currentCell.toxicity;
-		currentCell.damage += currentCell.totalTox;
 		currentCell.totalDamage = prevCell.totalDamage + currentCell.damage;
 	}
 	document.getElementById("totalDamage").innerHTML = enumerate(cells[50].totalDamage);
