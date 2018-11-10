@@ -156,8 +156,8 @@ function updateSpire() {
 		var currentCell = cells[i];
 		var prevCell = cells[i - 1];
 		var repeat = 1;
-		if (currentCell.isChilled && currentCell.name != "knowledge") repeat = 2;
-		if (currentCell.isFrozen && currentCell.name != "knowledge") repeat = 3;
+		if (currentCell.isChilled && currentCell.name != "frost" && currentCell.name != "knowledge") repeat = 2;
+		if (currentCell.isFrozen && currentCell.name != "frost" && currentCell.name != "knowledge") repeat = 3;
 		//if (currentCell.isBlocked) repeat += 1;
 		var plus10 = i + 10;
 		if (plus10 > maxCells) plus10 = maxCells;
