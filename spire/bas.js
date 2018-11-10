@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "0.1a";
+var version = "0.1b";
 var totalStones = 10000;
 var spentStones = 0;
 var remainingStones = totalStones - spentStones;
@@ -209,13 +209,15 @@ function updateSpire() {
 				else if (j == 3) currentCell.totalTox *= 1.25;
 				currentCell.toxicity = currentCell.totalTox - prevCell.totalTox;
 			} else if (currentCell.name == "knowledge") {
-				if (currentCell.isPowered && j == 1) {
-					for (freezy = i + 1; freezy <= plus10; freezy++) {
-						cells[freezy].isFrozen = true;
-					}
-				} else {
-					for (freezy = i + 1; freezy <= plus5; freezy++) {
-						cells[freezy].isFrozen = true;
+				if (currentCell.isChilled) {
+					if (currentCell.isPowered && j == 1) {
+						for (freezy = i + 1; freezy <= plus10; freezy++) {
+							cells[freezy].isFrozen = true;
+						}
+					} else {
+						for (freezy = i + 1; freezy <= plus5; freezy++) {
+							cells[freezy].isFrozen = true;
+						}
 					}
 				}
 			}
@@ -485,4 +487,160 @@ function spawnEnemies(val) {
 	avgDiff /= 100;
 	document.getElementById("difficulty").innerHTML = "Min Average Difficulty: " + avgDiff.toFixed(2);
 	document.getElementById("rps").innerHTML = "Min Runestones per second: " + (rsEarned / (totalSteps / 2)).toFixed(2);
+}
+
+function preset0() { //10K rs, 5383 damage
+	resetSpire();
+	selectTower(1); //fire
+	placeTower("22");
+	placeTower("24");
+	placeTower("25");
+	placeTower("31");
+	placeTower("32");
+	placeTower("33");
+	placeTower("35");
+	placeTower("41");
+	placeTower("42");
+	placeTower("43");
+	placeTower("44");
+	placeTower("51");
+	placeTower("52");
+	selectTower(2); //frost
+	placeTower("01");
+	placeTower("12");
+	placeTower("23");
+	placeTower("34");
+	placeTower("45");
+	selectTower(3); //poison
+	placeTower("02");
+	placeTower("03");
+	placeTower("04");
+	placeTower("05");
+	placeTower("11");
+	placeTower("13");
+	placeTower("14");
+	placeTower("15");
+	placeTower("21");
+}
+
+function preset1() { //300k rs, 47.5K damage
+	resetSpire();
+	selectTower(1); //fire
+	placeTower("72");
+	placeTower("73");
+	placeTower("74");
+	placeTower("81");
+	placeTower("82");
+	placeTower("83");
+	placeTower("84");
+	placeTower("91");
+	placeTower("92");
+	placeTower("93");
+	placeTower("94");
+	selectTower(2); //frost
+	placeTower("01");
+	placeTower("12");
+	placeTower("24");
+	placeTower("85");
+	selectTower(3); //poison
+	placeTower("02");
+	placeTower("03");
+	placeTower("04");
+	placeTower("05");
+	placeTower("11");
+	placeTower("13");
+	placeTower("14");
+	placeTower("15");
+	placeTower("21");
+	placeTower("22");
+	placeTower("25");
+	placeTower("31");
+	placeTower("32");
+	placeTower("33");
+	placeTower("34");
+	placeTower("35");
+	placeTower("41");
+	placeTower("42");
+	placeTower("45");
+	placeTower("51");
+	placeTower("52");
+	placeTower("53");
+	placeTower("65");
+	placeTower("71");
+	selectTower(4); //lightning
+	placeTower("23");
+	placeTower("43");
+	placeTower("54");
+	placeTower("61");
+	placeTower("63");
+	selectTower(5); //strength
+	placeTower("75");
+	placeTower("95");
+	selectTower(6); //condenser
+	placeTower("55");
+	placeTower("62");
+	selectTower(7); //knowledge
+	placeTower("44");
+	placeTower("64");
+}
+
+function preset2() { //4M rs, 107K damage
+	resetSpire();
+	selectTower(1); //fire
+	placeTower("71");
+	placeTower("72");
+	placeTower("73");
+	placeTower("74");
+	placeTower("81");
+	placeTower("82");
+	placeTower("83");
+	placeTower("84");
+	placeTower("92");
+	placeTower("93");
+	placeTower("94");
+	selectTower(2); //frost
+	placeTower("01");
+	placeTower("12");
+	placeTower("63");
+	placeTower("91");
+	selectTower(3); //poison
+	placeTower("02");
+	placeTower("03");
+	placeTower("04");
+	placeTower("05");
+	placeTower("11");
+	placeTower("13");
+	placeTower("14");
+	placeTower("15");
+	placeTower("23");
+	placeTower("24");
+	placeTower("25");
+	placeTower("31");
+	placeTower("32");
+	placeTower("33");
+	placeTower("34");
+	placeTower("35");
+	placeTower("43");
+	placeTower("44");
+	placeTower("45");
+	placeTower("51");
+	selectTower(4); //lightning
+	placeTower("21");
+	placeTower("41");
+	placeTower("52");
+	placeTower("54");
+	placeTower("61");
+	placeTower("64");
+	selectTower(5); //strength
+	placeTower("75");
+	placeTower("85");
+	placeTower("95");
+	selectTower(6); //condenser
+	placeTower("53");
+	placeTower("55");
+	placeTower("62");
+	selectTower(7); //knowledge
+	placeTower("22");
+	placeTower("42");
+	placeTower("65");
 }
