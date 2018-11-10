@@ -1,8 +1,9 @@
 window.onload = setup;
-var version = "0.1";
+var version = "0.1a";
 var totalStones = 10000;
 var spentStones = 0;
 var remainingStones = totalStones - spentStones;
+var minDamage = 0;
 var fireTraps = 0;
 var currentFireCost = 100;
 var frostTraps = 0;
@@ -20,6 +21,7 @@ var currentKnowledgeCost = 5000;
 
 var rows = 10;
 var maxCells = 5 * rows;
+var maxEnemies = 2 * rows;
 
 var selected = "none";
 var bgColor = "#000000";
@@ -43,16 +45,21 @@ class cell {
 		this.totalTox = 0;
 		this.damage = 0;
 		this.totalDamage = 0;
+		this.steps = 0;
+		this.damages = [];
+		this.isBlocked = false;
 	}
 }
 
 class enemy {
 	constructor (difficulty)
 	{
-		this.difficulty = difficulty;
+		this.difficulty = Math.pow(1.02, difficulty);
 		this.maxHP = 50 + (this.difficulty / 2) + Math.floor(Math.random() * 50 + this.difficulty);
-		this.currentHP = maxHP;
+		this.currentHP = this.maxHP;
 		this.drops = Math.floor(this.maxHP / 20);
+		this.steps = 0;
+		this.currentCell = 1;
 	}
 }
 
@@ -158,7 +165,7 @@ function updateSpire() {
 		var repeat = 1;
 		if (currentCell.isChilled && currentCell.name != "frost" && currentCell.name != "knowledge") repeat = 2;
 		if (currentCell.isFrozen && currentCell.name != "frost" && currentCell.name != "knowledge") repeat = 3;
-		//if (currentCell.isBlocked) repeat += 1;
+		if (currentCell.isBlocked) repeat += 1;
 		var plus10 = i + 10;
 		if (plus10 > maxCells) plus10 = maxCells;
 		var plus5 = i + 5;
@@ -166,7 +173,9 @@ function updateSpire() {
 		currentCell.damage = 0;
 		currentCell.toxicity = 0;
 		currentCell.totalTox = 0;
+		currentCell.steps = prevCell.steps;
 		for (j = 1; j <= repeat; j++) {
+			currentCell.steps++;
 			if (currentCell.name == "poison") {
 				currentCell.toxicity += 3;
 				if (currentCell.isPowered && j == 1) currentCell.toxicity += 3;
@@ -186,7 +195,6 @@ function updateSpire() {
 						cells[frosty].isChilled = true;
 					}
 				}
-				
 			} else if (currentCell.name == "lightning") {
 				cells[i + 1].isPowered = true;
 				if (j == 2 || j == 3) currentCell.damage += 10;
@@ -213,9 +221,13 @@ function updateSpire() {
 			}
 			currentCell.totalTox = prevCell.totalTox + currentCell.toxicity;
 			currentCell.damage += currentCell.totalTox;
+			if (j == 1) currentCell.damages[0] = currentCell.damage;
+			else if (j == 2) currentCell.damages[1] = currentCell.damage - currentCell.damages[0];
+			else if (j == 3) currentCell.damages[2] = currentCell.damage - currentCell.damages[0] - currentCell.damages[1];
 		}
 		currentCell.totalDamage = prevCell.totalDamage + currentCell.damage;
 	}
+	minDamage = cells[50].totalDamage;
 	document.getElementById("totalDamage").innerHTML = enumerate(cells[50].totalDamage);
 }
 
@@ -316,7 +328,7 @@ function getDifficulty() {
 	difficultyMod -= enemiesEscaped * 2;
 	if (difficultyMod < 0.1) difficultyMod = 0.1;
 	difficultyMod = Math.floor(difficultyMod * 10) / 10;
-	return difficultyMod;
+	//return difficultyMod;
 }
 
 //Make numbers look good.
@@ -371,7 +383,8 @@ function enumerate(x) {
 function save() {
 	var save = {
 		cells : cells,
-		totalStones : totalStones
+		totalStones : totalStones,
+		version : version
 	}
 	localStorage.setItem("buildAspire", JSON.stringify(save));
 }
@@ -420,3 +433,56 @@ function load() {
 	}
 }
 
+function spawnEnemies(val) {
+	var avgDiff = 0;
+	enemiesKilled = 0;
+	enemiesEscaped = 0;
+	var totalEnemies = 0;
+	var currentEnemies = 0;
+	var totalSteps = 0;
+	var rsEarned = 0;
+	enemies = [];
+	while ((enemiesKilled + enemiesEscaped) < val) {
+		if (currentEnemies < maxEnemies && totalSteps % 2 == 0 ) {
+			enemies.push(new enemy(difficultyMod));
+			totalEnemies++;
+			currentEnemies++;
+		}
+		for (i = 0; i < enemies.length; i++) {
+			var thisEnemy = enemies[i];
+			var thisCell = thisEnemy.currentCell;
+			thisEnemy.steps++;
+			if (thisEnemy.steps > cells[thisCell].steps) thisEnemy.currentCell++;
+			if (thisEnemy.currentCell > maxCells) {
+				enemies.splice(i, 1);
+				enemiesEscaped++;
+				currentEnemies--;
+				getDifficulty();
+				if (val - (enemiesKilled + enemiesEscaped) <= 100) avgDiff += difficultyMod;
+				break;
+			}
+			var takenDamage = cells[thisEnemy.currentCell].damages[cells[thisEnemy.currentCell].damages.length - 1 - (cells[thisEnemy.currentCell].steps - thisEnemy.steps)];
+			thisEnemy.currentHP -= takenDamage;
+			if (thisEnemy.currentHP <= 0) {
+				rsEarned += thisEnemy.drops;
+				enemies.splice(i, 1);
+				enemiesKilled++;
+				currentEnemies--;
+				getDifficulty();
+				if (val - (enemiesKilled + enemiesEscaped) <= 100) avgDiff += difficultyMod;
+			}
+		}
+		totalSteps++;
+	}
+	/*for(i = 0; i < val; i++) {
+		myEnemy = new enemy(difficultyMod);
+		if (minDamage >= myEnemy.maxHP) enemiesKilled++;
+		else enemiesEscaped++;
+		getDifficulty();
+		if (val - i <= 100) avgDiff += difficultyMod;
+	}*/
+	
+	avgDiff /= 100;
+	document.getElementById("difficulty").innerHTML = "Min Average Difficulty: " + avgDiff.toFixed(2);
+	document.getElementById("rps").innerHTML = "Min Runestones per second: " + (rsEarned / (totalSteps / 2)).toFixed(2);
+}

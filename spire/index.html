@@ -51,8 +51,8 @@
 			<div id="total">Runestones: <span id="totalStones">10000</span></div>
 			<div id="spent">Spent: <span id="spentStones">0</span></div>
 			<div id="remaining">Remaining: <span id="remainingStones">10.0K</span></div>
-			<div id="rps">Max Runestones per second: <span id="numRps">-</span></div>
-			<div id="difficulty">Max Average Difficulty: <span id="numDifficulty">-</span></div>
+			<div id="rps">Min Runestones per second: <span id="numRps">-</span></div>
+			<div id="difficulty">Min Average Difficulty: <span id="numDifficulty">-</span></div>
 			<button id="resetSpire" onclick="resetSpire()">Reset Spire</button>
 			<button id="sellTrap" onclick="selectTower(0)">Sell a Trap</button>
 			<button id="trapInfo" onclick="selectTower(8)">Trap Info</button>
@@ -64,6 +64,7 @@
 			<button id="selectStrength" onclick="selectTower(5)">Strength Tower (<span id="strengthCost">5000</span> Rs)</button>
 			<button id="selectCondenser" onclick="selectTower(6)">Condenser Tower (<span id="condenserCost">5000</span> Rs)</button>
 			<button id="selectKnowledge" onclick="selectTower(7)">Knowledge Tower (<span id="knowledgeCost">5000</span> Rs)</button>
+			<button id="enemyTest" onclick="spawnEnemies(1000)">Test Enemies</button>
 			<button id="save" onclick="save()">Save Setup</button>
 			<button id="load" onclick="load()">Load Setup</button>
 		</div>

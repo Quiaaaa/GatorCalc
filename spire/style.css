@@ -186,6 +186,12 @@ button {
 	border-color: white;
 }
 
+#enemyTest {
+	position: absolute;
+	top: 91%;
+	left: 4%;
+}
+
 #save {
 	position: absolute;
 	top: 91%;
