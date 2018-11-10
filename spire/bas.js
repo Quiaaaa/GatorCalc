@@ -214,13 +214,21 @@ function updateSpire() {
 }
 
 function clearVariables() {
+	spentStones = 0;
 	fireTraps = 0;
+	currentFireCost = 100;
 	frostTraps = 0;
+	currentFrostCost = 100;
 	poisonTraps = 0;
+	currentPoisonCost = 500;
 	lightningTraps = 0
+	currentLightningCost = 1000;
 	strengthTowers = 0;
+	currentStrengthCost = 5000;
 	condenserTowers = 0;
+	currentCondenserCost = 5000;
 	knowledgeTowers = 0;
+	currentKnowledgeCost = 5000;
 	
 	for (i = 1; i <= maxCells; i++) {
 		var currentName = cells[i].name;
@@ -347,7 +355,8 @@ function enumerate(x) {
 
 function save() {
 	var save = {
-		cells : cells
+		cells : cells,
+		totalStones : totalStones
 	}
 	localStorage.setItem("buildAspire", JSON.stringify(save));
 }
@@ -356,41 +365,42 @@ function load() {
 	var save = JSON.parse(localStorage.getItem("buildAspire"));
 	if (save != null) {
 		if (typeof save.cells != undefined) cells = save.cells;
-	}
-	clearVariables();
-	updateSpire();
-	selectTower(8);
-	for (i = 1; i <= maxCells; i++) {
-		var where = Math.floor((i - 1) / 5);
-		where += "" + (((i - 1) % 5) + 1);
-		switch(cells[i].name) {
-			case "empty":
-				document.getElementById(where).style.backgroundColor = "black";
-				break;
-			case "fire":
-				document.getElementById(where).style.backgroundColor = "#7F0505";
-				break;
-			case "frost":
-				document.getElementById(where).style.backgroundColor = "#02437C";
-				break;
-			case "poison":
-				document.getElementById(where).style.backgroundColor = "#008238";
-				break;
-			case "lightning":
-				document.getElementById(where).style.backgroundColor = "#A27D02";
-				break;
-			case "strength":
-				document.getElementById(where).style.backgroundColor = "#684112";
-				break;
-			case "condenser":
-				document.getElementById(where).style.backgroundColor = "#474747";
-				break;
-			case "knowledge":
-				document.getElementById(where).style.backgroundColor = "#2B112B";
-				break;
-			default: 
-				console.log("Something went wrong with load!");
-				break;
+		if (typeof save.totalStones != undefined) totalStones = save.totalStones;
+		clearVariables();
+		updateSpire();
+		selectTower(8);
+		for (i = 1; i <= maxCells; i++) {
+			var where = Math.floor((i - 1) / 5);
+			where += "" + (((i - 1) % 5) + 1);
+			switch(cells[i].name) {
+				case "empty":
+					document.getElementById(where).style.backgroundColor = "black";
+					break;
+				case "fire":
+					document.getElementById(where).style.backgroundColor = "#7F0505";
+					break;
+				case "frost":
+					document.getElementById(where).style.backgroundColor = "#02437C";
+					break;
+				case "poison":
+					document.getElementById(where).style.backgroundColor = "#008238";
+					break;
+				case "lightning":
+					document.getElementById(where).style.backgroundColor = "#A27D02";
+					break;
+				case "strength":
+					document.getElementById(where).style.backgroundColor = "#684112";
+					break;
+				case "condenser":
+					document.getElementById(where).style.backgroundColor = "#474747";
+					break;
+				case "knowledge":
+					document.getElementById(where).style.backgroundColor = "#2B112B";
+					break;
+				default: 
+					console.log("Something went wrong with load!");
+					break;
+			}
 		}
 	}
 }
