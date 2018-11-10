@@ -25,9 +25,13 @@ var selected = "none";
 var bgColor = "#000000";
 var baseDamage = 0;
 
+var difficultyMod = 0;
+var enemiesKilled = 0;
+var enemiesEscaped = 0;
+
 var cells = [];
 class cell {
-	constructor(id, name, isPowered, isChilled, isFrozen, isStrengthened, toxicity, totalTox, damage, totalDamage)
+	constructor(id, name)
 	{
 		this.id = id;
 		this.name = name;
@@ -43,11 +47,12 @@ class cell {
 }
 
 class enemy {
-	constructor (maxHP, currentHP, drops)
+	constructor (difficulty)
 	{
-		this.maxHP = maxHP;
+		this.difficulty = difficulty;
+		this.maxHP = 50 + (this.difficulty / 2) + Math.floor(Math.random() * 50 + this.difficulty);
 		this.currentHP = maxHP;
-		this.drops = 0;
+		this.drops = Math.floor(this.maxHP / 20);
 	}
 }
 
@@ -303,6 +308,15 @@ function resetSpire() {
 		}
 	}
 	selectTower(8);
+}
+
+function getDifficulty() {
+	difficultyMod = 0;
+	difficultyMod += enemiesKilled * 4;
+	difficultyMod -= enemiesEscaped * 2;
+	if (difficultyMod < 0.1) difficultyMod = 0.1;
+	difficultyMod = Math.floor(difficultyMod * 10) / 10;
+	return difficultyMod;
 }
 
 //Make numbers look good.
