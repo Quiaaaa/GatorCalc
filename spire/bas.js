@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "0.1b";
+var version = "0.1c";
 var totalStones = 10000;
 var spentStones = 0;
 var remainingStones = totalStones - spentStones;
@@ -194,6 +194,9 @@ function updateSpire() {
 					for (frosty = i + 1; frosty <= plus10; frosty++) {
 						cells[frosty].isChilled = true;
 					}
+				}
+				for (j = i; j <= maxCells; j++) {
+					cells[j].isFrozen = false;	//frost overwrites freeze
 				}
 			} else if (currentCell.name == "lightning") {
 				cells[i + 1].isPowered = true;
@@ -643,4 +646,32 @@ function preset2() { //4M rs, 107K damage
 	placeTower("22");
 	placeTower("42");
 	placeTower("65");
+}
+
+function optimizeLayout(cost) {
+	totalStones = cost;
+	resetSpire();
+	selectTower(2);
+	placeTower("01");
+	selectTower(3); //poison
+	var where = "01";
+	while (spentStones <= totalStones) {
+		where = getNext(where);
+		placeTower(where);
+	}
+	selectTower(0);
+	placeTower(where);
+}
+
+function getNext(myWhere) {
+	var w1 = parseInt(myWhere.charAt(0));
+	var w2 = parseInt(myWhere.charAt(1));
+	w2++;
+	if (w2 > 5) {
+		w2 = 1;
+		w1++;
+	}
+	//if (w1 > 9) return "95";
+	//console.log("" w1 + "" + w2);
+	else return "" + w1 + "" + w2;
 }
