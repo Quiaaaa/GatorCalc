@@ -195,8 +195,8 @@ function updateSpire() {
 						cells[frosty].isChilled = true;
 					}
 				}
-				for (j = i; j <= maxCells; j++) {
-					cells[j].isFrozen = false;	//frost overwrites freeze
+				for (k = i; k <= maxCells; k++) {
+					cells[k].isFrozen = false;	//frost overwrites freeze
 				}
 			} else if (currentCell.name == "lightning") {
 				cells[i + 1].isPowered = true;
@@ -455,9 +455,8 @@ function spawnEnemies(val) {
 		}
 		for (i = 0; i < enemies.length; i++) {
 			var thisEnemy = enemies[i];
-			var thisCell = thisEnemy.currentCell;
 			thisEnemy.steps++;
-			if (thisEnemy.steps > cells[thisCell].steps) thisEnemy.currentCell++;
+			if (thisEnemy.steps > cells[thisEnemy.currentCell].steps) thisEnemy.currentCell++;
 			if (thisEnemy.currentCell > maxCells) {
 				enemies.splice(i, 1);
 				enemiesEscaped++;
