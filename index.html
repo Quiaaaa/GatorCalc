@@ -11,7 +11,7 @@
 	<body>
 		<div id="inputs">
 			<br>
-			<textarea placeholder="Paste your save here" onpaste="pasteSave(event)" type="text" ></textarea>
+			<textarea id="saveBox" placeholder="Paste your save here" onpaste="pasteSave(event)" onclick="clearText()" type="text" ></textarea>
 			<button class="hidden" id="calculate" onclick="calculateCurrentPop()">Calculate</button>
 			<br>
 			<label title="Check this to keep your run stats the same, only updating perks and DG levels">
@@ -110,6 +110,26 @@
 			<button class="macro" id="forceGator" onclick="forceGator()">Force Gator At Zone:</button><br>
 			<input class="macroZone" id="gatorZone" type="number" onchange="changeGatorZone(this.value)"><br>
 			<div class="filler"></div>
+			<label title="Hold back on buying this many coordination upgrades throughout the run">
+			<span class="macroZone">Coords Withheld: </span></label><br>
+			<input class="macroZone" id="uncoords" value="0" type="number" onchange="changeUncoords(this.value)"><br>
+			<div class="filler"></div>
+			<label title="Stop buying coordinations at the specified zone in order to hit the goal number of Amalgamators. Use -1 to not withhold any">
+			<span class="macroZone">Withhold Coords Zone/Goal: </span></label><br>
+			<input class="macroZone" id="uncoordsZone" value="" type="number" onchange="changeUncoordsZone(this.value)">
+			<select class="macroZone" id="uncoordsGoal" onchange="changeUncoordsGoal(this.value)">
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+			<option selected value="5">5</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+			<option value="8">8</option>
+			<option value="9">9</option>
+			<option value="10">10</option>
+			</select><br>
+			<div class="filler"></div>
 			<button class="macro hidden" id="minimizeCapacity-1" onclick="minimize(1, 2)">Minimize Capacity - 1</button><br>
 			<div class="filler"></div>
 			<button class="macro hidden" id="minimizeAtZone-1" onclick="minimize(1, 1)">Minimize At Zone - 1</button><br>
@@ -148,7 +168,7 @@
 				</tr>
 				<tr><td>Zones of MI</td><td id="zonesOfMI">0</td>
 					<td></td>
-					<td></td><td></td>
+					<td>Zones Withheld</td><td id="zonesWithheld">-</td>
 				</tr>
 				<tr><td>Zones of Fuel</td><td id="zonesOfFuel">0</td>
 					<td></td>
@@ -210,13 +230,19 @@
 			<br>
 			What do the buttons in the middle column do?
 			<span class="answer">
-			These buttons are used to determine when it is optimal to fuel. The "Optimize" button will take the number of zones to fuel currently shown, and figure out the best starting zone to fuel in order to maximize population.
-			The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order to get the maximum number of Amalgamators possible, thus maximizing MI gains. The "Minimize - 1" button will do the same thing, 
+			These buttons are used to determine when it is optimal to fuel. They each provide sightly different bits of information that you can tailor your fueling preferences to.
+			<br>The "Optimize" button will take the number of zones to fuel currently shown, and figure out the best starting zone to fuel in order to maximize population.
+			<br>The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order to get the maximum number of Amalgamators possible, thus maximizing MI gains. <br>The "Minimize - 1" button will do the same thing, 
 			but with getting 1 less Gator. This can be useful if you'd need to fuel for an entire run in order to get your Max number of gators, and you'd rather keep the MI gains.
-			The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run otherwise, as you will 
-			get the benefit of the extra Gator earlier. The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel. You'll need to use the in-game capacity slider to adjust to the recommended value. The 
-			"Force Gator At Zone" button will determine how many coordinations you'd need to withhold from buying in order to get an extra gator on the zone specified. This will update the row of the corresponding zone in the table below the 
-			results table, but won't change anything else. Finally, the "Use 5 zone breakpoints" tick will calculate updates to your Amalgamators only after every 5th zone when they would die from an Omnipotrimp explosion. Without this option 
+			<br>The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run otherwise, as you will 
+			get the benefit of the extra Gator earlier. 
+			<br>The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel. You'll need to use the in-game capacity slider to adjust to the recommended value. 
+			<br>The "Force Gator At Zone" button will determine how many coordinations you'd need to withhold from buying in order to get an extra gator on the zone specified. This will update the row of the corresponding zone in the table below the 
+			results table, but won't change anything else. 
+			<br>The "Coords Withheld" option allows you to set a certain number of coordination upgrades to refrain from buying, in order to get an extra amalgamator earlier or with less fueling than otherwise would be possible. 
+			<br>The "Withhold Coords Zone/Goal" option allows you to specify a certain zone to stop buying coordinations in order to reach the chosen goal number of amalgamators. These last two options can only be used separately, not together. This will 
+			also update the "Zones Withheld" result with the number of zones you have to hold off on buying coordinations, and therefore the number of coordinations behind you will be.
+			<br>Finally, the "Use 5 zone breakpoints" tick will calculate updates to your Amalgamators only after every 5th zone when they would die from an Omnipotrimp explosion. Without this option 
 			checked, most of the time new Amalgamators will show up on the zone after a spire, due to the ratio needed decreasing. However, as Gators are only updated on trimp death, if you survive after beating a spire for the next 5 zones (which 
 			you are likely to do if you're strong enough to have beaten it), then you would get 5 more coordination upgrades before your next death, which will increase your army size, and therefore the needed population for your next Gator, possibly 
 			pushing it beyond the population you've amassed. 

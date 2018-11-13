@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "1.4c";
+var version = "1.5";
 var hze = 0;
 var ticked = false;
 var fuelStart = 230;
@@ -56,6 +56,9 @@ var ar3;
 var ar4;
 var ar5;
 
+var uncoords = 0;
+var uncoordsZone = -1;
+var uncoordsGoal = 1;
 var fuelThisZone = [];
 var totalFuel = [];
 var overclockTicks = [];
@@ -363,6 +366,7 @@ function calculateCoordIncrease() {
 
 function calculateFinalAmalRatio() {
 	document.getElementById("finalAmalRatio").innerHTML = Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000);
+	//document.getElementById("finalAmalRatio").innerHTML = enumerate(Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000));
 }
 
 function calculateCarpMod() {
@@ -385,7 +389,15 @@ function calculateCurrentPop() {
 	var sum = [];
 	var myHze = runEnd;
 	if (hze > myHze) myHze = hze;
-	for (i = 0; i <= (myHze - 230); i++) {
+	var stdev = Math.sqrt((0.03 * 0.97) / ((99 * (runEnd - fuelEnd))));
+	var confValue = 1 + ((0.03 - stdev) / 10);
+	if (confValue <= 1) confValue = 1.003;
+	var useConf = false;
+	var skippedCoords = 0;
+	var goalReached = false;
+	//console.log(confValue);
+	
+	for (i = 0; i <= (myHze - 200); i++) { //calc an extra 30 zones because why not
 		if (i == 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, maxSupply);
 		if ((i + 230) >= fuelStart && (i + 230) <= fuelEnd) {
@@ -397,6 +409,7 @@ function calculateCurrentPop() {
 		if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
 		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
 		if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, 2.97));
+		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(confValue, 2.97));
 		else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, 2.97));
 		if (i == 0) sum[0] = overclockPopThisZone[0];
 		else sum[i] = overclockPopThisZone[i] + sum[i - 1];
@@ -405,8 +418,25 @@ function calculateCurrentPop() {
 		else percentFromTauntimp[i] = 0;
 		if (i == 0) tauntimpThisZone[0] = 0;
 		else tauntimpThisZone[i] = popFromTauntimp[i] - popFromTauntimp[i - 1];
-		if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
-		else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
+		if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + (coordIncrease / 100))) * 3;
+		else if (uncoordsZone == -1) {
+			coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
+			document.getElementById("zonesWithheld").innerHTML = "-";
+		}
+		else {
+			if (i + 230 > uncoordsZone && currentAmals[i - 1] < uncoordsGoal && !goalReached) {
+				coordPop[i] = coordPop[i - 1];
+				skippedCoords++;
+			} else if (i + 230 > uncoordsZone && currentAmals[i - 1] >= uncoordsGoal && !goalReached) {
+				var tempCoordPop = coordPop[i - 1];
+				for (skipped = 0; skipped <= skippedCoords; skipped++) {
+					tempCoordPop = Math.ceil((tempCoordPop / 3) * (1 + (coordIncrease / 100))) * 3;
+				}
+				document.getElementById("zonesWithheld").innerHTML = skippedCoords;
+				goalReached = true;
+				coordPop[i] = tempCoordPop;
+			} else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
+		}
 		amalRatio[i] = (popWithTauntimp[i] * housingMod) / (coordPop[i] / 3);
 		if (i == 0) currentAmals[0] = 0;
 		else if ((offset && ((i - 1) % 5) != 0) || (offset && ((i - 71) % 100) == 0)) {
@@ -437,6 +467,7 @@ function calculateCurrentPop() {
 	}
 	totalPop = popWithTauntimp[runEnd - 230] * housingMod;
 	document.getElementById("totalPop").innerHTML = totalPop.toPrecision(3);
+	//document.getElementById("totalPop").innerHTML = enumerate(totalPop);
 	tauntimpPercent = (percentFromTauntimp[runEnd - 230] * 100);
 	document.getElementById("tauntimpPercent").innerHTML = tauntimpPercent.toFixed(2);
 	finalAmals = currentAmals[runEnd - 230];
@@ -452,8 +483,10 @@ function calculateCurrentPop() {
 	document.getElementById("finalAmalZone").innerHTML = finalAmalZone;
 	neededPop = coordPop[runEnd - 230] / 3;
 	document.getElementById("neededPop").innerHTML = neededPop.toPrecision(3);
+	//document.getElementById("neededPop").innerHTML = enumerate(neededPop);
 	finalArmySize = neededPop * Math.pow(1000, finalAmals);
 	document.getElementById("finalArmySize").innerHTML = finalArmySize.toPrecision(3);
+	//document.getElementById("finalArmySize").innerHTML = enumerate(finalArmySize);
 	yourFinalRatio = totalPop / finalArmySize;
 	document.getElementById("yourFinalRatio").innerHTML = Math.ceil(yourFinalRatio);
 	
@@ -625,16 +658,21 @@ function pasteSave(save) {
 	//console.log(game);
 }
 
+function clearText() {
+	document.getElementById("saveBox").value = "";
+}
+
 function optimize() {
 	var myFuelZones = fuelZones;
+	var bestAmals = maxAmals;
 	changeFuelStart(230);
 	var bestPop = 0;
-	var bestAmals = maxAmals;
+	if (maxAmals > bestAmals); //Could be getting an extra gator if not called from minimize
 	var myFuelStart = 230;
 	for (f = 230; f <= (runEnd - myFuelZones); f++) {
 		changeFuelStart(f);
 		changeFuelZones(myFuelZones);
-		if (totalPop > bestPop && bestAmals >= maxAmals) {
+		if (totalPop > bestPop && maxAmals >= bestAmals) {
 			bestPop = totalPop;
 			myFuelStart = f;
 		}
@@ -655,14 +693,16 @@ function minimize(dif, variant) {
 	var bestAmals = maxAmals - dif;
 	var bestJ = fuelZones;
 	var maxedAmals = false;
-	
-	if (variant == 1) changeFuelStart(minimizeZone);
+	if (variant == 1) {
+		changeRunEnd(minimizeZone - 1);
+		changeFuelStart(minimizeZone - 1);
+	}
 	else changeFuelStart(runEnd);
 	changeFuelZones(0);
 	if (variant == 2) var myCapacity = capacity;
 	
 	while (fuelStart >= 230) {
-		while (maxAmals == bestAmals && fuelZones >= 0) {
+		while (maxAmals >= bestAmals && fuelZones >= 0) {
 			if (variant == 2) {
 				var myPop = totalPop;
 				while (totalPop >= myPop) {
@@ -685,13 +725,14 @@ function minimize(dif, variant) {
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
 		if (maxedAmals == true && maxAmals < bestAmals) break;
 	}
+	
+	changeFuelZones(bestJ);
+	document.getElementById("fuelZones").value = fuelZones;
+	optimize();
 	if (variant == 1) {
 		changeRunEnd(myEnd);
 		document.getElementById("runEnd").value = runEnd;
 	}
-	changeFuelZones(bestJ);
-	document.getElementById("fuelZones").value = fuelZones;
-	optimize();
 	if (variant == 2) {
 		myPop = totalPop;
 		for (b = 0; b < 4; b++) { //run this a bunch or something
@@ -711,8 +752,8 @@ function minimize(dif, variant) {
 
 function changeMinimizeZone(value) {
 	minimizeZone = parseInt(value);
-	if (minimizeZone < 230) {
-		minimizeZone = 230;
+	if (minimizeZone < 231) {
+		minimizeZone = 231;
 		document.getElementById("minimizeZone").value = minimizeZone;
 	}
 	if (minimizeZone == 2151) {
@@ -775,6 +816,39 @@ function changeGatorZone(value) {
 	}
 }
 
+function changeUncoords(value) {
+	uncoords = parseInt(value);
+	if (uncoords <= 0) {
+		uncoords = 0;
+		document.getElementById("uncoords").value = uncoords;
+		calculateCurrentPop();
+		return;
+	} else if (uncoords > 100 + runEnd) {
+		uncoords = 100 + runEnd;
+		document.getElementById("uncoords").value = uncoords;
+	}
+	changeUncoordsZone(-1);
+	document.getElementById("uncoordsZone").value = "";
+	calculateCurrentPop();
+}
+
+function changeUncoordsZone(value) {
+	uncoordsZone = parseInt(value);
+	if (uncoordsZone <= -1) {
+		uncoordsZone = -1;
+		document.getElementById("uncoordsZone").value = "";
+	} else if (uncoordsZone > runEnd) {
+		uncoordsZone = runEnd;
+		document.getElementById("uncoordsZone").value = runEnd;
+	} else changeUncoords(0);
+	calculateCurrentPop();
+}
+
+function changeUncoordsGoal(value) {
+	uncoordsGoal = parseInt(value);
+	calculateCurrentPop();
+}
+
 function saveSettings() {
 	var settings = {
 		hze : hze,
@@ -797,7 +871,10 @@ function saveSettings() {
 		magmaFlow : magmaFlow,
 		minimizeZone : minimizeZone,
 		gatorZone : gatorZone,
-		offset : offset
+		offset : offset,
+		uncoords : uncoords, 
+		uncoordsZone : uncoordsZone,
+		uncoordsGoal : uncoordsGoal
 	}
 	localStorage.setItem("GatorSettings", JSON.stringify(settings));
 }
@@ -826,6 +903,9 @@ function loadSettings() {
 		if (typeof settings.minimizeZone != "undefined") minimizeZone = settings.minimizeZone;
 		if (typeof settings.gatorZone != "undefined") gatorZone = settings.gatorZone;
 		if (typeof settings.offset != "undefined") offset = settings.offset;
+		if (typeof settings.uncoords != "undefined") uncoords = settings.uncoords;
+		if (typeof settings.uncoordsZone != "undefined") uncoordsZone = settings.uncoordsZone;
+		if (typeof settings.uncoordsGoal != "undefined") uncoordsGoal = settings.uncoordsGoal;
 		document.getElementById("lockRun").checked = ticked;
 		document.getElementById("offset5").checked = offset;
 		changeFuelStart(fuelStart);
@@ -836,6 +916,12 @@ function loadSettings() {
 		document.getElementById("fuelZones").value = fuelZones;
 		changeRunEnd(runEnd);
 		document.getElementById("runEnd").value = runEnd;
+		changeUncoords(uncoords);
+		document.getElementById("uncoords").value = uncoords;
+		changeUncoordsZone(uncoordsZone);
+		document.getElementById("uncoordsZone").value = uncoordsZone;
+		changeUncoordsGoal(uncoordsGoal);
+		document.getElementById("uncoordsGoal").selected = uncoordsGoal;
 		changeHousingMod(housingMod);
 		document.getElementById("housingMod").value = housingMod;
 		changeSpiresCleared(spiresCleared);
@@ -878,6 +964,55 @@ function goFaq() {
 	if (document.getElementById("faqScreen").style.display == "inline") document.getElementById("faqScreen").style.display = "none";
 	else document.getElementById("faqScreen").style.display = "inline";
 	document.getElementById("faqScreen").focus();
+}
+
+//Make numbers look good.
+function enumerate(x) {
+	if (isNaN(x)) return x;
+	if (x <= 9999) return x;
+	if (x <= 100000) return (x/1000).toFixed(2) + "K";
+	if (x <= 1000000) return (x/1000).toFixed(1) + "K";
+	if (x <= 10000000) return (x/1000000).toFixed(3) + "M";
+	if (x <= 100000000) return (x/1000000).toFixed(2) + "M";
+	if (x <= 1000000000) return (x/1000000).toFixed(1) + "M";
+	if (x <= 10000000000) return (x/1000000000).toFixed(3) + "B";
+	if (x <= 100000000000) return (x/1000000000).toFixed(2) + "B";
+	if (x <= 1000000000000) return (x/1000000000).toFixed(1) + "B";
+	if (x <= 10000000000000) return (x/1000000000000).toFixed(3) + "T";
+	if (x <= 100000000000000) return (x/1000000000000).toFixed(2) + "T";
+	if (x <= 1000000000000000) return (x/1000000000000).toFixed(1) + "T";
+	if (x <= 10000000000000000) return (x/1000000000000000).toFixed(3) + "Qa";
+	if (x <= 100000000000000000) return (x/1000000000000000).toFixed(2) + "Qa";
+	if (x <= 1000000000000000000) return (x/1000000000000000).toFixed(1) + "Qa";
+	if (x <= 10000000000000000000) return (x/1000000000000000000).toFixed(3) + "Qi";
+	if (x <= 100000000000000000000) return (x/1000000000000000000).toFixed(2) + "Qi";
+	if (x <= 1000000000000000000000) return (x/1000000000000000000).toFixed(1) + "Qi";
+	if (x <= 10000000000000000000000) return (x/1000000000000000000000).toFixed(3) + "Sx";
+	if (x <= 100000000000000000000000) return (x/1000000000000000000000).toFixed(2) + "Sx";
+	if (x <= 1000000000000000000000000) return (x/1000000000000000000000).toFixed(1) + "Sx";
+	if (x <= 10000000000000000000000000) return (x/1000000000000000000000000).toFixed(3) + "Sp";
+	if (x <= 100000000000000000000000000) return (x/1000000000000000000000000).toFixed(2) + "Sp";
+	if (x <= 1000000000000000000000000000) return (x/1000000000000000000000000).toFixed(1) + "Sp";
+	if (x <= 10000000000000000000000000000) return (x/1000000000000000000000000000).toFixed(3) + "Oc";
+	if (x <= 100000000000000000000000000000) return (x/1000000000000000000000000000).toFixed(2) + "Oc";
+	if (x <= 1000000000000000000000000000000) return (x/1000000000000000000000000000).toFixed(1) + "Oc";
+	if (x <= 10000000000000000000000000000000) return (x/1000000000000000000000000000000).toFixed(3) + "No";
+	if (x <= 100000000000000000000000000000000) return (x/1000000000000000000000000000000).toFixed(2) + "No";
+	if (x <= 1000000000000000000000000000000000) return (x/1000000000000000000000000000000).toFixed(1) + "No";
+	if (x <= 10000000000000000000000000000000000) return (x/1000000000000000000000000000000000).toFixed(3) + "Dc";
+	if (x <= 100000000000000000000000000000000000) return (x/1000000000000000000000000000000000).toFixed(2) + "Dc";
+	if (x <= 1000000000000000000000000000000000000) return (x/1000000000000000000000000000000000).toFixed(1) + "Dc";
+	//add a while loop to deal with the rest
+	x = (x/1000000000000000000000000000000000000).toFixed(3);
+	var n = 36;
+	while (x > 999.999) {
+		x = (x/1000);
+		n += 3;
+	}
+	if (x < 1000) x = (x/1).toFixed(1);
+	if (x < 100) x = (x/1).toFixed(2);
+	if (x < 10) x = (x/1).toFixed(3);
+	return x + "e" + n;
 }
 
 //Copyright Nohmou, 2018

@@ -83,6 +83,14 @@ input {
 	left: 20%;
 }
 
+#uncoordsZone {
+	width: 50%;
+}
+
+#uncoordsGoal {
+	width: 15%;
+}
+
 #offset5Label {
 	display: block;
 	position: relative;
