@@ -326,7 +326,6 @@ function checkDGUpgrades() {
 	else document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 	
 	changeRunEnd(myRunEnd);
-	document.getElementById("runEnd").value = myRunEnd;
 	changeFuelStart(myStart);
 	changeFuelEnd(myEnd);
 }
@@ -714,7 +713,6 @@ function minimize(dif, variant) {
 	var myEnd = runEnd;
 	if (variant == 1) {
 		changeRunEnd(minimizeZone);
-		document.getElementById("runEnd").value = minimizeZone;
 	}
 	changeFuelEnd(runEnd);
 	var bestAmals = maxAmals - dif;
@@ -722,7 +720,6 @@ function minimize(dif, variant) {
 	var maxedAmals = false;
 	if (variant == 1) {
 		changeRunEnd(minimizeZone - 1);
-		document.getElementById("runEnd").value = minimizeZone -1;
 		changeFuelStart(minimizeZone - 1);
 	}
 	else changeFuelStart(runEnd);
