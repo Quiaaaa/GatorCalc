@@ -220,6 +220,7 @@ function checkDGUpgrades() {
 	changeFuelStart(230);
 	if (hze > 0) {
 		changeRunEnd(hze);
+		document.getElementById("runEnd").value = hze;
 		changeFuelEnd(hze);
 	}
 	else {
@@ -325,6 +326,7 @@ function checkDGUpgrades() {
 	else document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 	
 	changeRunEnd(myRunEnd);
+	document.getElementById("runEnd").value = myRunEnd;
 	changeFuelStart(myStart);
 	changeFuelEnd(myEnd);
 }
@@ -658,6 +660,7 @@ function pasteSave(save) {
 		runEnd = game.global.lastPortal;
 		changeRunEnd(runEnd);
 		document.getElementById("runEnd").value = runEnd;
+		document.getElementById("runEnd").value = runEnd;
 		spiresCleared = game.global.spiresCompleted;
 		changeSpiresCleared(spiresCleared);
 		document.getElementById("spiresCleared").value = spiresCleared;
@@ -710,13 +713,17 @@ function minimize(dif, variant) {
 	if (variant == 2) document.getElementById("message").innerHTML = "Calculating...";
 	changeFuelStart(230); 
 	var myEnd = runEnd;
-	if (variant == 1) changeRunEnd(minimizeZone);
+	if (variant == 1) {
+		changeRunEnd(minimizeZone);
+		document.getElementById("runEnd").value = minimizeZone;
+	}
 	changeFuelEnd(runEnd);
 	var bestAmals = maxAmals - dif;
 	var bestJ = fuelZones;
 	var maxedAmals = false;
 	if (variant == 1) {
 		changeRunEnd(minimizeZone - 1);
+		document.getElementById("runEnd").value = minimizeZone -1;
 		changeFuelStart(minimizeZone - 1);
 	}
 	else changeFuelStart(runEnd);
