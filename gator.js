@@ -710,9 +710,7 @@ function minimize(dif, variant) {
 	if (variant == 2) document.getElementById("message").innerHTML = "Calculating...";
 	changeFuelStart(230); 
 	var myEnd = runEnd;
-	if (variant == 1) {
-		changeRunEnd(minimizeZone);
-	}
+	if (variant == 1) changeRunEnd(minimizeZone);
 	changeFuelEnd(runEnd);
 	var bestAmals = finalAmals - dif;
 	var bestJ = fuelZones;
