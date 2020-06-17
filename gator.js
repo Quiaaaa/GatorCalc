@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "1.5";
+var version = "1.6";
 var hze = 0;
 var ticked = false;
 var fuelStart = 230;
