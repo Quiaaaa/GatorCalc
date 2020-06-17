@@ -220,7 +220,6 @@ function checkDGUpgrades() {
 	changeFuelStart(230);
 	if (hze > 0) {
 		changeRunEnd(hze);
-		document.getElementById("runEnd").value = hze;
 		changeFuelEnd(hze);
 	}
 	else {
