@@ -715,7 +715,7 @@ function minimize(dif, variant) {
 		changeRunEnd(minimizeZone);
 	}
 	changeFuelEnd(runEnd);
-	var bestAmals = maxAmals - dif;
+	var bestAmals = finalAmals - dif;
 	var bestJ = fuelZones;
 	var maxedAmals = false;
 	if (variant == 1) {
@@ -727,7 +727,7 @@ function minimize(dif, variant) {
 	if (variant == 2) var myCapacity = capacity;
 	
 	while (fuelStart >= 230) {
-		while (maxAmals >= bestAmals && fuelZones >= 0) {
+		while (finalAmals >= bestAmals && fuelZones >= 0) {
 			if (variant == 2) {
 				var myPop = totalPop;
 				while (totalPop >= myPop) {
@@ -748,7 +748,7 @@ function minimize(dif, variant) {
 		if (fuelStart >= 230) changeFuelStart(fuelStart);
 		if (variant == 1) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ));
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
-		if (maxedAmals == true && maxAmals < bestAmals) break;
+		if (maxedAmals == true && finalAmals < bestAmals) break;
 	}
 	
 	changeFuelZones(bestJ);
@@ -761,7 +761,7 @@ function minimize(dif, variant) {
 		myPop = totalPop;
 		for (b = 0; b < 4; b++) { //run this a bunch or something
 			changeCapacity(capacity + 1, 2);
-			while (totalPop >= myPop && maxAmals >= bestAmals && capacity <= myCapacity) {
+			while (totalPop >= myPop && finalAmals >= bestAmals && capacity <= myCapacity) {
 				myPop = totalPop;
 				changeCapacity(capacity + 1, 2);
 			}
