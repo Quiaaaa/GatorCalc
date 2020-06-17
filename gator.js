@@ -756,7 +756,6 @@ function minimize(dif, variant) {
 	optimize();
 	if (variant == 1) {
 		changeRunEnd(myEnd);
-		document.getElementById("runEnd").value = runEnd;
 	}
 	if (variant == 2) {
 		myPop = totalPop;
