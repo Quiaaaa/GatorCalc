@@ -12,6 +12,8 @@ var carp = 0;
 var carp2 = 0;
 var carpMod = 0;
 var coord = 0;
+var randimp = false;
+var tauntimpFrequency = 2.97;
 var efficiency = 0;
 var capacity = 0;
 var maxCapacity = 3;
@@ -157,6 +159,18 @@ function changeCarp2(value) {
 function changeCoord(value) {
 	coord = parseInt(value);
 	calculateCoordIncrease();
+	calculateCurrentPop();
+}
+
+function changeRandimp(value) {
+	if (value == "No" || !value) {
+		randimp = false;
+		tauntimpFrequency = 2.97;
+	}
+	else {
+		randimp = true
+		tauntimpFrequency = 3.366;
+	}
 	calculateCurrentPop();
 }
 
@@ -334,8 +348,8 @@ function changeSlowburn(value) {
 }
 
 function changeMagmaFlow(value) {
-	if (value == "Yes" || value) magmaFlow = true;
-	else magmaFlow = false;
+	if (value == "No" || !value) magmaFlow = false;
+	else magmaFlow = true;
 	if (magmaFlow) magmaCells = 18;
 	else magmaCells = 16;
 	calculateMagma();
@@ -408,9 +422,9 @@ function calculateCurrentPop() {
 		overclockPop[i] = Math.floor(overclockTicks[i]) * (carpMod * tickRatio) * overclocker;
 		if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
 		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
-		if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, 2.97));
-		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(confValue, 2.97));
-		else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, 2.97));
+		if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, tauntimpFrequency));
+		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(confValue, tauntimpFrequency));
+		else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency));
 		if (i == 0) sum[0] = overclockPopThisZone[0];
 		else sum[i] = overclockPopThisZone[i] + sum[i - 1];
 		popFromTauntimp[i] = popWithTauntimp[i] - sum[i];
@@ -597,6 +611,14 @@ function pasteSave(save) {
 	coord = game.portal.Coordinated.level;
 	changeCoord(coord);
 	document.getElementById("coord").value = coord;
+	randimp = game.talents.magimp.purchased;
+	if (randimp) {
+		changeRandimp(true);
+		document.getElementById("randimp").value = "Yes";
+	} else {
+		changeRandimp(false);
+		document.getElementById("randimp").value = "No";
+	}
 	efficiency = game.generatorUpgrades.Efficiency.upgrades;
 	changeEfficiency(efficiency);
 	document.getElementById("efficiency").value = efficiency;
@@ -862,6 +884,7 @@ function saveSettings() {
 		carp : carp,
 		carp2 : carp2,
 		coord : coord,
+		randimp : randimp,
 		efficiency : efficiency,
 		capacity : capacity,
 		supply : supply,
@@ -893,6 +916,7 @@ function loadSettings() {
 		if (typeof settings.carp != "undefined") carp = settings.carp;
 		if (typeof settings.carp2 != "undefined") carp2 = settings.carp2;
 		if (typeof settings.coord != "undefined") coord = settings.coord;
+		if (typeof settings.randimp != "undefined") randimp = settings.randimp;
 		if (typeof settings.efficiency != "undefined") efficiency = settings.efficiency;
 		if (typeof settings.capacity != "undefined") capacity = settings.capacity;
 		if (typeof settings.supply != "undefined") supply = settings.supply;
@@ -932,6 +956,9 @@ function loadSettings() {
 		document.getElementById("carp2").value = carp2;
 		changeCoord(coord);
 		document.getElementById("coord").value = coord;
+		changeRandimp(randimp);	
+		if (randimp) document.getElementById("randimp").value = "Yes";
+		else document.getElementById("randimp").value = "No";
 		changeEfficiency(efficiency);
 		document.getElementById("efficiency").value = efficiency;
 		changeCapacity(capacity);
