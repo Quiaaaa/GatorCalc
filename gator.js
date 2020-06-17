@@ -658,7 +658,6 @@ function pasteSave(save) {
 		document.getElementById("hze").value = hze;
 		runEnd = game.global.lastPortal;
 		changeRunEnd(runEnd);
-		document.getElementById("runEnd").value = runEnd;
 		spiresCleared = game.global.spiresCompleted;
 		changeSpiresCleared(spiresCleared);
 		document.getElementById("spiresCleared").value = spiresCleared;
