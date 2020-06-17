@@ -57,6 +57,13 @@
 			<div class="filler"></div>
 			<input id="coord" type="number" onchange="changeCoord(this.value)">&nbspCoordinated
 			<br><br><br>
+			Masteries<br>
+			<select class="select" id="randimp" onchange="changeRandimp(this.value)">
+				<option value="Yes">Yes</option>
+				<option value="No">No</option>
+			</select>&nbspRandimp
+			<div class="filler"></div>
+			<br><br>
 			DG Levels<span class="efficiency">Next Upgrade</span><br>
 			<input id="efficiency" type="number" onchange="changeEfficiency(this.value)">&nbspEfficiency
 			<span class="efficiency" id="efficiencyEfficiency"></span>
@@ -252,7 +259,7 @@
 			<span class="answer">
 			This calculator assumes no population before you begin fueling. The population received before your first DG tick is inconsequential to your total population, and won't affect the results shown for the intended users of this page.
 			<div class="filler"></div>
-			The calculator assumes exactly 2.97 tauntimps received per zone. This averages out to the expected value, but it is possible to have good/bad luck with tauntimps, and have your population thrive/suffer accordingly.
+			The calculator assumes exactly 2.97 tauntimps received per zone, or 3.366 with the Randimp mastery. This averages out to the expected value, but it is possible to have good/bad luck with tauntimps, and have your population thrive/suffer accordingly.
 			<div class="filler"></div>
 			The calculator assumes all DG ticks made are overclocks. This slightly affects the final results, especially for those with lower overclocker levels, as those non-OC ticks will be stronger that OC ticks, and happen earlier, therefore 
 			benefitting more from tauntimp compounding. However, the differences are still small, and largely unnoticable for fueling more than a couple of zones.
