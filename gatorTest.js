@@ -45,7 +45,7 @@ var neededPop = 0;
 var finalArmySize = 0;
 var coordinationArmyIncrease = 0;
 var armySizes = [];
-var coordinationThresholds[];
+var coordinationThresholds = [];
 var finalAmalRatio = 0;
 var yourFinalRatio = 0;
 var magmaZones = 0;
