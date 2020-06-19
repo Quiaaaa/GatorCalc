@@ -149,9 +149,9 @@ function calculateCurrentPop() {}
 
 function pasteSave(save) {}
 
-function clearText() {
+function clearText() {}
 
-function optimize() {
+function optimize() {}
 
 function minimize() {}
 
