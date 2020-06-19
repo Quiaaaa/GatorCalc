@@ -80,7 +80,7 @@ var gatorZone = 230;
 var offset = false;
 
 function setup() {
-	loadSettings();
+	loadSettings(); //Load
 	document.getElementById("version").innerHTML = version;
 }
 
@@ -91,19 +91,54 @@ function changeFuelStart(value) {
 		fuelEnd = fuelStart;
 		document.getElementById("fuelEnd").value = fuelEnd;
 	}
-	if (runEnd < fuelStart) {
-		runEnd = fuelStart;
+	if (runEnd < fuelEnd) {
+		runEnd = fuelEnd;
 		document.getElementById("runEnd").value = runEnd;
 	}
 	fuelZones = fuelEnd - fuelStart;
 	document.getElementById("fuelZones").value = fuelZones;
 }
 
-function changeFuelEnd() {}
+function changeFuelEnd(value) {
+	fuelEnd = Math.max(230, parseInt(value));
+	document.getElementById("fuelEnd").value = fuelEnd;
+	if (fuelStart > fuelEnd) {
+		fuelStart = fuelEnd;
+		document.getElementById("fuelStart").value = fuelStart;
+	}
+	if (runEnd < fuelEnd) {
+		runEnd = fuelEnd;
+		document.getElementById("runEnd").value = runEnd;
+	}
+	fuelZones = fuelEnd - fuelStart;
+	document.getElementById("fuelZones").value = fuelZones;
+}
 
-function changeFuelZones() {}
+function changeFuelZones(value) {
+	fuelZones = Math.max(0, parseInt(value));
+	document.getElementById("fuelZones").value = fuelZones;
+	fuelEnd = fuelStart + fuelZones;
+	document.getElementById("fuelEnd").value = fuelEnd;
+	if (runEnd < fuelEnd) {
+		runEnd = fuelEnd;
+		document.getElementById("runEnd").value = runEnd;
+	}
+}
 
-function changeRunEnd() {}
+function changeRunEnd(value) {
+	runEnd = Math.max(1, parseInt(value));
+	document.getElementById("runEnd").value = runEnd;
+	if (fuelStart > runEnd) {
+		fuelStart = fuelEnd;
+		document.getElementById("fuelStart").value = fuelStart;
+	}
+	if (fuelEnd > runEnd) {
+		fuelEnd = runEnd;
+		document.getElementById("fuelEnd").value = fuelEnd;
+		fuelZones = fuelEnd - fuelStart;
+		document.getElementById("fuelZones").value = fuelZones;
+	}
+}
 
 function changeHousingMod() {}
 
