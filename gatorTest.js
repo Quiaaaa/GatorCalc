@@ -129,7 +129,7 @@ function changeRunEnd(value) {
 	runEnd = Math.max(1, parseInt(value));
 	document.getElementById("runEnd").value = runEnd;
 	if (fuelStart > runEnd) {
-		fuelStart = fuelEnd;
+		fuelStart = runEnd;
 		document.getElementById("fuelStart").value = fuelStart;
 	}
 	if (fuelEnd > runEnd) {
