@@ -10,7 +10,7 @@ var housingMod = 1;
 var spiresCleared = 0;
 var carpentry = 0;
 var carpentry2 = 0;
-var carpenryMod = 0;
+var carpentryMod = 0;
 var coordinated = 0;
 var tauntimpFrequency = 2.97;
 var efficiency = 0;
@@ -86,7 +86,6 @@ function setup() {
 
 function changeFuelStart(value) {
 	fuelStart = Math.max(230, parseInt(value));
-	document.getElementById("fuelStart").value = fuelStart
 	if (fuelEnd < fuelStart) {
 		fuelEnd = fuelStart;
 		document.getElementById("fuelEnd").value = fuelEnd;
@@ -101,7 +100,6 @@ function changeFuelStart(value) {
 
 function changeFuelEnd(value) {
 	fuelEnd = Math.max(230, parseInt(value));
-	document.getElementById("fuelEnd").value = fuelEnd;
 	if (fuelStart > fuelEnd) {
 		fuelStart = fuelEnd;
 		document.getElementById("fuelStart").value = fuelStart;
@@ -116,7 +114,6 @@ function changeFuelEnd(value) {
 
 function changeFuelZones(value) {
 	fuelZones = Math.max(0, parseInt(value));
-	document.getElementById("fuelZones").value = fuelZones;
 	fuelEnd = fuelStart + fuelZones;
 	document.getElementById("fuelEnd").value = fuelEnd;
 	if (runEnd < fuelEnd) {
@@ -127,7 +124,6 @@ function changeFuelZones(value) {
 
 function changeRunEnd(value) {
 	runEnd = Math.max(1, parseInt(value));
-	document.getElementById("runEnd").value = runEnd;
 	if (fuelStart > runEnd) {
 		fuelStart = runEnd;
 		document.getElementById("fuelStart").value = fuelStart;
@@ -140,13 +136,30 @@ function changeRunEnd(value) {
 	}
 }
 
-function changeHousingMod() {}
+function changeHousingMod(value) {
+	housingMod = parsefloat(value);
+	if (housingMod < 0) {
+		housingMod = 1 + housingMod / 100;
+		document.getElementById("housingMod").value = housingMod;
+	}
+}
 
-function changeSpiresCleared() {}
+function changeSpiresCleared(value) {
+	spiresCleared = Math.min(7, Math.max(0, parseInt(value)));
+}
 
-function changeCarp() {}
+function changeCarpentry(value) {
+	carpentry = Math.max(0, parseInt(value));
+	calculateCarpentryMod();
+}
 
-function changeCarp2() {}
+function changeCarpentry2(value) {
+	carpentry2 = Math.max(0, parseInt(value));
+}
+
+function calculateCarpentryMod() {
+	carpentryMod = Math.pow(1.1, carpentry) * (1+ 0.0025 * carpentry2);
+}
 
 function changeCoord() {}
 
@@ -175,8 +188,6 @@ function calculateMagma() {}
 function calculateCoordIncrease() {}
 
 function calculateFinalAmalRatio() {}
-
-function calculateCarpMod() {}
 
 function calculateMinTick() {}
 
