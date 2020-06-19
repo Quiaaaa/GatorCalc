@@ -95,6 +95,8 @@ function changeFuelStart(value) {
 		runEnd = fuelStart;
 		document.getElementById("runEnd").value = runEnd;
 	}
+	fuelZones = fuelEnd - fuelStart;
+	document.getElementById("fuelZones").value = fuelZones;
 }
 
 function changeFuelEnd() {}
