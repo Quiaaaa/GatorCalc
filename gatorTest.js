@@ -89,7 +89,7 @@ function changeFuelStart(value) {
 	document.getElementById("fuelStart").value = fuelStart
 	if (fuelEnd < fuelStart) {
 		fuelEnd = fuelStart;
-		document.getElementbyId("fuelEnd").value = fuelEnd;
+		document.getElementById("fuelEnd").value = fuelEnd;
 	}
 	if (runEnd < fuelStart) {
 		runEnd = fuelStart;
