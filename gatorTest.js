@@ -44,8 +44,8 @@ var finalAmalgamatorZone = 0;
 var neededPop = 0;
 var finalArmySize = 0;
 var coordinationArmyIncrease = 0;
-var ArmySizes = [];
-var coordinationThresholds;
+var armySizes = [];
+var coordinationThresholds[];
 var finalAmalRatio = 0;
 var yourFinalRatio = 0;
 var magmaZones = 0;
@@ -168,6 +168,8 @@ function changeCoordinated(value) {
 }
 
 function calculateCoordinationIncrease() {
+	coordinationArmyIncrease = 1 + 0.25 * 0.98 ** coordinated;
+	document.getElementById("coordinationArmyIncrease").textContent = coordinationArmyIncrease.toFixed(4);
 }
 
 function changeRandimp() {}
