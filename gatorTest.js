@@ -39,7 +39,7 @@ var currentPop = [];
 var finalAmals = 0;
 var tauntimpPercent = 0;
 var maxAmalgamators = 0;
-var lastCoord = 0;
+var lastCoordination = 0;
 var finalAmalgamatorZone = 0;
 var neededPop = 0;
 var finalArmySize = 0;
@@ -155,13 +155,20 @@ function changeCarpentry(value) {
 
 function changeCarpentry2(value) {
 	carpentry2 = Math.max(0, parseInt(value));
+	calculateCarpentryMod();
 }
 
 function calculateCarpentryMod() {
-	carpentryMod = Math.pow(1.1, carpentry) * (1+ 0.0025 * carpentry2);
+	carpentryMod = Math.pow(1.1, carpentry) * (1 + 0.0025 * carpentry2);
 }
 
-function changeCoord() {}
+function changeCoordinated(value) {
+	coordinated = Math.max(0, parseInt(value));
+	calculateCoordinationIncrease();
+}
+
+function calculateCoordinationIncrease() {
+}
 
 function changeRandimp() {}
 
@@ -184,8 +191,6 @@ function changeSlowburn() {}
 function changeMagmaFlow() {}
 
 function calculateMagma() {}
-
-function calculateCoordIncrease() {}
 
 function calculateFinalAmalRatio() {}
 
