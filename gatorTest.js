@@ -168,8 +168,8 @@ function changeCoordinated(value) {
 }
 
 function calculateCoordinationIncrease() {
-	coordinationArmyIncrease = 1 + 0.25 * 0.98 ** coordinated;
-	document.getElementById("coordinationArmyIncrease").textContent = coordinationArmyIncrease.toFixed(4);
+	coordinationArmyIncrease = 25 * 0.98 ** coordinated;
+	document.getElementById("coordinationArmyIncrease").textContent = coordinationArmyIncrease.toFixed(4) + "%";
 }
 
 function changeRandimp() {}
