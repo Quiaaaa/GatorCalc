@@ -8,11 +8,17 @@ var fuelZones = 0;
 var runEnd = 230;
 var housingMod = 1;
 var spiresCleared = 0;
+
 var carpentry = 0;
 var carpentry2 = 0;
 var carpentryMod = 0;
 var coordinated = 0;
+
+var randimp = false;
 var tauntimpFrequency = 2.97;
+var magmaFlow = false;
+var magmaCellsPerZone = 16;
+
 var efficiency = 0;
 var efficiencyMod = 1
 var capacity = 0;
@@ -21,9 +27,11 @@ var supply = 0;
 var maxSupply = 0.2;
 var overclocker = 0;
 var overclockRate = 0;
+
+var storage = false;
 var storage = 1;
+var slowburn = false;
 var fuelPerTick = 0.5;
-var magmaCellsPerZone = 16;
 var popPerTick = 0;
 var minTick = 0;
 var maxTick = 0;
@@ -53,10 +61,10 @@ var magmiteZones = 0;
 var totalMagmite = 0;
 
 var ar1 = 10000000000;
-var ar2;
-var ar3;
-var ar4;
-var ar5;
+var ar2 = 1000000000;
+var ar3 = 100000000;
+var ar4 = 10000000;
+var ar5 = 1000000;
 
 var withheldCoords = 0;
 var withholdStopZone = -1;
@@ -172,7 +180,7 @@ function calculateCoordinationIncrease() {
 	document.getElementById("coordinationArmyIncrease").textContent = coordinationArmyIncrease.toFixed(4) + "%";
 }
 
-function changeRandimp() {}
+function changeRandimp(value) {}
 
 function changeEfficiency() {}
 
