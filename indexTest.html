@@ -17,6 +17,9 @@
 			<label title="Check this to keep your run stats the same, only updating perks and DG levels">
 				<input id="lockRun" type="checkbox">Lock Run Stats</label> 
 			<span id="invalid"></span>
+			<br>
+			<label id="offset5Label" title="Check this to only have gators updated every 5 zones when you'd die from an omnipotrimp explosion">
+				<input id="offset5" type="checkbox">Use 5 zone breakpoints</label>
 			<br><br>
 			Run Stats<br>
 			<label title="Zone to begin fueling">
@@ -140,8 +143,6 @@
 			<div class="filler"></div>
 			<button class="macro hidden" id="minimizeAtZone-1" onclick="minimize(1, 1)">Minimize At Zone - 1</button><br>
 			<div class="filler"></div>
-			<label id="offset5Label" title="Check this to only have gators updated every 5 zones when you'd die from an omnipotrimp explosion">
-				<input id="offset5" type="checkbox">Use 5 zone breakpoints</label> 
 			<br><br><br>
 			<center><span id="message"></span></center>
 		</div>
