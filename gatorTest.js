@@ -1,7 +1,7 @@
 window.onload = setup;
 var version = "1.6";
-var hze = 0;
-var ticked = false;
+var hze = 1;
+var lockedRunStats = false;
 var fuelStart = 230;
 var fuelEnd = 230;
 var fuelZones = 0;
@@ -24,6 +24,7 @@ var efficiencyMod = 1
 var capacity = 0;
 var maxCapacity = 3;
 var supply = 0;
+var supplyCap = 230;
 var maxSupply = 0.2;
 var overclocker = 0;
 var overclockRate = 0;
@@ -58,7 +59,7 @@ var finalAmalRatio = 0;
 var yourFinalRatio = 0;
 var magmaZones = 0;
 var magmiteZones = 0;
-var totalMagmite = 0;
+var magmiteEarned = 0;
 
 var ar1 = 10000000000;
 var ar2 = 1000000000;
@@ -180,27 +181,60 @@ function calculateCoordinationIncrease() {
 	document.getElementById("coordinationArmyIncrease").textContent = coordinationArmyIncrease.toFixed(4) + "%";
 }
 
-function changeRandimp(value) {}
+function changeRandimp(value) {
+	randimp = value;
+	if (value) tauntimpFrequency = 2.97;
+	else tauntimpFrequency = 3.366;
+}
 
-function changeEfficiency() {}
+function changeMagmaFlow(value) {
+	magmaFlow = value;
+	if (value) magmaCellsPerZone = 18;
+	else magmaCellsPerZone = 16;
+}
 
-function changeCapacity() {}
+function calculateMagma() {
+	magmaZones = runEnd - fuelStart;
+	document.getElementById("magmaZones").textContent = magmaZones;
+	
+	document.getElementById("fuelZones").textContent = fuelZones;
+	
+	magmiteZones = magmaZones - fuelZones;
+	document.getElementById("magmiteZones").textContent = magmiteZones;
+	
+	magmiteEarned = magmiteZones * magmaCelsPerZone;
+	document.getElementById("magmiteEarned").textContent = magmiteEarned;
+}
 
-function changeSupply() {}
+function changeEfficiency(value) {
+	efficiency = Math.max(0, parseInt(value));
+	efficiencyMod = 1 + efficiency / 10;
+}
 
-function changeOverclocker() {}
+function changeCapacity(value) {
+	capacity = Math.max(0, parseint(value));
+	maxCapacity = 3 + capacity * 0.4;
+}
 
-function checkDGUpgrades() {}
+function changeSupply(value) {
+	supply = Math.max(0, parseInt(value));
+	maxSupply = 0.2 + 0.02 * supply;
+}
 
-function changeHZE() {}
+function changeOverclocker(value) {
+	overclocker = Math.max(0, parseInt(value));
+	overclockRate = 1 - 0.50 * Math.pow(0.99, overclocker);
+}
+
+function checkDimensionalGeneratorUpgrades() {}
+
+function changeHZE(value) {
+	hze = Math.max(1, parseInt(value));
+}
 
 function changeStorage() {}
 
 function changeSlowburn() {}
-
-function changeMagmaFlow() {}
-
-function calculateMagma() {}
 
 function calculateFinalAmalRatio() {}
 
