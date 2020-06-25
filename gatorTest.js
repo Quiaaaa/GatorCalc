@@ -30,62 +30,46 @@ var overclocker = 0;
 var overclockRate = 0;
 
 var storage = false;
-var storage = 1;
+var storageMod = 1;
 var slowburn = false;
 var fuelPerTick = 0.5;
 var popPerTick = 0;
-var minTick = 0;
-var maxTick = 0;
-var tickRatio = 0;
 
 var efficiencyCost = 8;
 var capacityCost = 32;
 var supplyCost = 64;
 var overclockerCost = 512;
 
+var efficiencyValue = 1;
+var capacityValue = 1;
+var supplyValue = 1;
+var overclockerValue = 0;
+
 var totalPop = 0;
-var currentPop = [];
-var finalAmals = 0;
-var tauntimpPercent = 0;
-var maxAmalgamators = 0;
-var lastCoordination = 0;
-var finalAmalgamatorZone = 0;
-var neededPop = 0;
 var finalArmySize = 0;
+var maxAmalgamators = 0;
+var finalAmalgamators = 0;
+var finalAmalgamatorZone = 0;
+
+var magmaZones = 0;
+var magmiteZones = 0;
+var magmiteEarned = 0;
+var currentPop = [];
+
+var tauntimpPercent = 0;
+
+var lastCoordination = 0;
+
+var neededPop = 0;
+
 var coordinationArmyIncrease = 0;
 var armySizes = [];
 var coordinationThresholds = [];
 var finalAmalRatio = 0;
 var yourFinalRatio = 0;
-var magmaZones = 0;
-var magmiteZones = 0;
-var magmiteEarned = 0;
 
-var ar1 = 10000000000;
-var ar2 = 1000000000;
-var ar3 = 100000000;
-var ar4 = 10000000;
-var ar5 = 1000000;
-
-var withheldCoords = 0;
-var withholdStopZone = -1;
-var totalGatorGoal = 1;
-var fuelThisZone = [];
-var totalFuel = [];
-var overclockTicks = [];
-var overclockPop = [];
-var overclockPopThisZone = [];
-var popWithTauntimp = [];
-var popFromTauntimp = [];
-var percentFromTauntimp = [];
-var tauntimpThisZone = [];
-var coordPop = [];
-var amalRatio = [];
-var adjustedRatio = [];
-var currentAmals = [];
 
 var minimizeZone = 230;
-var gatorZone = 230;
 var offset = false;
 
 function setup() {
@@ -223,7 +207,8 @@ function changeSupply(value) {
 
 function changeOverclocker(value) {
 	overclocker = Math.max(0, parseInt(value));
-	overclockRate = 1 - 0.50 * Math.pow(0.99, overclocker);
+	if (overclocker = 0) overclockRate = 0;
+	else overclockRate = 1 - 0.50 * Math.pow(0.99, overclocker-1);
 }
 
 function checkDimensionalGeneratorUpgrades() {}
@@ -232,37 +217,29 @@ function changeHZE(value) {
 	hze = Math.max(1, parseInt(value));
 }
 
-function changeStorage() {}
+function changeStorage(value) {
+	storage = value;
+	if (storage) storageMod = 2;
+	else storageMod = 1;
+}
 
-function changeSlowburn() {}
-
-function calculateFinalAmalRatio() {}
-
-function calculateMinTick() {}
-
-function calculateMaxTick() {}
+function changeSlowburn(value) {
+	slowburn = value;
+	if (slowwburn) fuelPerTick = 0.4;
+	else fuelPerTick = 0.5;
+}
 
 function calculateCurrentPop() {}
 
 function pasteSave(save) {}
 
-function clearText() {}
+function clearSaveBox() {}
 
 function optimize() {}
 
 function minimize() {}
 
 function changeMinimizeZone() {}
-
-function forceGator() {}
-
-function changeGatorZone() {}
-
-function changeWithheldCoords() {}
-
-function changeWithheldCoordsZone() {}
-
-function changeGatorGoal() {}
 
 function saveSettings() {}
 
