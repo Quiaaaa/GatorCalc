@@ -79,9 +79,14 @@ var minimizeZone = 230;
 var gatorZone = 230;
 var offset = false;
 
+const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
+let elements
+
+
 function setup() {
+	elements = Object.fromEntries(elementsToGet.map(element => [element, document.getElementById(element)]))
 	loadSettings();
-	document.getElementById("version").innerHTML = version;
+	elements["version"].innerText = version;
 }
 
 function changeFuelStart(value) {
@@ -90,7 +95,7 @@ function changeFuelStart(value) {
 	if (fuelStart > fuelEnd) fuelEnd = fuelStart;
 	if (fuelStart > runEnd) runEnd = fuelStart;
 	fuelZones = fuelEnd - fuelStart;
-	document.getElementById("fuelZones").value = (fuelEnd - fuelStart);
+	elements["fuelZones"].value = (fuelEnd - fuelStart);
 	calculateMagma();
 	calculateCurrentPop();
 }
@@ -100,7 +105,7 @@ function changeFuelEnd(value) {
 	if (fuelEnd < fuelStart) fuelStart = fuelEnd;
 	if (fuelEnd > runEnd) runEnd = fuelEnd;
 	fuelZones = fuelEnd - fuelStart;
-	document.getElementById("fuelZones").value = (fuelEnd - fuelStart);
+	elements["fuelZones"].value = (fuelEnd - fuelStart);
 	if (fuelZones != (fuelEnd - fuelStart)) changeFuelZones(fuelEnd - fuelStart);
 	calculateMagma();
 	calculateCurrentPop();
@@ -109,7 +114,7 @@ function changeFuelEnd(value) {
 function changeFuelZones(value) {
 	fuelZones = parseInt(value);
 	fuelEnd = fuelStart + fuelZones;
-	document.getElementById("fuelEnd").value = (fuelStart + fuelZones);
+	elements["fuelEnd"].value = (fuelStart + fuelZones);
 	if (fuelEnd != (fuelStart + fuelZones)) changeFuelEnd(fuelStart + fuelZones);
 	calculateMagma();
 	calculateCurrentPop();
@@ -125,7 +130,7 @@ function changeHousingMod(value) {
 	housingMod = parseFloat(value);
 	if (housingMod < 0) {
 		housingMod = 1 + (housingMod / 100);
-		document.getElementById("housingMod").value = housingMod.toFixed(2);
+		elements["housingMod"].value = housingMod.toFixed(2);
 	}
 	calculateCurrentPop();
 }
@@ -195,7 +200,7 @@ function changeCapacity(value, mod) {
 function changeSupply(value, mod) {
 	supply = parseInt(value);
 	maxSupply = 0.2 + (supply * 0.02);
-	document.getElementById("maxSupplyZone").innerHTML = (230 + (2 * supply));
+	elements["maxSupplyZone"].innerText = (230 + (2 * supply));
 	supplyCost = (supply + 1) * 64;
 	calculateCurrentPop();
 	if (mod == undefined) checkDGUpgrades();
@@ -315,14 +320,14 @@ function checkDGUpgrades() {
 	supplyEfficiency /= supplyCost;
 	overclockerEfficiency /= overclockerCost;
 	
-	if (efficiencyCost < 0) document.getElementById("efficiencyEfficiency").innerHTML = "-----";
-	else document.getElementById("efficiencyEfficiency").innerHTML = "1";
-	if (capacityCost < 0) document.getElementById("capacityEfficiency").innerHTML = "-----";
-	else document.getElementById("capacityEfficiency").innerHTML = (capacityEfficiency / efficiencyEfficiency).toFixed(4);
-	if (supplyCost < 0) document.getElementById("supplyEfficiency").innerHTML = "-----";
-	else document.getElementById("supplyEfficiency").innerHTML = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
-	if (overclockerCost < 0) document.getElementById("overclockerEfficiency").innerHTML = "-----";
-	else document.getElementById("overclockerEfficiency").innerHTML = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
+	if (efficiencyCost < 0) elements["efficiencyEfficiency"].innerText = "-----";
+	else elements["efficiencyEfficiency"].innerText = "1";
+	if (capacityCost < 0) elements["capacityEfficiency"].innerText = "-----";
+	else elements["capacityEfficiency"].innerText = (capacityEfficiency / efficiencyEfficiency).toFixed(4);
+	if (supplyCost < 0) elements["supplyEfficiency"].innerText = "-----";
+	else elements["supplyEfficiency"].innerText = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
+	if (overclockerCost < 0) elements["overclockerEfficiency"].innerText = "-----";
+	else elements["overclockerEfficiency"].innerText = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 	
 	changeRunEnd(myRunEnd);
 	changeFuelStart(myStart);
@@ -357,18 +362,18 @@ function changeMagmaFlow(value) {
 }
 
 function calculateMagma() {
-	document.getElementById("zonesOfFuel").innerHTML = fuelZones;
+	elements["zonesOfFuel"].innerText = fuelZones;
 	zonesOfMI = (runEnd - 230) - fuelZones;
-	document.getElementById("zonesOfMI").innerHTML = zonesOfMI;
-	document.getElementById("zonesOfMagma").innerHTML = runEnd - 230;
+	elements["zonesOfMI"].innerText = zonesOfMI;
+	elements["zonesOfMagma"].innerText = runEnd - 230;
 	if (magmaFlow) totalMI = zonesOfMI * 18;
 	else totalMI = zonesOfMI * 16;
-	document.getElementById("totalMI").innerHTML = totalMI;
+	elements["totalMI"].innerText = totalMI;
 }
 
 function calculateCoordIncrease() {
 	coordIncrease = 25 * Math.pow(0.98, coord);
-	document.getElementById("coordIncrease").innerHTML = coordIncrease.toFixed(4);
+	elements["coordIncrease"].innerText = coordIncrease.toFixed(4);
 	coordinations[0] = 3;
 	var c = 0;
 	for (i = 1; i <= 328; i++) {
@@ -379,8 +384,8 @@ function calculateCoordIncrease() {
 }
 
 function calculateFinalAmalRatio() {
-	document.getElementById("finalAmalRatio").innerHTML = Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000);
-	//document.getElementById("finalAmalRatio").innerHTML = enumerate(Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000));
+	elements["finalAmalRatio"].innerText = Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000);
+	//elements["finalAmalRatio"].innerText = enumerate(Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000));
 }
 
 function calculateCarpMod() {
@@ -399,7 +404,7 @@ function calculateMaxTick() {
 }
 
 function calculateCurrentPop() {
-	offset = document.getElementById("offset5").checked;
+	offset = elements["offset5"].checked;
 	var sum = [];
 	var myHze = runEnd;
 	if (hze > myHze) myHze = hze;
@@ -435,7 +440,6 @@ function calculateCurrentPop() {
 		if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + (coordIncrease / 100))) * 3;
 		else if (uncoordsZone == -1) {
 			coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
-			document.getElementById("zonesWithheld").innerHTML = "-";
 		}
 		else {
 			if (i + 230 > uncoordsZone && currentAmals[i - 1] < uncoordsGoal && !goalReached) {
@@ -446,7 +450,6 @@ function calculateCurrentPop() {
 				for (skipped = 0; skipped <= skippedCoords; skipped++) {
 					tempCoordPop = Math.ceil((tempCoordPop / 3) * (1 + (coordIncrease / 100))) * 3;
 				}
-				document.getElementById("zonesWithheld").innerHTML = skippedCoords;
 				goalReached = true;
 				coordPop[i] = tempCoordPop;
 			} else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
@@ -479,13 +482,14 @@ function calculateCurrentPop() {
 		if (currentAmals[i] < 0) currentAmals[i] = 0;
 		adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
 	}
+	elements["zonesWithheld"].innerText = skippedCoords <= 0 ? '-' : skippedCoords;
 	totalPop = popWithTauntimp[runEnd - 230] * housingMod;
-	document.getElementById("totalPop").innerHTML = totalPop.toPrecision(3);
-	//document.getElementById("totalPop").innerHTML = enumerate(totalPop);
+	elements["totalPop"].innerText = totalPop.toPrecision(3);
+	//elements["totalPop"].innerText = enumerate(totalPop);
 	tauntimpPercent = (percentFromTauntimp[runEnd - 230] * 100);
-	document.getElementById("tauntimpPercent").innerHTML = tauntimpPercent.toFixed(2);
+	elements["tauntimpPercent"].innerText = tauntimpPercent.toFixed(2);
 	finalAmals = currentAmals[runEnd - 230];
-	document.getElementById("finalAmals").innerHTML = finalAmals;
+	elements["finalAmals"].innerText = finalAmals;
 	maxAmals = 0;
 	for (i = 0; i <= (runEnd - 230); i++) {
 		if (currentAmals[i] > maxAmals) {
@@ -493,16 +497,16 @@ function calculateCurrentPop() {
 			finalAmalZone = i + 230;
 		}
 	}
-	document.getElementById("maxAmals").innerHTML = maxAmals;
-	document.getElementById("finalAmalZone").innerHTML = finalAmalZone;
+	elements["maxAmals"].innerText = maxAmals;
+	elements["finalAmalZone"].innerText = finalAmalZone;
 	neededPop = coordPop[runEnd - 230] / 3;
-	document.getElementById("neededPop").innerHTML = neededPop.toPrecision(3);
-	//document.getElementById("neededPop").innerHTML = enumerate(neededPop);
+	elements["neededPop"].innerText = neededPop.toPrecision(3);
+	//elements["neededPop"].innerText = enumerate(neededPop);
 	finalArmySize = neededPop * Math.pow(1000, finalAmals);
-	document.getElementById("finalArmySize").innerHTML = finalArmySize.toPrecision(3);
-	//document.getElementById("finalArmySize").innerHTML = enumerate(finalArmySize);
+	elements["finalArmySize"].innerText = finalArmySize.toPrecision(3);
+	//elements["finalArmySize"].innerText = enumerate(finalArmySize);
 	yourFinalRatio = totalPop / finalArmySize;
-	document.getElementById("yourFinalRatio").innerHTML = Math.ceil(yourFinalRatio);
+	elements["yourFinalRatio"].innerText = Math.ceil(yourFinalRatio);
 	
 	var x = -1;
 	var y = "N/A";
@@ -516,10 +520,10 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	if (x == -1) document.getElementById("npm1").innerHTML = "N/A";
-	else document.getElementById("npm1").innerHTML = (ar1 / x).toPrecision(5);
-	document.getElementById("ex1").innerHTML = y;
-	document.getElementById("uc1").innerHTML = z;
+	if (x == -1) elements["npm1"].innerText = "N/A";
+	else elements["npm1"].innerText = (ar1 / x).toPrecision(5);
+	elements["ex1"].innerText = y;
+	elements["uc1"].innerText = z;
 	
 	x = -1;
 	y = "N/A";
@@ -533,10 +537,10 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	if (x == -1) document.getElementById("npm2").innerHTML = "N/A";
-	else document.getElementById("npm2").innerHTML = (ar2 / x).toPrecision(5);
-	document.getElementById("ex2").innerHTML = y;
-	document.getElementById("uc2").innerHTML = z;
+	if (x == -1) elements["npm2"].innerText = "N/A";
+	else elements["npm2"].innerText = (ar2 / x).toPrecision(5);
+	elements["ex2"].innerText = y;
+	elements["uc2"].innerText = z;
 	
 	x = -1;
 	y = "N/A";
@@ -550,10 +554,10 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	if (x == -1) document.getElementById("npm3").innerHTML = "N/A";
-	else document.getElementById("npm3").innerHTML = (ar3 / x).toPrecision(5);
-	document.getElementById("ex3").innerHTML = y;
-	document.getElementById("uc3").innerHTML = z;
+	if (x == -1) elements["npm3"].innerText = "N/A";
+	else elements["npm3"].innerText = (ar3 / x).toPrecision(5);
+	elements["ex3"].innerText = y;
+	elements["uc3"].innerText = z;
 	
 	x = -1;
 	y = "N/A";
@@ -567,10 +571,10 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	if (x == -1) document.getElementById("npm4").innerHTML = "N/A";
-	else document.getElementById("npm4").innerHTML = (ar4 / x).toPrecision(5);
-	document.getElementById("ex4").innerHTML = y;
-	document.getElementById("uc4").innerHTML = z;
+	if (x == -1) elements["npm4"].innerText = "N/A";
+	else elements["npm4"].innerText = (ar4 / x).toPrecision(5);
+	elements["ex4"].innerText = y;
+	elements["uc4"].innerText = z;
 	
 	x = -1;
 	y = "N/A";
@@ -584,104 +588,104 @@ function calculateCurrentPop() {
 			}
 		}
 	}
-	if (x == -1) document.getElementById("npm5").innerHTML = "N/A";
-	else document.getElementById("npm5").innerHTML = (ar5 / x).toPrecision(5);
-	document.getElementById("ex5").innerHTML = y;
-	document.getElementById("uc5").innerHTML = z;
+	if (x == -1) elements["npm5"].innerText = "N/A";
+	else elements["npm5"].innerText = (ar5 / x).toPrecision(5);
+	elements["ex5"].innerText = y;
+	elements["uc5"].innerText = z;
 	
 	saveSettings();
-	document.getElementById("message").innerHTML = "";
+	elements["message"].innerText = "";
 }
 
 function pasteSave(save) {
-	ticked = document.getElementById("lockRun").checked;
+	ticked = elements["lockRun"].checked;
 	var saveString = save.clipboardData.getData("text/plain").replace(/\s/g, '');
 	game = JSON.parse(LZString.decompressFromBase64(saveString));
 	if (game == null) {
-		document.getElementById("invalid").innerHTML = "Invalid Save!";
+		elements["invalid"].innerText = "Invalid Save!";
 		return;
 	}
-	document.getElementById("invalid").innerHTML = "";
+	elements["invalid"].innerText = "";
 	carp = game.portal.Carpentry.level;
 	changeCarp(carp);
-	document.getElementById("carp").value = carp;
+	elements["carp"].value = carp;
 	carp2 = game.portal.Carpentry_II.level;
 	changeCarp2(carp2);
-	document.getElementById("carp2").value = carp2;
+	elements["carp2"].value = carp2;
 	coord = game.portal.Coordinated.level;
 	changeCoord(coord);
-	document.getElementById("coord").value = coord;
+	elements["coord"].value = coord;
 	randimp = game.talents.magimp.purchased;
 	if (randimp) {
 		changeRandimp(true);
-		document.getElementById("randimp").value = "Yes";
+		elements["randimp"].value = "Yes";
 	} else {
 		changeRandimp(false);
-		document.getElementById("randimp").value = "No";
+		elements["randimp"].value = "No";
 	}
 	efficiency = game.generatorUpgrades.Efficiency.upgrades;
 	changeEfficiency(efficiency);
-	document.getElementById("efficiency").value = efficiency;
+	elements["efficiency"].value = efficiency;
 	capacity = game.generatorUpgrades.Capacity.upgrades;
 	changeCapacity(capacity);
-	document.getElementById("capacity").value = capacity;
+	elements["capacity"].value = capacity;
 	supply = game.generatorUpgrades.Supply.upgrades;
 	changeSupply(supply);
-	document.getElementById("supply").value = supply;
+	elements["supply"].value = supply;
 	overclocker = game.generatorUpgrades.Overclocker.upgrades;
 	changeOverclocker(overclocker);
-	document.getElementById("overclocker").value = overclock;
+	elements["overclocker"].value = overclock;
 	if (game.permanentGeneratorUpgrades.Storage.owned) {
 		changeStorage("Yes");
-		document.getElementById("storage").value = "Yes";
+		elements["storage"].value = "Yes";
 	} else {
 		changeStorage("No");
-		document.getElementById("storage").value = "No";
+		elements["storage"].value = "No";
 	}
 	if (game.permanentGeneratorUpgrades.Slowburn.owned) {
 		changeSlowburn("Yes");
-		document.getElementById("slowburn").value = "Yes";
+		elements["slowburn"].value = "Yes";
 	} else {
 		changeSlowburn("No");
-		document.getElementById("slowburn").value = "No";
+		elements["slowburn"].value = "No";
 	}
 	if (game.talents.magmaFlow.purchased) {
 		changeMagmaFlow("Yes");
-		document.getElementById("magmaFlow").value = "Yes";
+		elements["magmaFlow"].value = "Yes";
 	} else {
 		changeMagmaFlow("No");
-		document.getElementById("magmaFlow").value = "No";
+		elements["magmaFlow"].value = "No";
 	}
 	if (!ticked) {
 		hze = game.global.highestLevelCleared;
-		document.getElementById("hze").value = hze;
+		elements["hze"].value = hze;
 		runEnd = game.global.lastPortal;
 		changeRunEnd(runEnd);
-		document.getElementById("runEnd").value = runEnd;
+		elements["runEnd"].value = runEnd;
 		spiresCleared = game.global.spiresCompleted;
 		changeSpiresCleared(spiresCleared);
-		document.getElementById("spiresCleared").value = spiresCleared;
+		elements["spiresCleared"].value = spiresCleared;
 		if (game.global.genStateConfig.length == 0) fuelStart = 230;
 		else fuelStart = game.global.genStateConfig[0][1];
 		changeFuelStart(fuelStart);
-		document.getElementById("fuelStart").value = fuelStart;
+		elements["fuelStart"].value = fuelStart;
 		if (game.global.genStateConfig.length == 0) fuelEnd = runEnd;
 		else fuelEnd = game.global.genStateConfig[1][1];
 		changeFuelEnd(fuelEnd);
-		document.getElementById("fuelEnd").value = fuelEnd;
+		elements["fuelEnd"].value = fuelEnd;
 		if (game.global.dailyChallenge.large != undefined) {
 			housingMod = 1 - (game.global.dailyChallenge.large.strength / 100)
 		} else housingMod = 1;
 		changeHousingMod(housingMod);
-		document.getElementById("housingMod").value = housingMod.toFixed(2);
+		elements["housingMod"].value = housingMod.toFixed(2);
 	}
 	checkDGUpgrades();
-	document.getElementById("message").innerHTML = "Stats populated!";
+	elements["message"].innerText = "Stats populated!";
 	//console.log(game);
 }
 
 function clearText() {
-	document.getElementById("saveBox").value = "";
+	elements["saveBox"].value = "";
 }
 
 function optimize() {
@@ -700,14 +704,14 @@ function optimize() {
 		}
 	}
 	changeFuelStart(myFuelStart);
-	document.getElementById("fuelStart").value = fuelStart;
+	elements["fuelStart"].value = fuelStart;
 	changeFuelZones(myFuelZones);
-	document.getElementById("fuelZones").value = fuelZones;
-	document.getElementById("message").innerHTML = "Starting fuel zone optimized!";
+	elements["fuelZones"].value = fuelZones;
+	elements["message"].innerText = "Starting fuel zone optimized!";
 }
 
 function minimize(dif, variant) {
-	if (variant == 2) document.getElementById("message").innerHTML = "Calculating...";
+	if (variant == 2) elements["message"].innerText = "Calculating...";
 	changeFuelStart(230); 
 	var myEnd = runEnd;
 	if (variant == 1) changeRunEnd(minimizeZone);
@@ -749,7 +753,7 @@ function minimize(dif, variant) {
 	}
 	
 	changeFuelZones(bestJ);
-	document.getElementById("fuelZones").value = fuelZones;
+	elements["fuelZones"].value = fuelZones;
 	optimize();
 	if (variant == 1) {
 		changeRunEnd(myEnd);
@@ -763,23 +767,23 @@ function minimize(dif, variant) {
 				changeCapacity(capacity + 1, 2);
 			}
 			changeCapacity(capacity - 1);
-			document.getElementById("capacity").value = capacity;
+			elements["capacity"].value = capacity;
 			optimize();
 		}
 	}
-	document.getElementById("message").innerHTML = "Zones to fuel minimized!";
-	if (variant == 2) document.getElementById("message").innerHTML = "Ideal slider setting: " + (3 + capacity * slowburn) + " max fuel";
+	elements["message"].innerText = "Zones to fuel minimized!";
+	if (variant == 2) elements["message"].innerText = "Ideal slider setting: " + (3 + capacity * slowburn) + " max fuel";
 }
 
 function changeMinimizeZone(value) {
 	minimizeZone = parseInt(value);
 	if (minimizeZone < 231) {
 		minimizeZone = 231;
-		document.getElementById("minimizeZone").value = minimizeZone;
+		elements["minimizeZone"].value = minimizeZone;
 	}
 	if (minimizeZone == 2151) {
-		document.getElementById("minimizeCapacity-1").style.display = "inline";
-		document.getElementById("minimizeAtZone-1").style.display = "inline";
+		elements["minimizeCapacity-1"].style.display = "inline";
+		elements["minimizeAtZone-1"].style.display = "inline";
 	}
 }
 
@@ -792,48 +796,48 @@ function forceGator() {
 	} else if (y1 < 301) {
 		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
 			z1 = Math.ceil(Math.log(ar1 / x1) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm1").innerHTML = (ar1 / x1).toPrecision(5);
-			document.getElementById("ex1").innerHTML = y1;
-			document.getElementById("uc1").innerHTML = z1;
+			elements["npm1"].innerText = (ar1 / x1).toPrecision(5);
+			elements["ex1"].innerText = y1;
+			elements["uc1"].innerText = z1;
 		}
 	} else if (y1 < 401) {
 		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
 			z1 = Math.ceil(Math.log(ar2 / x1) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm2").innerHTML = (ar2 / x1).toPrecision(5);
-			document.getElementById("ex2").innerHTML = y1;
-			document.getElementById("uc2").innerHTML = z1;
+			elements["npm2"].innerText = (ar2 / x1).toPrecision(5);
+			elements["ex2"].innerText = y1;
+			elements["uc2"].innerText = z1;
 		}
 	} else if (y1 < 501) {
 		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
 			z1 = Math.ceil(Math.log(ar3 / x1) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm3").innerHTML = (ar3 / x1).toPrecision(5);
-			document.getElementById("ex3").innerHTML = y1;
-			document.getElementById("uc3").innerHTML = z1;
+			elements["npm3"].innerText = (ar3 / x1).toPrecision(5);
+			elements["ex3"].innerText = y1;
+			elements["uc3"].innerText = z1;
 		}
 	} else if (y1 < 601) {
 		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
 			z1 = Math.ceil(Math.log(ar4 / x1) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm4").innerHTML = (ar4 / x1).toPrecision(5);
-			document.getElementById("ex4").innerHTML = y1;
-			document.getElementById("uc4").innerHTML = z1;
+			elements["npm4"].innerText = (ar4 / x1).toPrecision(5);
+			elements["ex4"].innerText = y1;
+			elements["uc4"].innerText = z1;
 		}
 	} else {
 		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
 			z1 = Math.ceil(Math.log(ar5 / x1) / Math.log(1 + (coordIncrease / 100)));
-			document.getElementById("npm5").innerHTML = (ar5 / x1).toPrecision(5);
-			document.getElementById("ex5").innerHTML = y1;
-			document.getElementById("uc5").innerHTML = z1;
+			elements["npm5"].innerText = (ar5 / x1).toPrecision(5);
+			elements["ex5"].innerText = y1;
+			elements["uc5"].innerText = z1;
 		}
 	}
-	document.getElementById("message").innerHTML = "Extra Gator box updated!";
-	if (gatorZone <= finalAmalZone) document.getElementById("message").innerHTML = "Zone too low!";
+	elements["message"].innerText = "Extra Gator box updated!";
+	if (gatorZone <= finalAmalZone) elements["message"].innerText = "Zone too low!";
 }
 
 function changeGatorZone(value) {
 	gatorZone = parseInt(value);
 	if (gatorZone < 230) {
 		gatorZone = 230;
-		document.getElementById("gatorZone").value = gatorZone;
+		elements["gatorZone"].value = gatorZone;
 	}
 }
 
@@ -841,15 +845,15 @@ function changeUncoords(value) {
 	uncoords = parseInt(value);
 	if (uncoords <= 0) {
 		uncoords = 0;
-		document.getElementById("uncoords").value = uncoords;
+		elements["uncoords"].value = uncoords;
 		calculateCurrentPop();
 		return;
 	} else if (uncoords > 100 + runEnd) {
 		uncoords = 100 + runEnd;
-		document.getElementById("uncoords").value = uncoords;
+		elements["uncoords"].value = uncoords;
 	}
 	changeUncoordsZone(-1);
-	document.getElementById("uncoordsZone").value = "";
+	elements["uncoordsZone"].value = "";
 	calculateCurrentPop();
 }
 
@@ -857,10 +861,10 @@ function changeUncoordsZone(value) {
 	uncoordsZone = parseInt(value);
 	if (uncoordsZone <= -1) {
 		uncoordsZone = -1;
-		document.getElementById("uncoordsZone").value = "";
+		elements["uncoordsZone"].value = "";
 	} else if (uncoordsZone > runEnd) {
 		uncoordsZone = runEnd;
-		document.getElementById("uncoordsZone").value = runEnd;
+		elements["uncoordsZone"].value = runEnd;
 	} else changeUncoords(0);
 	calculateCurrentPop();
 }
@@ -929,67 +933,67 @@ function loadSettings() {
 		if (typeof settings.uncoords != "undefined") uncoords = settings.uncoords;
 		if (typeof settings.uncoordsZone != "undefined") uncoordsZone = settings.uncoordsZone;
 		if (typeof settings.uncoordsGoal != "undefined") uncoordsGoal = settings.uncoordsGoal;
-		document.getElementById("lockRun").checked = ticked;
-		document.getElementById("offset5").checked = offset;
+		elements["lockRun"].checked = ticked;
+		elements["offset5"].checked = offset;
 		changeFuelStart(fuelStart);
-		document.getElementById("fuelStart").value = fuelStart;
+		elements["fuelStart"].value = fuelStart;
 		changeFuelEnd(fuelEnd);
-		document.getElementById("fuelEnd").value = fuelEnd;
+		elements["fuelEnd"].value = fuelEnd;
 		changeFuelZones(fuelZones);
-		document.getElementById("fuelZones").value = fuelZones;
+		elements["fuelZones"].value = fuelZones;
 		changeRunEnd(runEnd);
-		document.getElementById("runEnd").value = runEnd;
+		elements["runEnd"].value = runEnd;
 		changeUncoords(uncoords);
-		document.getElementById("uncoords").value = uncoords;
+		elements["uncoords"].value = uncoords;
 		changeUncoordsZone(uncoordsZone);
-		document.getElementById("uncoordsZone").value = uncoordsZone;
+		elements["uncoordsZone"].value = uncoordsZone;
 		changeUncoordsGoal(uncoordsGoal);
-		document.getElementById("uncoordsGoal").selected = uncoordsGoal;
+		elements["uncoordsGoal"].selected = uncoordsGoal;
 		changeHousingMod(housingMod);
-		document.getElementById("housingMod").value = housingMod;
+		elements["housingMod"].value = housingMod;
 		changeSpiresCleared(spiresCleared);
-		document.getElementById("spiresCleared").value = spiresCleared;
+		elements["spiresCleared"].value = spiresCleared;
 		changeCarp(carp);
-		document.getElementById("carp").value = carp;
+		elements["carp"].value = carp;
 		changeCarp2(carp2);
-		document.getElementById("carp2").value = carp2;
+		elements["carp2"].value = carp2;
 		changeCoord(coord);
-		document.getElementById("coord").value = coord;
+		elements["coord"].value = coord;
 		changeRandimp(randimp);	
-		if (randimp) document.getElementById("randimp").value = "Yes";
-		else document.getElementById("randimp").value = "No";
+		if (randimp) elements["randimp"].value = "Yes";
+		else elements["randimp"].value = "No";
 		changeEfficiency(efficiency);
-		document.getElementById("efficiency").value = efficiency;
+		elements["efficiency"].value = efficiency;
 		changeCapacity(capacity);
-		document.getElementById("capacity").value = capacity;
+		elements["capacity"].value = capacity;
 		changeSupply(supply);
-		document.getElementById("supply").value = supply;
+		elements["supply"].value = supply;
 		changeOverclocker(overclock);
-		document.getElementById("overclocker").value = overclock;
+		elements["overclocker"].value = overclock;
 		changeHZE(hze);
-		document.getElementById("hze").value = hze;
+		elements["hze"].value = hze;
 		changeStorage(storage);
-		if (storage == 2) document.getElementById("storage").value = "Yes";
-		else document.getElementById("storage").value = "No";
+		if (storage == 2) elements["storage"].value = "Yes";
+		else elements["storage"].value = "No";
 		changeSlowburn(slowburn);
-		if (slowburn == 0.4) document.getElementById("slowburn").value = "Yes";
-		else document.getElementById("slowburn").value = "No";
+		if (slowburn == 0.4) elements["slowburn"].value = "Yes";
+		else elements["slowburn"].value = "No";
 		changeMagmaFlow(magmaFlow);
-		if (magmaFlow) document.getElementById("magmaFlow").value = "Yes";
-		else document.getElementById("magmaFlow").value = "No";
+		if (magmaFlow) elements["magmaFlow"].value = "Yes";
+		else elements["magmaFlow"].value = "No";
 		changeMinimizeZone(minimizeZone);
-		document.getElementById("minimizeZone").value = minimizeZone;
+		elements["minimizeZone"].value = minimizeZone;
 		changeGatorZone(gatorZone);
-		document.getElementById("gatorZone").value = gatorZone;
+		elements["gatorZone"].value = gatorZone;
 		checkDGUpgrades();
-		document.getElementById("message").innerHTML = "Settings loaded!";
+		elements["message"].innerText = "Settings loaded!";
 	}
 }
 
 function goFaq() {
-	if (document.getElementById("faqScreen").style.display == "inline") document.getElementById("faqScreen").style.display = "none";
-	else document.getElementById("faqScreen").style.display = "inline";
-	document.getElementById("faqScreen").focus();
+	if (elements["faqScreen"].style.display == "inline") elements["faqScreen"].style.display = "none";
+	else elements["faqScreen"].style.display = "inline";
+	elements["faqScreen"].focus();
 }
 
 //Make numbers look good.
