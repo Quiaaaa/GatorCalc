@@ -47,7 +47,7 @@
 			<label title="Spires cleared *this run*">
 				<input id="spiresCleared" type="number" min="0" max="6" onchange="changeSpiresCleared(this.value)">&nbsp#Spires Cleared
 			</label>
-			<br><br><br>
+			<br><br>
 			Perk Levels<br>
 			<input id="carp" type="number" onchange="changeCarp(this.value)">&nbspCarpentry
 			<br>
@@ -56,7 +56,7 @@
 			<br>
 			<div class="filler"></div>
 			<input id="coord" type="number" onchange="changeCoord(this.value)">&nbspCoordinated
-			<br><br><br>
+			<br><br>
 			Masteries<br>
 			<select class="select" id="randimp" onchange="changeRandimp(this.value)">
 				<option value="Yes">Yes</option>
@@ -67,6 +67,11 @@
 				<option value="Yes">Yes</option>
 				<option value="No">No</option>
 			</select>&nbspMagma Flow
+			<br><br>
+			Bone Upgrades<br>
+			<input type="number" id="moreImports" onchange="changeImports(this.value)" min="0", max="10">
+			&nbspMore Imports
+			<div class="filler"></div>
 			<br><br>
 			DG Levels<span class="efficiency">Next Upgrade</span><br>
 			<input id="efficiency" type="number" onchange="changeEfficiency(this.value)">&nbspEfficiency
@@ -277,7 +282,7 @@
 			<br>
 			Is this up to date?
 			<span class="answer">
-			This was last updated on June 17, 2020.
+			This was last updated on October 8, 2022.
 			</span>
 			<br>
 			<br>

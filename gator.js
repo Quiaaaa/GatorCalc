@@ -13,6 +13,7 @@ var carp2 = 0;
 var carpMod = 0;
 var coord = 0;
 var randimp = false;
+var moreImports = 0;
 var tauntimpFrequency = 2.97;
 var efficiency = 0;
 var capacity = 0;
@@ -79,7 +80,7 @@ var minimizeZone = 230;
 var gatorZone = 230;
 var offset = false;
 
-const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
+const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "moreImports", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
 let elements
 
 
@@ -168,15 +169,24 @@ function changeCoord(value) {
 }
 
 function changeRandimp(value) {
-	if (value == "No" || !value) {
+	if (value == "No" || !value && randimp) {
 		randimp = false;
-		tauntimpFrequency = 2.97;
+		tauntimpFrequency -= 0.396;
 	}
 	else {
 		randimp = true
-		tauntimpFrequency = 3.366;
+		tauntimpFrequency += 0.396;
 	}
 	calculateCurrentPop();
+}
+
+function changeImports(value) {
+	tauntimpFrequency -= moreImports * 0.05;
+	tauntimpFrequency += value * 0.05;
+	moreImports = value;
+	calculateCurrentPop();
+
+
 }
 
 function changeEfficiency(value, mod) {
@@ -623,6 +633,9 @@ function pasteSave(save) {
 		changeRandimp(false);
 		elements["randimp"].value = "No";
 	}
+	moreImports = game.permaBoneBonuses.exotic.owned;
+	changeImports(moreImports);
+	elements["moreImports"].value = moreImports;
 	efficiency = game.generatorUpgrades.Efficiency.upgrades;
 	changeEfficiency(efficiency);
 	elements["efficiency"].value = efficiency;
