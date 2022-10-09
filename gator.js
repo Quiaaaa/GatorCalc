@@ -169,24 +169,30 @@ function changeCoord(value) {
 }
 
 function changeRandimp(value) {
-	if (value == "No" || !value && randimp) {
+	if (value == "No" || !value) {
 		randimp = false;
-		tauntimpFrequency -= 0.396;
 	}
 	else {
 		randimp = true
-		tauntimpFrequency += 0.396;
 	}
+	calculateTauntimpFrequency();
 	calculateCurrentPop();
 }
 
 function changeImports(value) {
-	tauntimpFrequency -= moreImports * 0.05;
-	tauntimpFrequency += value * 0.05;
 	moreImports = value;
+	calculateTauntimpFrequency();
 	calculateCurrentPop();
+}
 
-
+function calculateTauntimpFrequency() {
+	tauntimpFrequency = 2.97;
+	if (randimp) {
+		tauntimpFrequency += 0.396;
+	}
+	if (moreImports) {
+		tauntimpFrequency += moreImports * 0.05;
+	}
 }
 
 function changeEfficiency(value, mod) {
