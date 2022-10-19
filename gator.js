@@ -231,10 +231,9 @@ function changeSupply(value, mod) {
 }
 
 function changeOverclocker(value, mod) {
-	overclocker = parseInt(value);
-	overclock = overclocker;
-	if (overclocker < 1) overclocker = 1;
-	else overclocker = 1 - (0.5 * Math.pow(0.99, overclocker - 1));
+	overclock = parseInt(value);
+	if (overclock < 1) overclocker = 1;
+	else overclocker = 1 - (0.5 * Math.pow(0.99, overclock - 1));
 	overclockerCost = (overclock * 32) + 512;
 	calculateCurrentPop();
 	if (mod == undefined) checkDGUpgrades();
@@ -654,7 +653,7 @@ function pasteSave(save) {
 	efficiency = game.generatorUpgrades.Efficiency.upgrades;
 	capacity = game.generatorUpgrades.Capacity.upgrades;
 	supply = game.generatorUpgrades.Supply.upgrades;
-	overclocker = game.generatorUpgrades.Overclocker.upgrades;
+	overclock = game.generatorUpgrades.Overclocker.upgrades;
 	storage = game.permanentGeneratorUpgrades.Storage.owned ? 2 : 1;
 	slowburn = game.permanentGeneratorUpgrades.Slowburn.owned ? .4 : .5;
 	if (!ticked) {
