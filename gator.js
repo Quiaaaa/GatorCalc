@@ -14,6 +14,7 @@ var carpMod = 0;
 var coord = 0;
 var randimp = false;
 var moreImports = 0;
+var scaffolding = 0;
 var tauntimpFrequency = 2.97;
 var efficiency = 0;
 var capacity = 0;
@@ -80,7 +81,7 @@ var minimizeZone = 230;
 var gatorZone = 230;
 var offset = false;
 
-const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "moreImports", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
+const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "scaffolding", "moreImports", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
 let elements
 
 
@@ -185,13 +186,20 @@ function changeImports(value) {
 	calculateCurrentPop();
 }
 
+function changeScaffolding(value) {
+	scaffolding = parseInt(value);
+	calculateCarpMod();
+	calculateCurrentPop();
+}
+
 function calculateTauntimpFrequency() {
+	// Non-round numbers are because you only get 99 random cells per zone
 	tauntimpFrequency = 2.97;
 	if (randimp) {
 		tauntimpFrequency += 0.396;
 	}
 	if (moreImports) {
-		tauntimpFrequency += moreImports * 0.05;
+		tauntimpFrequency += moreImports * .05 * 99 / 100; // inc chance * possible import cells / world cells
 	}
 }
 
@@ -247,7 +255,7 @@ function checkDGUpgrades() {
 		changeFuelEnd(runEnd);
 	}
 	var myPop = totalPop;
-	
+
 	changeEfficiency(efficiency + 1, 1);
 	var efficiencyEfficiency = totalPop - myPop;
 	changeEfficiency(efficiency - 1, 1);
@@ -260,12 +268,12 @@ function checkDGUpgrades() {
 	changeOverclocker(overclock + 1, 1);
 	var overclockerEfficiency = totalPop - myPop;
 	changeOverclocker(overclock - 1, 1);
-	
+
 	var eCost = efficiencyCost;
 	var cCost = capacityCost;
 	var sCost = supplyCost;
 	var oCost = overclockerCost;
-	
+
 	if (eCost > myMI * 4.9) efficiencyCost = -1;
 	else if ((eCost * 2) + 8 <= myMI);
 	else if (eCost <= myMI) {
@@ -330,12 +338,12 @@ function checkDGUpgrades() {
 		}
 		overclockerCost += (myMI - oCost) * 0.2;
 	}
-	
+
 	efficiencyEfficiency /= efficiencyCost;
 	capacityEfficiency /= capacityCost;
 	supplyEfficiency /= supplyCost;
 	overclockerEfficiency /= overclockerCost;
-	
+
 	if (efficiencyCost < 0) elements["efficiencyEfficiency"].innerText = "-----";
 	else elements["efficiencyEfficiency"].innerText = "1";
 	if (capacityCost < 0) elements["capacityEfficiency"].innerText = "-----";
@@ -344,7 +352,7 @@ function checkDGUpgrades() {
 	else elements["supplyEfficiency"].innerText = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
 	if (overclockerCost < 0) elements["overclockerEfficiency"].innerText = "-----";
 	else elements["overclockerEfficiency"].innerText = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
-	
+
 	changeRunEnd(myRunEnd);
 	changeFuelStart(myStart);
 	changeFuelEnd(myEnd);
@@ -405,7 +413,7 @@ function calculateFinalAmalRatio() {
 }
 
 function calculateCarpMod() {
-	carpMod = minTick * Math.pow(1.1, carp) * (1 + (carp2 * 0.0025));
+	carpMod = minTick * Math.pow(1.1, carp) * (1 + (carp2 * 0.0025)) * (1 + (scaffolding * Math.pow(1.1, scaffolding - 1)));
 }
 
 function calculateMinTick() {
@@ -424,28 +432,36 @@ function calculateCurrentPop() {
 	var sum = [];
 	var myHze = runEnd;
 	if (hze > myHze) myHze = hze;
-	var stdev = Math.sqrt((0.03 * 0.97) / ((99 * (runEnd - fuelEnd))));
-	var confValue = 1 + ((0.03 - stdev) / 10);
-	if (confValue <= 1) confValue = 1.003;
-	var useConf = false;
+	// TODO SANITY CHECKS REQUIRED
+	var confInterval = (1 - (1.91 / Math.sqrt((runEnd - fuelStart) * tauntimpFrequency)))
+	var useConf = true;
 	var skippedCoords = 0;
 	var goalReached = false;
 	//console.log(confValue);
-	
+
 	for (i = 0; i <= (myHze - 200); i++) { //calc an extra 30 zones because why not
+		// i = zone offset from z230
+
+		//calc fuel gain
 		if (i == 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, maxSupply);
 		if ((i + 230) >= fuelStart && (i + 230) <= fuelEnd) {
 			if (i == 0) totalFuel[0] = 0.2;
 			else totalFuel[i] = (magmaCells * fuelThisZone[i]) + totalFuel[i - 1];
 		} else totalFuel[i] = 0;
+
+		//calc generated pop
 		overclockTicks[i] = Math.max((totalFuel[i] - (storage * maxCapacity)) / slowburn, 0);
 		overclockPop[i] = Math.floor(overclockTicks[i]) * (carpMod * tickRatio) * overclocker;
 		if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
 		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
+
+		//calc tauntimp pop
 		if (i == 0) popWithTauntimp[0] = Math.floor(overclockPopThisZone[0] * Math.pow(1.003, tauntimpFrequency));
-		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(confValue, tauntimpFrequency));
+		else if (useConf) popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency * confInterval));
 		else popWithTauntimp[i] = Math.floor((overclockPopThisZone[i] + popWithTauntimp[i - 1]) * Math.pow(1.003, tauntimpFrequency));
+
+		//calc pop stats
 		if (i == 0) sum[0] = overclockPopThisZone[0];
 		else sum[i] = overclockPopThisZone[i] + sum[i - 1];
 		popFromTauntimp[i] = popWithTauntimp[i] - sum[i];
@@ -453,6 +469,8 @@ function calculateCurrentPop() {
 		else percentFromTauntimp[i] = 0;
 		if (i == 0) tauntimpThisZone[0] = 0;
 		else tauntimpThisZone[i] = popFromTauntimp[i] - popFromTauntimp[i - 1];
+
+		//calc army size
 		if (i == 0) coordPop[0] = Math.ceil((coordinations[coordinations.length - (1 + uncoords)] / 3) * (1 + (coordIncrease / 100))) * 3;
 		else if (uncoordsZone == -1) {
 			coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
@@ -470,10 +488,14 @@ function calculateCurrentPop() {
 				coordPop[i] = tempCoordPop;
 			} else coordPop[i] = Math.ceil((coordPop[i - 1] / 3) * (1 + (coordIncrease / 100))) * 3;
 		}
+
+		//calc gators
 		amalRatio[i] = (popWithTauntimp[i] * housingMod) / (coordPop[i] / 3);
 		if (i == 0) currentAmals[0] = 0;
 		else if ((offset && ((i - 1) % 5) != 0) || (offset && ((i - 71) % 100) == 0)) {
 			currentAmals[i] = currentAmals[i - 1];
+
+			//TODO There has to be a less repetive way to write this
 		} else if (i <= 70) {
 			if (adjustedRatio[i - 1] > Math.max(ar1, finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
 			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
@@ -494,7 +516,7 @@ function calculateCurrentPop() {
 			if (adjustedRatio[i - 1] > Math.max(ar5, finalAmalRatio)) currentAmals[i] = currentAmals[i - 1] + 1;
 			else if (adjustedRatio[i - 1] < 1000) currentAmals[i] = currentAmals[i - 1] - 1;
 			else currentAmals[i] = currentAmals[i - 1];
-		} 
+		}
 		if (currentAmals[i] < 0) currentAmals[i] = 0;
 		adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
 	}
@@ -523,7 +545,7 @@ function calculateCurrentPop() {
 	//elements["finalArmySize"].innerText = enumerate(finalArmySize);
 	yourFinalRatio = totalPop / finalArmySize;
 	elements["yourFinalRatio"].innerText = Math.ceil(yourFinalRatio);
-	
+
 	var x = -1;
 	var y = "N/A";
 	var z = "N/A";
@@ -540,7 +562,7 @@ function calculateCurrentPop() {
 	else elements["npm1"].innerText = (ar1 / x).toPrecision(5);
 	elements["ex1"].innerText = y;
 	elements["uc1"].innerText = z;
-	
+
 	x = -1;
 	y = "N/A";
 	z = "N/A";
@@ -557,7 +579,7 @@ function calculateCurrentPop() {
 	else elements["npm2"].innerText = (ar2 / x).toPrecision(5);
 	elements["ex2"].innerText = y;
 	elements["uc2"].innerText = z;
-	
+
 	x = -1;
 	y = "N/A";
 	z = "N/A";
@@ -574,7 +596,7 @@ function calculateCurrentPop() {
 	else elements["npm3"].innerText = (ar3 / x).toPrecision(5);
 	elements["ex3"].innerText = y;
 	elements["uc3"].innerText = z;
-	
+
 	x = -1;
 	y = "N/A";
 	z = "N/A";
@@ -591,7 +613,7 @@ function calculateCurrentPop() {
 	else elements["npm4"].innerText = (ar4 / x).toPrecision(5);
 	elements["ex4"].innerText = y;
 	elements["uc4"].innerText = z;
-	
+
 	x = -1;
 	y = "N/A";
 	z = "N/A";
@@ -608,7 +630,7 @@ function calculateCurrentPop() {
 	else elements["npm5"].innerText = (ar5 / x).toPrecision(5);
 	elements["ex5"].innerText = y;
 	elements["uc5"].innerText = z;
-	
+
 	saveSettings();
 	elements["message"].innerText = "";
 }
@@ -623,82 +645,32 @@ function pasteSave(save) {
 	}
 	elements["invalid"].innerText = "";
 	carp = game.portal.Carpentry.level;
-	changeCarp(carp);
-	elements["carp"].value = carp;
 	carp2 = game.portal.Carpentry_II.level;
-	changeCarp2(carp2);
-	elements["carp2"].value = carp2;
 	coord = game.portal.Coordinated.level;
-	changeCoord(coord);
-	elements["coord"].value = coord;
 	randimp = game.talents.magimp.purchased;
-	if (randimp) {
-		changeRandimp(true);
-		elements["randimp"].value = "Yes";
-	} else {
-		changeRandimp(false);
-		elements["randimp"].value = "No";
-	}
+	magmaFlow = game.talents.magmaFlow.purchased;
 	moreImports = game.permaBoneBonuses.exotic.owned;
-	changeImports(moreImports);
-	elements["moreImports"].value = moreImports;
+	scaffolding = game.global.autoBattleData.bonuses.Scaffolding;
 	efficiency = game.generatorUpgrades.Efficiency.upgrades;
-	changeEfficiency(efficiency);
-	elements["efficiency"].value = efficiency;
 	capacity = game.generatorUpgrades.Capacity.upgrades;
-	changeCapacity(capacity);
-	elements["capacity"].value = capacity;
 	supply = game.generatorUpgrades.Supply.upgrades;
-	changeSupply(supply);
-	elements["supply"].value = supply;
 	overclocker = game.generatorUpgrades.Overclocker.upgrades;
-	changeOverclocker(overclocker);
-	elements["overclocker"].value = overclock;
-	if (game.permanentGeneratorUpgrades.Storage.owned) {
-		changeStorage("Yes");
-		elements["storage"].value = "Yes";
-	} else {
-		changeStorage("No");
-		elements["storage"].value = "No";
-	}
-	if (game.permanentGeneratorUpgrades.Slowburn.owned) {
-		changeSlowburn("Yes");
-		elements["slowburn"].value = "Yes";
-	} else {
-		changeSlowburn("No");
-		elements["slowburn"].value = "No";
-	}
-	if (game.talents.magmaFlow.purchased) {
-		changeMagmaFlow("Yes");
-		elements["magmaFlow"].value = "Yes";
-	} else {
-		changeMagmaFlow("No");
-		elements["magmaFlow"].value = "No";
-	}
+	storage = game.permanentGeneratorUpgrades.Storage.owned ? 2 : 1;
+	slowburn = game.permanentGeneratorUpgrades.Slowburn.owned ? .4 : .5;
 	if (!ticked) {
 		hze = game.global.highestLevelCleared;
-		elements["hze"].value = hze;
 		runEnd = game.global.lastPortal;
-		changeRunEnd(runEnd);
-		elements["runEnd"].value = runEnd;
 		spiresCleared = game.global.spiresCompleted;
-		changeSpiresCleared(spiresCleared);
-		elements["spiresCleared"].value = spiresCleared;
 		if (game.global.genStateConfig.length == 0) fuelStart = 230;
 		else fuelStart = game.global.genStateConfig[0][1];
-		changeFuelStart(fuelStart);
-		elements["fuelStart"].value = fuelStart;
 		if (game.global.genStateConfig.length == 0) fuelEnd = runEnd;
 		else fuelEnd = game.global.genStateConfig[1][1];
-		changeFuelEnd(fuelEnd);
-		elements["fuelEnd"].value = fuelEnd;
 		if (game.global.dailyChallenge.large != undefined) {
 			housingMod = 1 - (game.global.dailyChallenge.large.strength / 100)
 		} else housingMod = 1;
-		changeHousingMod(housingMod);
-		elements["housingMod"].value = housingMod.toFixed(2);
 	}
 	checkDGUpgrades();
+	updateAfterLoad();
 	elements["message"].innerText = "Stats populated!";
 	//console.log(game);
 }
@@ -731,7 +703,7 @@ function optimize() {
 
 function minimize(dif, variant) {
 	if (variant == 2) elements["message"].innerText = "Calculating...";
-	changeFuelStart(230); 
+	changeFuelStart(230);
 	var myEnd = runEnd;
 	if (variant == 1) changeRunEnd(minimizeZone);
 	changeFuelEnd(runEnd);
@@ -745,7 +717,7 @@ function minimize(dif, variant) {
 	else changeFuelStart(runEnd);
 	changeFuelZones(0);
 	if (variant == 2) var myCapacity = capacity;
-	
+
 	while (fuelStart >= 230) {
 		while (finalAmals >= bestAmals && fuelZones >= 0) {
 			if (variant == 2) {
@@ -770,7 +742,7 @@ function minimize(dif, variant) {
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
 		if (maxedAmals == true && finalAmals < bestAmals) break;
 	}
-	
+
 	changeFuelZones(bestJ);
 	elements["fuelZones"].value = fuelZones;
 	optimize();
@@ -811,7 +783,7 @@ function forceGator() {
 	var y1 = gatorZone;
 	var z1 = "N/A";
 	if (y1 < 230) {
-		
+
 	} else if (y1 < 301) {
 		if (currentAmals[y1 - 230] >= maxAmals && y1 > finalAmalZone) {
 			z1 = Math.ceil(Math.log(ar1 / x1) / Math.log(1 + (coordIncrease / 100)));
@@ -895,31 +867,33 @@ function changeUncoordsGoal(value) {
 
 function saveSettings() {
 	var settings = {
-		hze : hze,
-		ticked : ticked,
-		fuelStart : fuelStart,
-		fuelEnd : fuelEnd,
-		fuelZones : fuelZones,
-		runEnd : runEnd,
-		housingMod : housingMod,
-		spiresCleared : spiresCleared,
-		carp : carp,
-		carp2 : carp2,
-		coord : coord,
-		randimp : randimp,
-		efficiency : efficiency,
-		capacity : capacity,
-		supply : supply,
-		overclock : overclock,
-		storage : storage,
-		slowburn : slowburn,
-		magmaFlow : magmaFlow,
-		minimizeZone : minimizeZone,
-		gatorZone : gatorZone,
-		offset : offset,
-		uncoords : uncoords, 
-		uncoordsZone : uncoordsZone,
-		uncoordsGoal : uncoordsGoal
+		hze: hze,
+		ticked: ticked,
+		fuelStart: fuelStart,
+		fuelEnd: fuelEnd,
+		fuelZones: fuelZones,
+		runEnd: runEnd,
+		housingMod: housingMod,
+		spiresCleared: spiresCleared,
+		carp: carp,
+		carp2: carp2,
+		coord: coord,
+		randimp: randimp,
+		magmaFlow: magmaFlow,
+		moreImports: moreImports,
+		scaffolding: scaffolding,
+		efficiency: efficiency,
+		capacity: capacity,
+		supply: supply,
+		overclock: overclock,
+		storage: storage,
+		slowburn: slowburn,
+		minimizeZone: minimizeZone,
+		gatorZone: gatorZone,
+		offset: offset,
+		uncoords: uncoords,
+		uncoordsZone: uncoordsZone,
+		uncoordsGoal: uncoordsGoal
 	}
 	localStorage.setItem("GatorSettings", JSON.stringify(settings));
 }
@@ -927,86 +901,72 @@ function saveSettings() {
 function loadSettings() {
 	var settings = JSON.parse(localStorage.getItem("GatorSettings"));
 	if (settings != null) {
-		if (typeof settings.hze != "undefined") hze = settings.hze;
-		if (typeof settings.ticked != "undefined") ticked = settings.ticked;
-		if (typeof settings.fuelStart != "undefined") fuelStart = settings.fuelStart;
-		if (typeof settings.fuelEnd != "undefined") fuelEnd = settings.fuelEnd;
-		if (typeof settings.fuelZones != "undefined") fuelZones = settings.fuelZones;
-		if (typeof settings.runEnd != "undefined") runEnd = settings.runEnd;
-		if (typeof settings.housingMod != "undefined") housingMod = settings.housingMod;
-		if (typeof settings.spiresCleared != "undefined") spiresCleared = settings.spiresCleared;
-		if (typeof settings.carp != "undefined") carp = settings.carp;
-		if (typeof settings.carp2 != "undefined") carp2 = settings.carp2;
-		if (typeof settings.coord != "undefined") coord = settings.coord;
-		if (typeof settings.randimp != "undefined") randimp = settings.randimp;
-		if (typeof settings.efficiency != "undefined") efficiency = settings.efficiency;
-		if (typeof settings.capacity != "undefined") capacity = settings.capacity;
-		if (typeof settings.supply != "undefined") supply = settings.supply;
-		if (typeof settings.overclock != "undefined") overclock = settings.overclock;
-		if (typeof settings.storage != "undefined") storage = settings.storage;
-		if (typeof settings.slowburn != "undefined") slowburn = settings.slowburn;
-		if (typeof settings.magmaFlow != "undefined") magmaFlow = settings.magmaFlow;
-		if (typeof settings.minimizeZone != "undefined") minimizeZone = settings.minimizeZone;
-		if (typeof settings.gatorZone != "undefined") gatorZone = settings.gatorZone;
-		if (typeof settings.offset != "undefined") offset = settings.offset;
-		if (typeof settings.uncoords != "undefined") uncoords = settings.uncoords;
-		if (typeof settings.uncoordsZone != "undefined") uncoordsZone = settings.uncoordsZone;
-		if (typeof settings.uncoordsGoal != "undefined") uncoordsGoal = settings.uncoordsGoal;
-		elements["lockRun"].checked = ticked;
-		elements["offset5"].checked = offset;
-		changeFuelStart(fuelStart);
-		elements["fuelStart"].value = fuelStart;
-		changeFuelEnd(fuelEnd);
-		elements["fuelEnd"].value = fuelEnd;
-		changeFuelZones(fuelZones);
-		elements["fuelZones"].value = fuelZones;
-		changeRunEnd(runEnd);
-		elements["runEnd"].value = runEnd;
-		changeUncoords(uncoords);
-		elements["uncoords"].value = uncoords;
-		changeUncoordsZone(uncoordsZone);
-		elements["uncoordsZone"].value = uncoordsZone;
-		changeUncoordsGoal(uncoordsGoal);
-		elements["uncoordsGoal"].selected = uncoordsGoal;
-		changeHousingMod(housingMod);
-		elements["housingMod"].value = housingMod;
-		changeSpiresCleared(spiresCleared);
-		elements["spiresCleared"].value = spiresCleared;
-		changeCarp(carp);
-		elements["carp"].value = carp;
-		changeCarp2(carp2);
-		elements["carp2"].value = carp2;
-		changeCoord(coord);
-		elements["coord"].value = coord;
-		changeRandimp(randimp);	
-		if (randimp) elements["randimp"].value = "Yes";
-		else elements["randimp"].value = "No";
-		changeEfficiency(efficiency);
-		elements["efficiency"].value = efficiency;
-		changeCapacity(capacity);
-		elements["capacity"].value = capacity;
-		changeSupply(supply);
-		elements["supply"].value = supply;
-		changeOverclocker(overclock);
-		elements["overclocker"].value = overclock;
-		changeHZE(hze);
-		elements["hze"].value = hze;
-		changeStorage(storage);
-		if (storage == 2) elements["storage"].value = "Yes";
-		else elements["storage"].value = "No";
-		changeSlowburn(slowburn);
-		if (slowburn == 0.4) elements["slowburn"].value = "Yes";
-		else elements["slowburn"].value = "No";
-		changeMagmaFlow(magmaFlow);
-		if (magmaFlow) elements["magmaFlow"].value = "Yes";
-		else elements["magmaFlow"].value = "No";
-		changeMinimizeZone(minimizeZone);
-		elements["minimizeZone"].value = minimizeZone;
-		changeGatorZone(gatorZone);
-		elements["gatorZone"].value = gatorZone;
-		checkDGUpgrades();
+		for (const [setting, value] of Object.entries(settings)) {
+			if (typeof value != "undefined") window[setting] = value;
+		}
+		updateAfterLoad()
 		elements["message"].innerText = "Settings loaded!";
 	}
+}
+
+function updateAfterLoad() {
+	elements["lockRun"].checked = ticked;
+	elements["offset5"].checked = offset;
+	changeFuelStart(fuelStart);
+	elements["fuelStart"].value = fuelStart;
+	changeFuelEnd(fuelEnd);
+	elements["fuelEnd"].value = fuelEnd;
+	changeFuelZones(fuelZones);
+	elements["fuelZones"].value = fuelZones;
+	changeRunEnd(runEnd);
+	elements["runEnd"].value = runEnd;
+	changeUncoords(uncoords);
+	elements["uncoords"].value = uncoords;
+	changeUncoordsZone(uncoordsZone);
+	elements["uncoordsZone"].value = uncoordsZone;
+	changeUncoordsGoal(uncoordsGoal);
+	elements["uncoordsGoal"].selected = uncoordsGoal;
+	changeHousingMod(housingMod);
+	elements["housingMod"].value = housingMod;
+	changeSpiresCleared(spiresCleared);
+	elements["spiresCleared"].value = spiresCleared;
+	changeCarp(carp);
+	elements["carp"].value = carp;
+	changeCarp2(carp2);
+	elements["carp2"].value = carp2;
+	changeCoord(coord);
+	elements["coord"].value = coord;
+	changeRandimp(randimp);
+	if (randimp) elements["randimp"].value = "Yes";
+	else elements["randimp"].value = "No";
+	elements["moreImports"].value = moreImports;
+	changeImports(moreImports)
+	elements["scaffolding"].value = scaffolding;
+	changeScaffolding(scaffolding);
+	changeEfficiency(efficiency);
+	elements["efficiency"].value = efficiency;
+	changeCapacity(capacity);
+	elements["capacity"].value = capacity;
+	changeSupply(supply);
+	elements["supply"].value = supply;
+	changeOverclocker(overclock);
+	elements["overclocker"].value = overclock;
+	changeHZE(hze);
+	elements["hze"].value = hze;
+	changeStorage(storage);
+	if (storage == 2) elements["storage"].value = "Yes";
+	else elements["storage"].value = "No";
+	changeSlowburn(slowburn);
+	if (slowburn == 0.4) elements["slowburn"].value = "Yes";
+	else elements["slowburn"].value = "No";
+	changeMagmaFlow(magmaFlow);
+	if (magmaFlow) elements["magmaFlow"].value = "Yes";
+	else elements["magmaFlow"].value = "No";
+	changeMinimizeZone(minimizeZone);
+	elements["minimizeZone"].value = minimizeZone;
+	changeGatorZone(gatorZone);
+	elements["gatorZone"].value = gatorZone;
+	checkDGUpgrades();
 }
 
 function goFaq() {
@@ -1019,48 +979,48 @@ function goFaq() {
 function enumerate(x) {
 	if (isNaN(x)) return x;
 	if (x <= 9999) return x;
-	if (x <= 100000) return (x/1000).toFixed(2) + "K";
-	if (x <= 1000000) return (x/1000).toFixed(1) + "K";
-	if (x <= 10000000) return (x/1000000).toFixed(3) + "M";
-	if (x <= 100000000) return (x/1000000).toFixed(2) + "M";
-	if (x <= 1000000000) return (x/1000000).toFixed(1) + "M";
-	if (x <= 10000000000) return (x/1000000000).toFixed(3) + "B";
-	if (x <= 100000000000) return (x/1000000000).toFixed(2) + "B";
-	if (x <= 1000000000000) return (x/1000000000).toFixed(1) + "B";
-	if (x <= 10000000000000) return (x/1000000000000).toFixed(3) + "T";
-	if (x <= 100000000000000) return (x/1000000000000).toFixed(2) + "T";
-	if (x <= 1000000000000000) return (x/1000000000000).toFixed(1) + "T";
-	if (x <= 10000000000000000) return (x/1000000000000000).toFixed(3) + "Qa";
-	if (x <= 100000000000000000) return (x/1000000000000000).toFixed(2) + "Qa";
-	if (x <= 1000000000000000000) return (x/1000000000000000).toFixed(1) + "Qa";
-	if (x <= 10000000000000000000) return (x/1000000000000000000).toFixed(3) + "Qi";
-	if (x <= 100000000000000000000) return (x/1000000000000000000).toFixed(2) + "Qi";
-	if (x <= 1000000000000000000000) return (x/1000000000000000000).toFixed(1) + "Qi";
-	if (x <= 10000000000000000000000) return (x/1000000000000000000000).toFixed(3) + "Sx";
-	if (x <= 100000000000000000000000) return (x/1000000000000000000000).toFixed(2) + "Sx";
-	if (x <= 1000000000000000000000000) return (x/1000000000000000000000).toFixed(1) + "Sx";
-	if (x <= 10000000000000000000000000) return (x/1000000000000000000000000).toFixed(3) + "Sp";
-	if (x <= 100000000000000000000000000) return (x/1000000000000000000000000).toFixed(2) + "Sp";
-	if (x <= 1000000000000000000000000000) return (x/1000000000000000000000000).toFixed(1) + "Sp";
-	if (x <= 10000000000000000000000000000) return (x/1000000000000000000000000000).toFixed(3) + "Oc";
-	if (x <= 100000000000000000000000000000) return (x/1000000000000000000000000000).toFixed(2) + "Oc";
-	if (x <= 1000000000000000000000000000000) return (x/1000000000000000000000000000).toFixed(1) + "Oc";
-	if (x <= 10000000000000000000000000000000) return (x/1000000000000000000000000000000).toFixed(3) + "No";
-	if (x <= 100000000000000000000000000000000) return (x/1000000000000000000000000000000).toFixed(2) + "No";
-	if (x <= 1000000000000000000000000000000000) return (x/1000000000000000000000000000000).toFixed(1) + "No";
-	if (x <= 10000000000000000000000000000000000) return (x/1000000000000000000000000000000000).toFixed(3) + "Dc";
-	if (x <= 100000000000000000000000000000000000) return (x/1000000000000000000000000000000000).toFixed(2) + "Dc";
-	if (x <= 1000000000000000000000000000000000000) return (x/1000000000000000000000000000000000).toFixed(1) + "Dc";
+	if (x <= 100000) return (x / 1000).toFixed(2) + "K";
+	if (x <= 1000000) return (x / 1000).toFixed(1) + "K";
+	if (x <= 10000000) return (x / 1000000).toFixed(3) + "M";
+	if (x <= 100000000) return (x / 1000000).toFixed(2) + "M";
+	if (x <= 1000000000) return (x / 1000000).toFixed(1) + "M";
+	if (x <= 10000000000) return (x / 1000000000).toFixed(3) + "B";
+	if (x <= 100000000000) return (x / 1000000000).toFixed(2) + "B";
+	if (x <= 1000000000000) return (x / 1000000000).toFixed(1) + "B";
+	if (x <= 10000000000000) return (x / 1000000000000).toFixed(3) + "T";
+	if (x <= 100000000000000) return (x / 1000000000000).toFixed(2) + "T";
+	if (x <= 1000000000000000) return (x / 1000000000000).toFixed(1) + "T";
+	if (x <= 10000000000000000) return (x / 1000000000000000).toFixed(3) + "Qa";
+	if (x <= 100000000000000000) return (x / 1000000000000000).toFixed(2) + "Qa";
+	if (x <= 1000000000000000000) return (x / 1000000000000000).toFixed(1) + "Qa";
+	if (x <= 10000000000000000000) return (x / 1000000000000000000).toFixed(3) + "Qi";
+	if (x <= 100000000000000000000) return (x / 1000000000000000000).toFixed(2) + "Qi";
+	if (x <= 1000000000000000000000) return (x / 1000000000000000000).toFixed(1) + "Qi";
+	if (x <= 10000000000000000000000) return (x / 1000000000000000000000).toFixed(3) + "Sx";
+	if (x <= 100000000000000000000000) return (x / 1000000000000000000000).toFixed(2) + "Sx";
+	if (x <= 1000000000000000000000000) return (x / 1000000000000000000000).toFixed(1) + "Sx";
+	if (x <= 10000000000000000000000000) return (x / 1000000000000000000000000).toFixed(3) + "Sp";
+	if (x <= 100000000000000000000000000) return (x / 1000000000000000000000000).toFixed(2) + "Sp";
+	if (x <= 1000000000000000000000000000) return (x / 1000000000000000000000000).toFixed(1) + "Sp";
+	if (x <= 10000000000000000000000000000) return (x / 1000000000000000000000000000).toFixed(3) + "Oc";
+	if (x <= 100000000000000000000000000000) return (x / 1000000000000000000000000000).toFixed(2) + "Oc";
+	if (x <= 1000000000000000000000000000000) return (x / 1000000000000000000000000000).toFixed(1) + "Oc";
+	if (x <= 10000000000000000000000000000000) return (x / 1000000000000000000000000000000).toFixed(3) + "No";
+	if (x <= 100000000000000000000000000000000) return (x / 1000000000000000000000000000000).toFixed(2) + "No";
+	if (x <= 1000000000000000000000000000000000) return (x / 1000000000000000000000000000000).toFixed(1) + "No";
+	if (x <= 10000000000000000000000000000000000) return (x / 1000000000000000000000000000000000).toFixed(3) + "Dc";
+	if (x <= 100000000000000000000000000000000000) return (x / 1000000000000000000000000000000000).toFixed(2) + "Dc";
+	if (x <= 1000000000000000000000000000000000000) return (x / 1000000000000000000000000000000000).toFixed(1) + "Dc";
 	//add a while loop to deal with the rest
-	x = (x/1000000000000000000000000000000000000).toFixed(3);
+	x = (x / 1000000000000000000000000000000000000).toFixed(3);
 	var n = 36;
 	while (x > 999.999) {
-		x = (x/1000);
+		x = (x / 1000);
 		n += 3;
 	}
-	if (x < 1000) x = (x/1).toFixed(1);
-	if (x < 100) x = (x/1).toFixed(2);
-	if (x < 10) x = (x/1).toFixed(3);
+	if (x < 1000) x = (x / 1).toFixed(1);
+	if (x < 100) x = (x / 1).toFixed(2);
+	if (x < 10) x = (x / 1).toFixed(3);
 	return x + "e" + n;
 }
 
