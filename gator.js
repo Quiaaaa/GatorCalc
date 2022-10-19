@@ -650,7 +650,7 @@ function pasteSave(save) {
 	randimp = game.talents.magimp.purchased;
 	magmaFlow = game.talents.magmaFlow.purchased;
 	moreImports = game.permaBoneBonuses.exotic.owned;
-	scaffolding = game.global.autoBattleData.bonuses.Scaffolding;
+	scaffolding = game.global.autoBattleData.bonuses?.Scaffolding ? game.global.autoBattleData.bonuses?.Scaffolding : 0;
 	efficiency = game.generatorUpgrades.Efficiency.upgrades;
 	capacity = game.generatorUpgrades.Capacity.upgrades;
 	supply = game.generatorUpgrades.Supply.upgrades;
