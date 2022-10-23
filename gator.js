@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "1.7";
+var version = "1.7.1";
 var hze = 0;
 var ticked = false;
 var fuelStart = 230;
@@ -80,6 +80,37 @@ var currentAmals = [];
 var minimizeZone = 230;
 var gatorZone = 230;
 var offset = false;
+
+var eradMode = false;
+/*
+TODO
+GENERAL
+Add a 'show extra options' toggle, off by default
+Hide
+	Minimize Capacity
+	Force Gaor At Zone
+	Coords Witheld (set to -1)
+	Withhold coods (set to -1)
+
+	Use 5z breakpoints (set to true)
+
+	Extra gators info box
+
+ERAD
+Put a checkbox under 'use 5 zone breakpoints' to enable erad mode
+	set fuel start to 1
+	set fuel end to ~game.global.c2.erad 
+	set run end to ~game.global.c2.erad 
+	set push run goal to ~game.global.c2.erad ?? Do we need this one?
+
+Put an input box for 'withold until zone X' by the checkbox
+	default to 0
+	set withheld coords to 2*input
+
+Grant 2 coords per zone
+
+bug that needs fixing: NaN error if you try to withhold more coords than you have at your starting zone
+*/
 
 const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "scaffolding", "moreImports", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
 let elements
@@ -426,13 +457,14 @@ function calculateMaxTick() {
 	if (minTick > 0) tickRatio = maxTick / minTick;
 }
 
-function calculateCurrentPop() {
+function calculateCurrentPop(confEndZone) {
 	offset = elements["offset5"].checked;
 	var sum = [];
 	var myHze = runEnd;
 	if (hze > myHze) myHze = hze;
-	// TODO SANITY CHECKS REQUIRED
-	var confInterval = (1 - (1.91 / Math.sqrt((runEnd - fuelStart) * tauntimpFrequency)))
+	// base CI on last gator (recursive)
+	if (!confEndZone) confEndZone = runEnd;
+	var confInterval = (1 - (1.91 / Math.sqrt((confEndZone - fuelStart) * tauntimpFrequency)))
 	var useConf = true;
 	var skippedCoords = 0;
 	var goalReached = false;
@@ -632,6 +664,11 @@ function calculateCurrentPop() {
 
 	saveSettings();
 	elements["message"].innerText = "";
+	if (finalAmalZone < confEndZone && finalAmals > 0) {
+		// rerun calcs for highly uncertain gators
+		calculateCurrentPop(finalAmalZone);
+		return;
+	}
 }
 
 function pasteSave(save) {
@@ -683,7 +720,6 @@ function optimize() {
 	var bestAmals = maxAmals;
 	changeFuelStart(230);
 	var bestPop = 0;
-	if (maxAmals > bestAmals); //Could be getting an extra gator if not called from minimize
 	var myFuelStart = 230;
 	for (f = 230; f <= (runEnd - myFuelZones); f++) {
 		changeFuelStart(f);
@@ -691,6 +727,7 @@ function optimize() {
 		if (totalPop > bestPop && maxAmals >= bestAmals) {
 			bestPop = totalPop;
 			myFuelStart = f;
+			bestAmals = Math.max(maxAmals, bestAmals); // max pop is not always max gators
 		}
 	}
 	changeFuelStart(myFuelStart);
@@ -719,6 +756,7 @@ function minimize(dif, variant) {
 
 	while (fuelStart >= 230) {
 		while (finalAmals >= bestAmals && fuelZones >= 0) {
+			// minimize capacity
 			if (variant == 2) {
 				var myPop = totalPop;
 				while (totalPop >= myPop) {
@@ -737,11 +775,14 @@ function minimize(dif, variant) {
 		}
 		fuelStart -= 1;
 		if (fuelStart >= 230) changeFuelStart(fuelStart);
-		if (variant == 1) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ));
+		if (variant == 1) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ)); // minimize at zone
 		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
 		if (maxedAmals == true && finalAmals < bestAmals) break;
 	}
-
+	// if ratios are dropping per zone, fuel a little extra for safety's sake
+	if (amalRatio[finalAmalZone] > amalRatio[finalAmalZone + 1]) {
+		bestJ += Math.ceil(bestJ * .1)
+	}
 	changeFuelZones(bestJ);
 	elements["fuelZones"].value = fuelZones;
 	optimize();
