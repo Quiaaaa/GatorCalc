@@ -665,8 +665,9 @@ function calculateCurrentPop(confEndZone) {
 	saveSettings();
 	elements["message"].innerText = "";
 	if (finalAmalZone < confEndZone && finalAmals > 0) {
+		// This makes for weird and buggy results, oh well
 		// rerun calcs for highly uncertain gators
-		calculateCurrentPop(finalAmalZone);
+		//calculateCurrentPop(finalAmalZone);
 		return;
 	}
 }
