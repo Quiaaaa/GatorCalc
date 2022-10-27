@@ -127,8 +127,7 @@ function changeFuelStart(value) {
 	if (fuelStart < 230) fuelStart = 230;
 	if (fuelStart > fuelEnd) fuelEnd = fuelStart;
 	if (fuelStart > runEnd) runEnd = fuelStart;
-	fuelZones = fuelEnd - fuelStart;
-	elements["fuelZones"].value = (fuelEnd - fuelStart);
+	if (fuelZones != (fuelEnd - fuelStart)) changeFuelZones(fuelEnd - fuelStart);
 	calculateMagma();
 	calculateCurrentPop();
 }
@@ -137,8 +136,8 @@ function changeFuelEnd(value) {
 	fuelEnd = parseInt(value);
 	if (fuelEnd < fuelStart) fuelStart = fuelEnd;
 	if (fuelEnd > runEnd) runEnd = fuelEnd;
-	fuelZones = fuelEnd - fuelStart;
-	elements["fuelZones"].value = (fuelEnd - fuelStart);
+	elements["fuelEnd"].value = fuelEnd;
+
 	if (fuelZones != (fuelEnd - fuelStart)) changeFuelZones(fuelEnd - fuelStart);
 	calculateMagma();
 	calculateCurrentPop();
@@ -146,8 +145,7 @@ function changeFuelEnd(value) {
 
 function changeFuelZones(value) {
 	fuelZones = parseInt(value);
-	fuelEnd = fuelStart + fuelZones;
-	elements["fuelEnd"].value = (fuelStart + fuelZones);
+	elements["fuelZones"].value = fuelZones;
 	if (fuelEnd != (fuelStart + fuelZones)) changeFuelEnd(fuelStart + fuelZones);
 	calculateMagma();
 	calculateCurrentPop();
@@ -155,6 +153,7 @@ function changeFuelZones(value) {
 
 function changeRunEnd(value) {
 	runEnd = parseInt(value);
+	elements["runEnd"] = runEnd;
 	calculateMagma();
 	calculateCurrentPop();
 }
@@ -170,6 +169,7 @@ function changeHousingMod(value) {
 
 function changeSpiresCleared(value) {
 	spiresCleared = parseInt(value);
+	elements["spiresCleared"].value = spiresCleared;
 	calculateFinalAmalRatio();
 	if (spiresCleared >= 2) ar2 = 1000000000;
 	else ar2 = ar1;
@@ -184,41 +184,42 @@ function changeSpiresCleared(value) {
 
 function changeCarp(value) {
 	carp = parseInt(value);
+	elements["carp"].value = carp;
 	calculateCarpMod();
 	calculateCurrentPop();
 }
 
 function changeCarp2(value) {
 	carp2 = parseInt(value);
+	elements["carp2"].value = carp2;
 	calculateCarpMod();
 	calculateCurrentPop();
 }
 
 function changeCoord(value) {
 	coord = parseInt(value);
+	elements["coord"].value = coord;
 	calculateCoordIncrease();
 	calculateCurrentPop();
 }
 
 function changeRandimp(value) {
-	if (value == "No" || !value) {
-		randimp = false;
-	}
-	else {
-		randimp = true
-	}
+	randimp = !(value == "No" || !value) ? "Yes" : "No";
+	elements["randimp"].value = randimp;
 	calculateTauntimpFrequency();
 	calculateCurrentPop();
 }
 
 function changeImports(value) {
 	moreImports = value;
+	elements["moreImports"].value = moreImports;
 	calculateTauntimpFrequency();
 	calculateCurrentPop();
 }
 
 function changeScaffolding(value) {
 	scaffolding = parseInt(value);
+	elements["scaffolding"].value = scaffolding;
 	calculateCarpMod();
 	calculateCurrentPop();
 }
@@ -236,6 +237,7 @@ function calculateTauntimpFrequency() {
 
 function changeEfficiency(value, mod) {
 	efficiency = parseInt(value);
+	elements["efficiency"].value = efficiency;
 	calculateMinTick();
 	calculateMaxTick();
 	efficiencyCost = (efficiency + 1) * 8;
@@ -245,6 +247,7 @@ function changeEfficiency(value, mod) {
 
 function changeCapacity(value, mod) {
 	capacity = parseInt(value);
+	elements["capacity"].value = capacity;
 	maxCapacity = 3 + (capacity * 0.4);
 	calculateMaxTick();
 	capacityCost = (capacity + 1) * 32;
@@ -254,6 +257,7 @@ function changeCapacity(value, mod) {
 
 function changeSupply(value, mod) {
 	supply = parseInt(value);
+	elements["supply"].value = supply;
 	maxSupply = 0.2 + (supply * 0.02);
 	elements["maxSupplyZone"].innerText = (230 + (2 * supply));
 	supplyCost = (supply + 1) * 64;
@@ -263,8 +267,8 @@ function changeSupply(value, mod) {
 
 function changeOverclocker(value, mod) {
 	overclock = parseInt(value);
-	if (overclock < 1) overclocker = 1;
-	else overclocker = 1 - (0.5 * Math.pow(0.99, overclock - 1));
+	elements["overclocker"].value = overclock;
+	overclocker = (overclock < 1) ? 1 : 1 - (0.5 * Math.pow(0.99, overclock - 1));
 	overclockerCost = (overclock * 32) + 512;
 	calculateCurrentPop();
 	if (mod == undefined) checkDGUpgrades();
@@ -390,27 +394,27 @@ function checkDGUpgrades() {
 
 function changeHZE(value) {
 	hze = parseInt(value);
+	elements["hze"].value = hze;
 	checkDGUpgrades();
 }
 
 function changeStorage(value) {
-	if (value == "Yes" || value == 2) storage = 2;
-	else storage = 1;
+	storage = (value == "Yes" || value == 2) ? 2 : 1;
+	elements["storage"].value = storage == 2 ? "Yes" : "No";
 	calculateCurrentPop();
 }
 
 function changeSlowburn(value) {
-	if (value == "Yes" || value == 0.4) slowburn = 0.4;
-	else slowburn = 0.5;
+	slowburn = (value == "Yes" || value == 0.4) ? 0.4 : 0.5;
+	elements["slowburn"].value = slowburn == 0.4 ? "Yes" : "No";
 	calculateMinTick();
 	calculateCurrentPop();
 }
 
 function changeMagmaFlow(value) {
-	if (value == "No" || !value) magmaFlow = false;
-	else magmaFlow = true;
-	if (magmaFlow) magmaCells = 18;
-	else magmaCells = 16;
+	magmaFlow = (value == "No" || !value) ? false : true;
+	magmaCells = magmaFlow ? 18 : 16;
+	elements["magmaFlow"].value = magmaFlow ? "Yes" : "No";
 	calculateMagma();
 	calculateCurrentPop();
 }
@@ -732,9 +736,7 @@ function optimize() {
 		}
 	}
 	changeFuelStart(myFuelStart);
-	elements["fuelStart"].value = fuelStart;
 	changeFuelZones(myFuelZones);
-	elements["fuelZones"].value = fuelZones;
 	elements["message"].innerText = "Starting fuel zone optimized!";
 }
 
@@ -785,7 +787,6 @@ function minimize(dif, variant) {
 		bestJ += Math.ceil(bestJ * .1)
 	}
 	changeFuelZones(bestJ);
-	elements["fuelZones"].value = fuelZones;
 	optimize();
 	if (variant == 1) {
 		changeRunEnd(myEnd);
@@ -799,7 +800,6 @@ function minimize(dif, variant) {
 				changeCapacity(capacity + 1, 2);
 			}
 			changeCapacity(capacity - 1);
-			elements["capacity"].value = capacity;
 			optimize();
 		}
 	}
@@ -817,6 +817,7 @@ function changeMinimizeZone(value) {
 		elements["minimizeCapacity-1"].style.display = "inline";
 		elements["minimizeAtZone-1"].style.display = "inline";
 	}
+
 }
 
 function forceGator() {
@@ -885,7 +886,6 @@ function changeUncoords(value) {
 		elements["uncoords"].value = uncoords;
 	}
 	changeUncoordsZone(-1);
-	elements["uncoordsZone"].value = "";
 	calculateCurrentPop();
 }
 
@@ -903,6 +903,7 @@ function changeUncoordsZone(value) {
 
 function changeUncoordsGoal(value) {
 	uncoordsGoal = parseInt(value);
+	elements["uncoordsGoal"].selected = uncoordsGoal;
 	calculateCurrentPop();
 }
 
@@ -954,59 +955,30 @@ function updateAfterLoad() {
 	elements["lockRun"].checked = ticked;
 	elements["offset5"].checked = offset;
 	changeFuelStart(fuelStart);
-	elements["fuelStart"].value = fuelStart;
 	changeFuelEnd(fuelEnd);
-	elements["fuelEnd"].value = fuelEnd;
 	changeFuelZones(fuelZones);
-	elements["fuelZones"].value = fuelZones;
 	changeRunEnd(runEnd);
-	elements["runEnd"].value = runEnd;
 	changeUncoords(uncoords);
-	elements["uncoords"].value = uncoords;
 	changeUncoordsZone(uncoordsZone);
-	elements["uncoordsZone"].value = uncoordsZone;
 	changeUncoordsGoal(uncoordsGoal);
-	elements["uncoordsGoal"].selected = uncoordsGoal;
 	changeHousingMod(housingMod);
-	elements["housingMod"].value = housingMod;
 	changeSpiresCleared(spiresCleared);
-	elements["spiresCleared"].value = spiresCleared;
 	changeCarp(carp);
-	elements["carp"].value = carp;
 	changeCarp2(carp2);
-	elements["carp2"].value = carp2;
 	changeCoord(coord);
-	elements["coord"].value = coord;
 	changeRandimp(randimp);
-	if (randimp) elements["randimp"].value = "Yes";
-	else elements["randimp"].value = "No";
-	elements["moreImports"].value = moreImports;
 	changeImports(moreImports)
-	elements["scaffolding"].value = scaffolding;
 	changeScaffolding(scaffolding);
 	changeEfficiency(efficiency);
-	elements["efficiency"].value = efficiency;
 	changeCapacity(capacity);
-	elements["capacity"].value = capacity;
 	changeSupply(supply);
-	elements["supply"].value = supply;
 	changeOverclocker(overclock);
-	elements["overclocker"].value = overclock;
 	changeHZE(hze);
-	elements["hze"].value = hze;
 	changeStorage(storage);
-	if (storage == 2) elements["storage"].value = "Yes";
-	else elements["storage"].value = "No";
 	changeSlowburn(slowburn);
-	if (slowburn == 0.4) elements["slowburn"].value = "Yes";
-	else elements["slowburn"].value = "No";
 	changeMagmaFlow(magmaFlow);
-	if (magmaFlow) elements["magmaFlow"].value = "Yes";
-	else elements["magmaFlow"].value = "No";
 	changeMinimizeZone(minimizeZone);
-	elements["minimizeZone"].value = minimizeZone;
 	changeGatorZone(gatorZone);
-	elements["gatorZone"].value = gatorZone;
 	checkDGUpgrades();
 }
 
