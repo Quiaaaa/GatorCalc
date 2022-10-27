@@ -127,6 +127,7 @@ function changeFuelStart(value) {
 	if (fuelStart < 230) fuelStart = 230;
 	if (fuelStart > fuelEnd) fuelEnd = fuelStart;
 	if (fuelStart > runEnd) runEnd = fuelStart;
+	elements["fuelStart"].value = fuelStart;
 	if (fuelZones != (fuelEnd - fuelStart)) changeFuelZones(fuelEnd - fuelStart);
 	calculateMagma();
 	calculateCurrentPop();
@@ -153,7 +154,7 @@ function changeFuelZones(value) {
 
 function changeRunEnd(value) {
 	runEnd = parseInt(value);
-	elements["runEnd"] = runEnd;
+	elements["runEnd"].value = runEnd;
 	calculateMagma();
 	calculateCurrentPop();
 }
