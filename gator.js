@@ -1,41 +1,18 @@
 window.onload = setup;
 var version = "1.7.1";
-var hze = 0;
 var ticked = false;
-var fuelStart = 230;
-var fuelEnd = 230;
-var fuelZones = fuelEnd - fuelStart;
-var runEnd = 230;
-var housingMod = 1;
-var spiresCleared = 0;
-var carp = 0;
-var carp2 = 0;
 var carpMod = 0;
-var coord = 0;
-var randimp = false;
-var moreImports = 0;
-var scaffolding = 0;
 var tauntimpFrequency = 2.97;
-var efficiency = 0;
-var capacity = 0;
+
 var maxCapacity = 3;
-var supply = 0;
 var maxSupply = 0.2;
-var overclock = 0;
-var overclocker = 0;
-var storage = 2;
-var slowburn = 0.4;
-var magmaFlow = true;
 var magmaCells = 18;
 var popPerTick = 0;
 var minTick = 0;
 var maxTick = 0;
 var tickRatio = 0;
 
-var efficiencyCost = 8;
-var capacityCost = 32;
-var supplyCost = 64;
-var overclockerCost = 512;
+
 
 var totalPop = 0;
 var currentPop = [];
@@ -77,8 +54,6 @@ var amalRatio = [];
 var adjustedRatio = [];
 var currentAmals = [];
 
-var minimizeZone = 230;
-var gatorZone = 230;
 var offset = false;
 
 var eradMode = false;
@@ -112,6 +87,8 @@ Grant 2 coords per zone
 bug that needs fixing: NaN error if you try to withhold more coords than you have at your starting zone
 */
 
+//TODO add in a toggle for max gators or -1, remove minimize -1 button, and HIDDEN SECRET capacity-1 and at zone-1 buttons.
+
 const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "scaffolding", "moreImports", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
 let elements
 
@@ -122,316 +99,445 @@ function setup() {
 	elements["version"].innerText = version;
 }
 
-function changeFuelStart(value) {
-	fuelStart = parseInt(value);
-	if (fuelStart < 230) fuelStart = 230;
-	if (fuelStart > fuelEnd) fuelEnd = fuelStart;
-	if (fuelStart > runEnd) runEnd = fuelStart;
-	elements["fuelStart"].value = fuelStart;
-	if (fuelZones != (fuelEnd - fuelStart)) changeFuelZones(fuelEnd - fuelStart);
-	calculateMagma();
-	calculateCurrentPop();
+
+// All user inputs, UI updates, and recalculations required on change
+const settings = {
+	//runstats
+	fuelStart: {
+		value: 230,
+		elementName: "fuelStart",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			if (this.value < 230) this.value = 230;
+			if (this.value > settings.fuelEnd.value) settings.fuelEnd.value = this.value;
+			if (this.value > settings.runEnd.value) settings.runEnd.value = this.value;
+			elements[this.elementName].value = this.value;
+			if (settings.fuelZones.value != (settings.fuelEnd.value - this.value)) settings.fuelZones.update(settings.fuelEnd.value - this.value);
+			calculateMagma();
+			calculateCurrentPop();
+		},
+	},
+	fuelEnd: {
+		value: 235,
+		elementName: "fuelEnd",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			if (this.value < settings.fuelStart.value) settings.fuelStart.value = this.value;
+			if (this.value > settings.runEnd.value) settings.runEnd.value = this.value;
+			elements[this.elementName].value = this.value;
+			if (settings.fuelZones.value != (this.value - settings.fuelStart.value)) settings.fuelZones.update(this.value - settings.fuelStart.value);
+			calculateMagma();
+			calculateCurrentPop();
+		},
+	},
+	fuelZones: {
+		value: 5,
+		elementName: "fuelZones",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			if (settings.fuelEnd.value != (settings.fuelStart.value + this.value)) settings.fuelEnd.update(settings.fuelStart.value + this.value);
+			calculateMagma();
+			calculateCurrentPop();
+		}
+	},
+	runEnd: {
+		value: 0,
+		elementName: "runEnd",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateMagma();
+			calculateCurrentPop();
+		}
+	},
+	housingMod: {
+		value: 1,
+		elementName: "housingMod",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			if (this.value < 0) {
+				this.value = 1 + (this.value / 100);
+				elements[this.elementName].value = this.value.toFixed(2);
+			}
+			calculateCurrentPop();
+		}
+	},
+	spiresCleared: {
+		value: 0,
+		elementName: "spiresCleared",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateFinalAmalRatio();
+			if (this.value >= 2) ar2 = 1000000000;
+			else ar2 = ar1;
+			if (this.value >= 3) ar3 = 100000000;
+			else ar3 = ar2;
+			if (this.value >= 4) ar4 = 10000000;
+			else ar4 = ar3;
+			if (this.value >= 5) ar5 = 1000000;
+			else ar5 = ar4;
+			calculateCurrentPop();
+		}
+	},
+	hze: {
+		value: 0,
+		elementName: "hze",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			checkDGUpgrades();
+		}
+	},
+	//perks
+	carp: {
+		value: 0,
+		elementName: "carp",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateCarpMod();
+			calculateCurrentPop();
+		}
+	},
+	carp2: {
+		value: 0,
+		elementName: "carp2",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateCarpMod();
+			calculateCurrentPop();
+		}
+	},
+	coord: {
+		value: 0,
+		elementName: "coord",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateCoordIncrease();
+			calculateCurrentPop();
+		}
+	},
+	//misc upgrades
+	randimp: {
+		value: false,
+		elementName: "randimp",
+		update: function (value = this.value) {
+			this.value = !(value == "No" || !value);
+			elements[this.elementName].value = this.value ? "Yes" : "No";
+			calculateTauntimpFrequency();
+			calculateCurrentPop();
+		}
+	},
+	magmaFlow: {
+		value: 0,
+		elementName: "magmaFlow",
+		update: function (value = this.value) {
+			this.value = !(value == "No" || !value);
+			elements[this.elementName].value = this.value ? "Yes" : "No";
+			magmaCells = this.value ? 18 : 16;
+			calculateMagma();
+			calculateCurrentPop();
+		}
+	},
+	moreImports: {
+		value: 0,
+		elementName: "moreImports",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateTauntimpFrequency();
+			calculateCurrentPop();
+		}
+	},
+	scaffolding: {
+		value: 0,
+		elementName: "scaffolding",
+		update: function (value = this.value) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			calculateCarpMod();
+			calculateCurrentPop();
+		}
+	},
+	//dg upgrades
+	efficiency: {
+		value: 0,
+		elementName: "efficiency",
+		cost: 8,
+		update: function (value = this.value, mod) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			this.cost = (this.value + 1) * 8;
+			calculateMinTick();
+			calculateMaxTick();
+			calculateCurrentPop();
+			if (mod == undefined) checkDGUpgrades();
+		}
+	},
+	capacity: {
+		value: 0,
+		elementName: "capacity",
+		cost: 32,
+		update: function (value = this.value, mod) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			this.cost = (this.value + 1) * 32;
+			maxCapacity = 3 + (settings.capacity.value * 0.4);
+			calculateMaxTick();
+			calculateCurrentPop();
+			if (mod == undefined) checkDGUpgrades();
+		}
+	},
+	supply: {
+		value: 0,
+		elementName: "supply",
+		cost: 64,
+		update: function (value = this.value, mod) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			this.cost = (this.value + 1) * 64;
+			maxSupply = 0.2 + (this.value * 0.02);
+			elements["maxSupplyZone"].innerText = (230 + (2 * this.value));
+			calculateCurrentPop();
+			if (mod == undefined) checkDGUpgrades();
+		}
+	},
+	overclocker: {
+		value: 0,
+		elementName: "overclocker",
+		cost: 512,
+		bonus: 0,
+		update: function (value = this.value, mod) {
+			this.value = parseInt(value);
+			elements[this.elementName].value = this.value;
+			this.cost = (this.value + 1) * 512;
+			this.bonus = (this.value < 1) ? 1 : 1 - (0.5 * Math.pow(0.99, this.value - 1));
+			calculateCurrentPop();
+			if (mod == undefined) checkDGUpgrades();
+		}
+	},
+	//perm dg upgrades
+	storage: {
+		value: 1,
+		elementName: "storage",
+		update: function (value = this.value) {
+			this.value = (value == "Yes" || value == 2) ? 2 : 1;
+			elements[this.elementName].value = this.value == 2 ? "Yes" : "No";
+			calculateCurrentPop();
+		}
+	},
+	slowburn: {
+		value: 0.4,
+		elementName: "slowburn",
+		update: function (value = this.value) {
+			this.value = (value == "Yes" || value == 0.4) ? 0.4 : 0.5;
+			elements[this.elementName].value = this.value == 0.4 ? "Yes" : "No";
+			calculateMinTick();
+			calculateCurrentPop();
+		}
+	},
+	//optimization targets
+	minimizeZone: {
+		value: 231,
+		elementName: "minimizeZone",
+		update: function (value = this.value) {
+			this.value = value < 231 ? 231 : value;
+			elements[this.elementName].value = this.value;
+
+			//WHAT THE FUCK 
+			//TODO put this in properly somewhere instead of under a stupid code value
+			if (settings.minimizeZone.value == 2151) {
+				elements["minimizeCapacity-1"].style.display = "inline";
+				elements["minimizeAtZone-1"].style.display = "inline";
+			}
+		}
+	},
+	gatorZone: {
+		value: 231,
+		elementName: "gatorZone",
+		update: function (value = this.value) {
+			this.value = value < 231 ? 231 : value;
+			elements[this.elementName].value = this.value;
+		}
+	},
 }
 
-function changeFuelEnd(value) {
-	fuelEnd = parseInt(value);
-	if (fuelEnd < fuelStart) fuelStart = fuelEnd;
-	if (fuelEnd > runEnd) runEnd = fuelEnd;
-	elements["fuelEnd"].value = fuelEnd;
-
-	if (fuelZones != (fuelEnd - fuelStart)) changeFuelZones(fuelEnd - fuelStart);
-	calculateMagma();
-	calculateCurrentPop();
-}
-
-function changeFuelZones(value) {
-	fuelZones = parseInt(value);
-	elements["fuelZones"].value = fuelZones;
-	if (fuelEnd != (fuelStart + fuelZones)) changeFuelEnd(fuelStart + fuelZones);
-	calculateMagma();
-	calculateCurrentPop();
-}
-
-function changeRunEnd(value) {
-	runEnd = parseInt(value);
-	elements["runEnd"].value = runEnd;
-	calculateMagma();
-	calculateCurrentPop();
-}
-
-function changeHousingMod(value) {
-	housingMod = parseFloat(value);
-	if (housingMod < 0) {
-		housingMod = 1 + (housingMod / 100);
-		elements["housingMod"].value = housingMod.toFixed(2);
+function changeUncoords(value) {
+	uncoords = parseInt(value);
+	if (uncoords <= 0) {
+		uncoords = 0;
+		elements["uncoords"].value = uncoords;
+		calculateCurrentPop();
+		return;
+	} else if (uncoords > 100 + settings.runEnd.value) {
+		uncoords = 100 + settings.runEnd.value;
+		elements["uncoords"].value = uncoords;
 	}
+	changeUncoordsZone(-1);
 	calculateCurrentPop();
 }
 
-function changeSpiresCleared(value) {
-	spiresCleared = parseInt(value);
-	elements["spiresCleared"].value = spiresCleared;
-	calculateFinalAmalRatio();
-	if (spiresCleared >= 2) ar2 = 1000000000;
-	else ar2 = ar1;
-	if (spiresCleared >= 3) ar3 = 100000000;
-	else ar3 = ar2;
-	if (spiresCleared >= 4) ar4 = 10000000;
-	else ar4 = ar3;
-	if (spiresCleared >= 5) ar5 = 1000000;
-	else ar5 = ar4;
+function changeUncoordsZone(value) {
+	uncoordsZone = parseInt(value);
+	if (uncoordsZone <= -1) {
+		uncoordsZone = -1;
+		elements["uncoordsZone"].value = "";
+	} else if (uncoordsZone > settings.runEnd.value) {
+		uncoordsZone = settings.runEnd.value;
+		elements["uncoordsZone"].value = settings.runEnd.value;
+	} else changeUncoords(0);
 	calculateCurrentPop();
 }
 
-function changeCarp(value) {
-	carp = parseInt(value);
-	elements["carp"].value = carp;
-	calculateCarpMod();
+function changeUncoordsGoal(value) {
+	uncoordsGoal = parseInt(value);
+	elements["uncoordsGoal"].selected = uncoordsGoal;
 	calculateCurrentPop();
 }
 
-function changeCarp2(value) {
-	carp2 = parseInt(value);
-	elements["carp2"].value = carp2;
-	calculateCarpMod();
-	calculateCurrentPop();
-}
-
-function changeCoord(value) {
-	coord = parseInt(value);
-	elements["coord"].value = coord;
-	calculateCoordIncrease();
-	calculateCurrentPop();
-}
-
-function changeRandimp(value) {
-	randimp = !(value == "No" || !value) ? "Yes" : "No";
-	elements["randimp"].value = randimp;
-	calculateTauntimpFrequency();
-	calculateCurrentPop();
-}
-
-function changeImports(value) {
-	moreImports = value;
-	elements["moreImports"].value = moreImports;
-	calculateTauntimpFrequency();
-	calculateCurrentPop();
-}
-
-function changeScaffolding(value) {
-	scaffolding = parseInt(value);
-	elements["scaffolding"].value = scaffolding;
-	calculateCarpMod();
-	calculateCurrentPop();
-}
 
 function calculateTauntimpFrequency() {
 	// Non-round numbers are because you only get 99 random cells per zone
 	tauntimpFrequency = 2.97;
-	if (randimp) {
-		tauntimpFrequency += 0.396;
-	}
-	if (moreImports) {
-		tauntimpFrequency += moreImports * .05 * 99 / 100; // inc chance * possible import cells / world cells
-	}
-}
-
-function changeEfficiency(value, mod) {
-	efficiency = parseInt(value);
-	elements["efficiency"].value = efficiency;
-	calculateMinTick();
-	calculateMaxTick();
-	efficiencyCost = (efficiency + 1) * 8;
-	calculateCurrentPop();
-	if (mod == undefined) checkDGUpgrades();
-}
-
-function changeCapacity(value, mod) {
-	capacity = parseInt(value);
-	elements["capacity"].value = capacity;
-	maxCapacity = 3 + (capacity * 0.4);
-	calculateMaxTick();
-	capacityCost = (capacity + 1) * 32;
-	calculateCurrentPop();
-	if (mod == undefined) checkDGUpgrades();
-}
-
-function changeSupply(value, mod) {
-	supply = parseInt(value);
-	elements["supply"].value = supply;
-	maxSupply = 0.2 + (supply * 0.02);
-	elements["maxSupplyZone"].innerText = (230 + (2 * supply));
-	supplyCost = (supply + 1) * 64;
-	calculateCurrentPop();
-	if (mod == undefined) checkDGUpgrades();
-}
-
-function changeOverclocker(value, mod) {
-	overclock = parseInt(value);
-	elements["overclocker"].value = overclock;
-	overclocker = (overclock < 1) ? 1 : 1 - (0.5 * Math.pow(0.99, overclock - 1));
-	overclockerCost = (overclock * 32) + 512;
-	calculateCurrentPop();
-	if (mod == undefined) checkDGUpgrades();
+	if (settings.randimp.value) tauntimpFrequency += 0.396;
+	if (settings.moreImports.value) tauntimpFrequency += settings.moreImports.value * .05 * 99 / 100; // inc chance * possible import cells / world cells
 }
 
 function checkDGUpgrades() {
-	var myStart = fuelStart;
-	var myEnd = fuelEnd;
-	var myRunEnd = runEnd;
+	var myStart = settings.fuelStart.value;
+	var myEnd = settings.fuelEnd.value;
+	var myRunEnd = settings.runEnd.value;
 	var myMI = totalMI;
 	if (myMI == 0) return;
-	changeFuelStart(230);
-	if (hze > 0) {
-		changeRunEnd(hze);
-		changeFuelEnd(hze);
+	settings.fuelStart.update(230);
+	if (settings.hze.value > 0) {
+		settings.runEnd.update(settings.hze.value);
+		settings.fuelEnd.update(settings.hze.value);
 	}
 	else {
-		changeFuelEnd(runEnd);
+		settings.fuelEnd.update(settings.runEnd.value);
 	}
 	var myPop = totalPop;
 
-	changeEfficiency(efficiency + 1, 1);
+	settings.efficiency.update(settings.efficiency.value + 1, 1);
 	var efficiencyEfficiency = totalPop - myPop;
-	changeEfficiency(efficiency - 1, 1);
-	changeCapacity(capacity + 1, 1);
+	settings.efficiency.update(settings.efficiency.value - 1, 1);
+	settings.capacity.update(settings.capacity.value + 1, 1);
 	var capacityEfficiency = totalPop - myPop;
-	changeCapacity(capacity - 1, 1);
-	changeSupply(supply + 1, 1);
+	settings.capacity.update(settings.capacity.value - 1, 1);
+	settings.supply.update(settings.supply.value + 1, 1);
 	var supplyEfficiency = totalPop - myPop;
-	changeSupply(supply - 1, 1);
-	changeOverclocker(overclock + 1, 1);
+	settings.supply.update(settings.supply.value - 1, 1);
+	settings.overclocker.update(settings.overclocker.value + 1, 1);
 	var overclockerEfficiency = totalPop - myPop;
-	changeOverclocker(overclock - 1, 1);
+	settings.overclocker.update(settings.overclocker.value - 1, 1);
 
-	var eCost = efficiencyCost;
-	var cCost = capacityCost;
-	var sCost = supplyCost;
-	var oCost = overclockerCost;
+	var eCost = settings.efficiency.cost;
+	var cCost = settings.capacity.cost;
+	var sCost = settings.supply.cost;
+	var oCost = settings.overclocker.cost;
 
-	if (eCost > myMI * 4.9) efficiencyCost = -1;
+	if (eCost > myMI * 4.9) settings.efficiency.cost = -1;
 	else if ((eCost * 2) + 8 <= myMI);
 	else if (eCost <= myMI) {
-		efficiencyCost += (myMI - eCost) * 0.2;
+		settings.efficiency.cost += (myMI - eCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
 		while (eCost > myMI) {
-			efficiencyCost += myMI;
+			settings.efficiency.cost += myMI;
 			eCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
 			if (runsNeeded > 20) {
 				break;
 			}
 		}
-		efficiencyCost += (myMI - eCost) * 0.2;
+		settings.efficiency.cost += (myMI - eCost) * 0.2;
 	}
-	if (cCost > myMI * 4.9) capacityCost = -1;
+	if (cCost > myMI * 4.9) settings.capacity.cost = -1;
 	else if ((cCost * 2) + 32 <= myMI);
 	else if (cCost <= myMI) {
-		capacityCost += (myMI - cCost) * 0.2;
+		settings.capacity.cost += (myMI - cCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
 		while (cCost > myMI) {
-			capacityCost += myMI;
+			settings.capacity.cost += myMI;
 			cCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
 			if (runsNeeded > 20) {
 				break;
 			}
 		}
-		capacityCost += (myMI - cCost) * 0.2;
+		settings.capacity.cost += (myMI - cCost) * 0.2;
 	}
-	if (sCost > myMI * 4.9) supplyCost = -1;
+	if (sCost > myMI * 4.9) settings.supply.cost = -1;
 	else if ((sCost * 2) + 64 <= myMI);
 	else if (sCost <= myMI) {
-		supplyCost += (myMI - sCost) * 0.2;
+		settings.supply.cost += (myMI - sCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
 		while (sCost > myMI) {
-			supplyCost += myMI;
+			settings.supply.cost += myMI;
 			sCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
 			if (runsNeeded > 20) {
 				break;
 			}
 		}
-		supplyCost += (myMI - sCost) * 0.2;
+		settings.supply.cost += (myMI - sCost) * 0.2;
 	}
-	if (oCost > myMI * 4.9) overclockerCost = -1;
+	if (oCost > myMI * 4.9) settings.overclocker.cost = -1;
 	else if ((oCost * 2) + 32 <= myMI);
 	else if (oCost <= myMI) {
-		overclockerCost += (myMI - oCost) * 0.2;
+		settings.overclocker.cost += (myMI - oCost) * 0.2;
 	} else {
 		var runsNeeded = 1;
 		while (oCost > myMI) {
-			overclockerCost += myMI;
+			settings.overclocker.cost += myMI;
 			oCost -= myMI * Math.pow(0.8, runsNeeded);
 			runsNeeded++;
 			if (runsNeeded > 20) {
 				break;
 			}
 		}
-		overclockerCost += (myMI - oCost) * 0.2;
+		settings.overclocker.cost += (myMI - oCost) * 0.2;
 	}
 
-	efficiencyEfficiency /= efficiencyCost;
-	capacityEfficiency /= capacityCost;
-	supplyEfficiency /= supplyCost;
-	overclockerEfficiency /= overclockerCost;
+	efficiencyEfficiency /= settings.efficiency.cost;
+	capacityEfficiency /= settings.capacity.cost;
+	supplyEfficiency /= settings.supply.cost;
+	overclockerEfficiency /= settings.overclocker.cost;
 
-	if (efficiencyCost < 0) elements["efficiencyEfficiency"].innerText = "-----";
+	if (settings.efficiency.cost < 0) elements["efficiencyEfficiency"].innerText = "-----";
 	else elements["efficiencyEfficiency"].innerText = "1";
-	if (capacityCost < 0) elements["capacityEfficiency"].innerText = "-----";
+	if (settings.capacity.cost < 0) elements["capacityEfficiency"].innerText = "-----";
 	else elements["capacityEfficiency"].innerText = (capacityEfficiency / efficiencyEfficiency).toFixed(4);
-	if (supplyCost < 0) elements["supplyEfficiency"].innerText = "-----";
+	if (settings.supply.cost < 0) elements["supplyEfficiency"].innerText = "-----";
 	else elements["supplyEfficiency"].innerText = (supplyEfficiency / efficiencyEfficiency).toFixed(4);
-	if (overclockerCost < 0) elements["overclockerEfficiency"].innerText = "-----";
+	if (settings.overclocker.cost < 0) elements["overclockerEfficiency"].innerText = "-----";
 	else elements["overclockerEfficiency"].innerText = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 
-	changeRunEnd(myRunEnd);
-	changeFuelStart(myStart);
-	changeFuelEnd(myEnd);
+	settings.runEnd.update(myRunEnd);
+	settings.fuelStart.update(myStart);
+	settings.fuelEnd.update(myEnd);
 }
 
-function changeHZE(value) {
-	hze = parseInt(value);
-	elements["hze"].value = hze;
-	checkDGUpgrades();
-}
-
-function changeStorage(value) {
-	storage = (value == "Yes" || value == 2) ? 2 : 1;
-	elements["storage"].value = storage == 2 ? "Yes" : "No";
-	calculateCurrentPop();
-}
-
-function changeSlowburn(value) {
-	slowburn = (value == "Yes" || value == 0.4) ? 0.4 : 0.5;
-	elements["slowburn"].value = slowburn == 0.4 ? "Yes" : "No";
-	calculateMinTick();
-	calculateCurrentPop();
-}
-
-function changeMagmaFlow(value) {
-	magmaFlow = (value == "No" || !value) ? false : true;
-	magmaCells = magmaFlow ? 18 : 16;
-	elements["magmaFlow"].value = magmaFlow ? "Yes" : "No";
-	calculateMagma();
-	calculateCurrentPop();
-}
 
 function calculateMagma() {
-	elements["zonesOfFuel"].innerText = fuelZones;
-	zonesOfMI = (runEnd - 230) - fuelZones;
+	elements["zonesOfFuel"].innerText = settings.fuelZones.value;
+	zonesOfMI = (settings.runEnd.value - 230) - settings.fuelZones.value;
 	elements["zonesOfMI"].innerText = zonesOfMI;
-	elements["zonesOfMagma"].innerText = runEnd - 230;
-	if (magmaFlow) totalMI = zonesOfMI * 18;
+	elements["zonesOfMagma"].innerText = settings.runEnd.value - 230;
+	if (settings.magmaFlow.value) totalMI = zonesOfMI * 18;
 	else totalMI = zonesOfMI * 16;
 	elements["totalMI"].innerText = totalMI;
 }
 
 function calculateCoordIncrease() {
-	coordIncrease = 25 * Math.pow(0.98, coord);
+	coordIncrease = 25 * Math.pow(0.98, settings.coord.value);
 	elements["coordIncrease"].innerText = coordIncrease.toFixed(4);
 	coordinations[0] = 3;
 	var c = 0;
@@ -443,33 +549,33 @@ function calculateCoordIncrease() {
 }
 
 function calculateFinalAmalRatio() {
-	elements["finalAmalRatio"].innerText = Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000);
+	elements["finalAmalRatio"].innerText = Math.max(10000000000 / Math.pow(10, settings.spiresCleared.value - 1), 1000000);
 	//elements["finalAmalRatio"].innerText = enumerate(Math.max(10000000000 / Math.pow(10, spiresCleared - 1), 1000000));
 }
 
 function calculateCarpMod() {
-	carpMod = minTick * Math.pow(1.1, carp) * (1 + (carp2 * 0.0025)) * (1 + (scaffolding * Math.pow(1.1, scaffolding - 1)));
+	carpMod = minTick * Math.pow(1.1, settings.carp.value) * (1 + (settings.carp2.value * 0.0025)) * (1 + (settings.scaffolding.value * Math.pow(1.1, settings.scaffolding.value - 1)));
 }
 
 function calculateMinTick() {
-	minTick = Math.sqrt(slowburn) * 500000000 * (1 + (0.1 * efficiency));
+	minTick = Math.sqrt(settings.slowburn.value) * 500000000 * (1 + (0.1 * settings.efficiency.value));
 	tickRatio = maxTick / minTick;
 	calculateCarpMod();
 }
 
 function calculateMaxTick() {
-	maxTick = Math.sqrt(maxCapacity) * 500000000 * (1 + (0.1 * efficiency));
+	maxTick = Math.sqrt(maxCapacity) * 500000000 * (1 + (0.1 * settings.efficiency.value));
 	if (minTick > 0) tickRatio = maxTick / minTick;
 }
 
 function calculateCurrentPop(confEndZone) {
 	offset = elements["offset5"].checked;
 	var sum = [];
-	var myHze = runEnd;
-	if (hze > myHze) myHze = hze;
+	var myHze = settings.runEnd.value;
+	if (settings.hze.value > myHze) myHze = settings.hze.value;
 	// base CI on last gator (recursive)
-	if (!confEndZone) confEndZone = runEnd;
-	var confInterval = (1 - (1.91 / Math.sqrt((confEndZone - fuelStart) * tauntimpFrequency)))
+	if (!confEndZone) confEndZone = settings.runEnd.value;
+	var confInterval = (1 - (1.91 / Math.sqrt((confEndZone - settings.fuelStart.value) * tauntimpFrequency)))
 	var useConf = true;
 	var skippedCoords = 0;
 	var goalReached = false;
@@ -481,14 +587,14 @@ function calculateCurrentPop(confEndZone) {
 		//calc fuel gain
 		if (i == 0) fuelThisZone[0] = 0.2;
 		else fuelThisZone[i] = Math.min(fuelThisZone[i - 1] + 0.01, maxSupply);
-		if ((i + 230) >= fuelStart && (i + 230) <= fuelEnd) {
+		if ((i + 230) >= settings.fuelStart.value && (i + 230) <= settings.fuelEnd.value) {
 			if (i == 0) totalFuel[0] = 0.2;
 			else totalFuel[i] = (magmaCells * fuelThisZone[i]) + totalFuel[i - 1];
 		} else totalFuel[i] = 0;
 
 		//calc generated pop
-		overclockTicks[i] = Math.max((totalFuel[i] - (storage * maxCapacity)) / slowburn, 0);
-		overclockPop[i] = Math.floor(overclockTicks[i]) * (carpMod * tickRatio) * overclocker;
+		overclockTicks[i] = Math.max((totalFuel[i] - (settings.storage.value * maxCapacity)) / settings.slowburn.value, 0);
+		overclockPop[i] = Math.floor(overclockTicks[i]) * (carpMod * tickRatio) * settings.overclocker.bonus;
 		if (i == 0) overclockPopThisZone[0] = Math.max(overclockPop[0], 0);
 		else overclockPopThisZone[i] = Math.max(overclockPop[i] - overclockPop[i - 1], 0);
 
@@ -526,7 +632,7 @@ function calculateCurrentPop(confEndZone) {
 		}
 
 		//calc gators
-		amalRatio[i] = (popWithTauntimp[i] * housingMod) / (coordPop[i] / 3);
+		amalRatio[i] = (popWithTauntimp[i] * settings.housingMod.value) / (coordPop[i] / 3);
 		if (i == 0) currentAmals[0] = 0;
 		else if ((offset && ((i - 1) % 5) != 0) || (offset && ((i - 71) % 100) == 0)) {
 			currentAmals[i] = currentAmals[i - 1];
@@ -557,15 +663,15 @@ function calculateCurrentPop(confEndZone) {
 		adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
 	}
 	elements["zonesWithheld"].innerText = skippedCoords <= 0 ? '-' : skippedCoords;
-	totalPop = popWithTauntimp[runEnd - 230] * housingMod;
+	totalPop = popWithTauntimp[settings.runEnd.value - 230] * settings.housingMod.value;
 	elements["totalPop"].innerText = totalPop.toPrecision(3);
 	//elements["totalPop"].innerText = enumerate(totalPop);
-	tauntimpPercent = (percentFromTauntimp[runEnd - 230] * 100);
+	tauntimpPercent = (percentFromTauntimp[settings.runEnd.value - 230] * 100);
 	elements["tauntimpPercent"].innerText = tauntimpPercent.toFixed(2);
-	finalAmals = currentAmals[runEnd - 230];
+	finalAmals = currentAmals[settings.runEnd.value - 230];
 	elements["finalAmals"].innerText = finalAmals;
 	maxAmals = 0;
-	for (i = 0; i <= (runEnd - 230); i++) {
+	for (i = 0; i <= (settings.runEnd.value - 230); i++) {
 		if (currentAmals[i] > maxAmals) {
 			maxAmals = currentAmals[i];
 			finalAmalZone = i + 230;
@@ -573,7 +679,7 @@ function calculateCurrentPop(confEndZone) {
 	}
 	elements["maxAmals"].innerText = maxAmals;
 	elements["finalAmalZone"].innerText = finalAmalZone;
-	neededPop = coordPop[runEnd - 230] / 3;
+	neededPop = coordPop[settings.runEnd.value - 230] / 3;
 	elements["neededPop"].innerText = neededPop.toPrecision(3);
 	//elements["neededPop"].innerText = enumerate(neededPop);
 	finalArmySize = neededPop * Math.pow(1000, finalAmals);
@@ -677,153 +783,99 @@ function calculateCurrentPop(confEndZone) {
 	}
 }
 
-function pasteSave(save) {
-	ticked = elements["lockRun"].checked;
-	var saveString = save.clipboardData.getData("text/plain").replace(/\s/g, '');
-	game = JSON.parse(LZString.decompressFromBase64(saveString));
-	if (game == null) {
-		elements["invalid"].innerText = "Invalid Save!";
-		return;
-	}
-	elements["invalid"].innerText = "";
-	carp = game.portal.Carpentry.level;
-	carp2 = game.portal.Carpentry_II.level;
-	coord = game.portal.Coordinated.level;
-	randimp = game.talents.magimp.purchased;
-	magmaFlow = game.talents.magmaFlow.purchased;
-	moreImports = game.permaBoneBonuses.exotic.owned;
-	scaffolding = game.global.autoBattleData.bonuses?.Scaffolding ? game.global.autoBattleData.bonuses?.Scaffolding : 0;
-	efficiency = game.generatorUpgrades.Efficiency.upgrades;
-	capacity = game.generatorUpgrades.Capacity.upgrades;
-	supply = game.generatorUpgrades.Supply.upgrades;
-	overclock = game.generatorUpgrades.Overclocker.upgrades;
-	storage = game.permanentGeneratorUpgrades.Storage.owned ? 2 : 1;
-	slowburn = game.permanentGeneratorUpgrades.Slowburn.owned ? .4 : .5;
-	if (!ticked) {
-		hze = game.global.highestLevelCleared;
-		runEnd = game.global.lastPortal;
-		spiresCleared = game.global.spiresCompleted;
-		if (game.global.genStateConfig.length == 0) fuelStart = 230;
-		else fuelStart = game.global.genStateConfig[0][1];
-		if (game.global.genStateConfig.length == 0) fuelEnd = runEnd;
-		else fuelEnd = game.global.genStateConfig[1][1];
-		if (game.global.dailyChallenge.large != undefined) {
-			housingMod = 1 - (game.global.dailyChallenge.large.strength / 100)
-		} else housingMod = 1;
-	}
-	checkDGUpgrades();
-	updateAfterLoad();
-	elements["message"].innerText = "Stats populated!";
-	//console.log(game);
-}
-
-function clearText() {
-	elements["saveBox"].value = "";
-}
 
 function optimize() {
-	var myFuelZones = fuelZones;
+	var myFuelZones = settings.fuelZones.value;
 	var bestAmals = maxAmals;
-	changeFuelStart(230);
+	settings.fuelStart.update(230);
 	var bestPop = 0;
 	var myFuelStart = 230;
-	for (f = 230; f <= (runEnd - myFuelZones); f++) {
-		changeFuelStart(f);
-		changeFuelZones(myFuelZones);
+	for (f = 230; f <= (settings.runEnd.value - myFuelZones); f++) {
+		settings.fuelStart.update(f);
+		settings.fuelZones.update(myFuelZones);
 		if (totalPop > bestPop && maxAmals >= bestAmals) {
 			bestPop = totalPop;
 			myFuelStart = f;
 			bestAmals = Math.max(maxAmals, bestAmals); // max pop is not always max gators
 		}
 	}
-	changeFuelStart(myFuelStart);
-	changeFuelZones(myFuelZones);
+	settings.fuelStart.update(myFuelStart);
+	settings.fuelZones.update(myFuelZones);
 	elements["message"].innerText = "Starting fuel zone optimized!";
 }
 
 function minimize(dif, variant) {
 	if (variant == 2) elements["message"].innerText = "Calculating...";
-	changeFuelStart(230);
-	var myEnd = runEnd;
-	if (variant == 1) changeRunEnd(minimizeZone);
-	changeFuelEnd(runEnd);
+	settings.fuelStart.update(230);
+	var myEnd = settings.runEnd.value;
+	if (variant == 1) settings.runEnd.update(settings.minimizeZone.value);
+	settings.fuelEnd.update(settings.runEnd.value);
 	var bestAmals = finalAmals - dif;
-	var bestJ = fuelZones;
+	var bestJ = settings.fuelZones.value;
 	var maxedAmals = false;
 	if (variant == 1) {
-		changeRunEnd(minimizeZone - 1);
-		changeFuelStart(minimizeZone - 1);
+		settings.runEnd.update(settings.minimizeZone.value - 1);
+		settings.fuelStart.update(settings.minimizeZone.value - 1);
 	}
-	else changeFuelStart(runEnd);
-	changeFuelZones(0);
-	if (variant == 2) var myCapacity = capacity;
+	else settings.fuelStart.update(settings.runEnd.value);
+	settings.fuelZones.update(0);
+	if (variant == 2) var myCapacity = settings.capacity.value;
 
-	while (fuelStart >= 230) {
-		while (finalAmals >= bestAmals && fuelZones >= 0) {
+	while (settings.fuelStart.value >= 230) {
+		while (finalAmals >= bestAmals && settings.fuelZones.value >= 0) {
 			// minimize capacity
 			if (variant == 2) {
 				var myPop = totalPop;
 				while (totalPop >= myPop) {
-					changeCapacity(capacity - 1, 2);
+					settings.capacity.update(settings.capacity.value - 1, 2);
 					if (totalPop >= myPop) myPop = totalPop;
 					else {
-						changeCapacity(capacity + 1, 2);
+						settings.capacity.update(settings.capacity.value + 1, 2);
 						break;
 					}
 				}
 			}
-			bestJ = fuelZones;
-			fuelZones -= 1;
-			changeFuelZones(fuelZones);
+			bestJ = settings.fuelZones.value;
+			settings.fuelZones.value -= 1;
+			settings.fuelZones.update(settings.fuelZones.value);
 			maxedAmals = true;
 		}
-		fuelStart -= 1;
-		if (fuelStart >= 230) changeFuelStart(fuelStart);
-		if (variant == 1) changeFuelZones(Math.min(minimizeZone - fuelStart, bestJ)); // minimize at zone
-		else changeFuelZones(Math.min(runEnd - fuelStart, bestJ));
+		settings.fuelStart.value -= 1;
+		if (settings.fuelStart.value >= 230) settings.fuelStart.update(settings.fuelStart.value);
+		if (variant == 1) settings.fuelZones.update(Math.min(settings.minimizeZone.value - settings.fuelStart.value, bestJ)); // minimize at zone
+		else settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ));
 		if (maxedAmals == true && finalAmals < bestAmals) break;
 	}
 	// if ratios are dropping per zone, fuel a little extra for safety's sake
 	if (amalRatio[finalAmalZone] > amalRatio[finalAmalZone + 1]) {
 		bestJ += Math.ceil(bestJ * .1)
 	}
-	changeFuelZones(bestJ);
+	settings.fuelZones.update(bestJ);
 	optimize();
 	if (variant == 1) {
-		changeRunEnd(myEnd);
+		settings.runEnd.update(myEnd);
 	}
 	if (variant == 2) {
 		myPop = totalPop;
 		for (b = 0; b < 4; b++) { //run this a bunch or something
-			changeCapacity(capacity + 1, 2);
-			while (totalPop >= myPop && finalAmals >= bestAmals && capacity <= myCapacity) {
+			settings.capacity.update(settings.capacity.value + 1, 2);
+			while (totalPop >= myPop && finalAmals >= bestAmals && settings.capacity.value <= myCapacity) {
 				myPop = totalPop;
-				changeCapacity(capacity + 1, 2);
+				settings.capacity.update(settings.capacity.value + 1, 2);
 			}
-			changeCapacity(capacity - 1);
+			settings.capacity.update(settings.capacity.value - 1);
 			optimize();
 		}
 	}
 	elements["message"].innerText = "Zones to fuel minimized!";
-	if (variant == 2) elements["message"].innerText = "Ideal slider setting: " + (3 + capacity * slowburn) + " max fuel";
+	if (variant == 2) elements["message"].innerText = "Ideal slider setting: " + (3 + settings.capacity.value * settings.slowburn.value) + " max fuel";
 }
 
-function changeMinimizeZone(value) {
-	minimizeZone = parseInt(value);
-	if (minimizeZone < 231) {
-		minimizeZone = 231;
-		elements["minimizeZone"].value = minimizeZone;
-	}
-	if (minimizeZone == 2151) {
-		elements["minimizeCapacity-1"].style.display = "inline";
-		elements["minimizeAtZone-1"].style.display = "inline";
-	}
 
-}
 
 function forceGator() {
-	var x1 = adjustedRatio[gatorZone - 230];
-	var y1 = gatorZone;
+	var x1 = adjustedRatio[settings.gatorZone.value - 230];
+	var y1 = settings.gatorZone.value;
 	var z1 = "N/A";
 	if (y1 < 230) {
 
@@ -864,89 +916,76 @@ function forceGator() {
 		}
 	}
 	elements["message"].innerText = "Extra Gator box updated!";
-	if (gatorZone <= finalAmalZone) elements["message"].innerText = "Zone too low!";
+	if (settings.gatorZone.value <= finalAmalZone) elements["message"].innerText = "Zone too low!";
 }
 
-function changeGatorZone(value) {
-	gatorZone = parseInt(value);
-	if (gatorZone < 230) {
-		gatorZone = 230;
-		elements["gatorZone"].value = gatorZone;
-	}
-}
-
-function changeUncoords(value) {
-	uncoords = parseInt(value);
-	if (uncoords <= 0) {
-		uncoords = 0;
-		elements["uncoords"].value = uncoords;
-		calculateCurrentPop();
-		return;
-	} else if (uncoords > 100 + runEnd) {
-		uncoords = 100 + runEnd;
-		elements["uncoords"].value = uncoords;
-	}
-	changeUncoordsZone(-1);
-	calculateCurrentPop();
-}
-
-function changeUncoordsZone(value) {
-	uncoordsZone = parseInt(value);
-	if (uncoordsZone <= -1) {
-		uncoordsZone = -1;
-		elements["uncoordsZone"].value = "";
-	} else if (uncoordsZone > runEnd) {
-		uncoordsZone = runEnd;
-		elements["uncoordsZone"].value = runEnd;
-	} else changeUncoords(0);
-	calculateCurrentPop();
-}
-
-function changeUncoordsGoal(value) {
-	uncoordsGoal = parseInt(value);
-	elements["uncoordsGoal"].selected = uncoordsGoal;
-	calculateCurrentPop();
+// Save and Load functions
+function clearText() {
+	elements["saveBox"].value = "";
 }
 
 function saveSettings() {
-	var settings = {
-		hze: hze,
-		ticked: ticked,
-		fuelStart: fuelStart,
-		fuelEnd: fuelEnd,
-		fuelZones: fuelZones,
-		runEnd: runEnd,
-		housingMod: housingMod,
-		spiresCleared: spiresCleared,
-		carp: carp,
-		carp2: carp2,
-		coord: coord,
-		randimp: randimp,
-		magmaFlow: magmaFlow,
-		moreImports: moreImports,
-		scaffolding: scaffolding,
-		efficiency: efficiency,
-		capacity: capacity,
-		supply: supply,
-		overclock: overclock,
-		storage: storage,
-		slowburn: slowburn,
-		minimizeZone: minimizeZone,
-		gatorZone: gatorZone,
-		offset: offset,
-		uncoords: uncoords,
-		uncoordsZone: uncoordsZone,
-		uncoordsGoal: uncoordsGoal
+	let saveObj = Object.fromEntries(Object.entries(settings).map(([name, data]) => [name, data.value]))
+	saveObj["ticked"] = ticked;
+	saveObj["offset"] = offset;
+	localStorage.setItem("GatorSettings", JSON.stringify(saveObj));
+	//	uncoords: uncoords,
+	//	uncoordsZone: uncoordsZone,
+	//	uncoordsGoal: uncoordsGoal
+}
+
+function pasteSave(save) {
+	ticked = elements["lockRun"].checked;
+	var saveString = save.clipboardData.getData("text/plain").replace(/\s/g, '');
+	game = JSON.parse(LZString.decompressFromBase64(saveString));
+	if (game == null) {
+		elements["invalid"].innerText = "Invalid Save!";
+		return;
 	}
-	localStorage.setItem("GatorSettings", JSON.stringify(settings));
+	elements["invalid"].innerText = "";
+	settings.carp.value = game.portal.Carpentry.level;
+	settings.carp2.value = game.portal.Carpentry_II.level;
+	settings.coord.value = game.portal.Coordinated.level;
+	settings.randimp.value = game.talents.magimp.purchased;
+	settings.magmaFlow.value = game.talents.magmaFlow.purchased;
+	settings.moreImports.value = game.permaBoneBonuses.exotic.owned;
+	settings.scaffolding.value = game.global.autoBattleData.bonuses?.Scaffolding ? game.global.autoBattleData.bonuses?.Scaffolding : 0;
+	settings.efficiency.value = game.generatorUpgrades.Efficiency.upgrades;
+	settings.capacity.value = game.generatorUpgrades.Capacity.upgrades;
+	settings.supply.value = game.generatorUpgrades.Supply.upgrades;
+	settings.overclocker.value = game.generatorUpgrades.Overclocker.upgrades;
+	settings.storage.value = game.permanentGeneratorUpgrades.Storage.owned ? 2 : 1;
+	settings.slowburn.value = game.permanentGeneratorUpgrades.Slowburn.owned ? .4 : .5;
+	if (!ticked) {
+		settings.hze.value = game.global.highestLevelCleared;
+		settings.runEnd.value = game.global.lastPortal;
+		settings.spiresCleared.value = game.global.spiresCompleted;
+		if (game.global.genStateConfig.length == 0) {
+			settings.fuelStart.value = 230;
+			settings.fuelEnd.value = settings.runEnd.value;
+		}
+		else {
+			settings.fuelStart.value = game.global.genStateConfig[0][1];
+			settings.fuelEnd.value = game.global.genStateConfig[1][1];
+		}
+		if (game.global.dailyChallenge.large != undefined) {
+			settings.housingMod.value = 1 - (game.global.dailyChallenge.large.strength / 100)
+		} else settings.housingMod.value = 1;
+	}
+	checkDGUpgrades();
+	updateAfterLoad();
+	elements["message"].innerText = "Stats populated!";
+	//console.log(game);
 }
 
 function loadSettings() {
-	var settings = JSON.parse(localStorage.getItem("GatorSettings"));
-	if (settings != null) {
-		for (const [setting, value] of Object.entries(settings)) {
-			if (typeof value != "undefined") window[setting] = value;
+	var loadedSettings = JSON.parse(localStorage.getItem("GatorSettings"));
+	if (loadedSettings != null) {
+		for (const [setting, value] of Object.entries(loadedSettings)) {
+			if (settings[setting]) settings[setting].value = value;
 		}
+		ticked = loadedSettings.ticked;
+		offset = loadedSettings.offset;
 		updateAfterLoad()
 		elements["message"].innerText = "Settings loaded!";
 	}
@@ -955,31 +994,11 @@ function loadSettings() {
 function updateAfterLoad() {
 	elements["lockRun"].checked = ticked;
 	elements["offset5"].checked = offset;
-	changeFuelStart(fuelStart);
-	changeFuelEnd(fuelEnd);
-	changeFuelZones(fuelZones);
-	changeRunEnd(runEnd);
-	changeUncoords(uncoords);
-	changeUncoordsZone(uncoordsZone);
-	changeUncoordsGoal(uncoordsGoal);
-	changeHousingMod(housingMod);
-	changeSpiresCleared(spiresCleared);
-	changeCarp(carp);
-	changeCarp2(carp2);
-	changeCoord(coord);
-	changeRandimp(randimp);
-	changeImports(moreImports)
-	changeScaffolding(scaffolding);
-	changeEfficiency(efficiency);
-	changeCapacity(capacity);
-	changeSupply(supply);
-	changeOverclocker(overclock);
-	changeHZE(hze);
-	changeStorage(storage);
-	changeSlowburn(slowburn);
-	changeMagmaFlow(magmaFlow);
-	changeMinimizeZone(minimizeZone);
-	changeGatorZone(gatorZone);
+	Object.values(settings).forEach((setting) => setting.update());
+	//changeUncoords(uncoords);
+	//changeUncoordsZone(uncoordsZone);
+	//changeUncoordsGoal(uncoordsGoal);
+
 	checkDGUpgrades();
 }
 

@@ -22,90 +22,94 @@
 		<br><br>
 		Run Stats<br>
 		<label title="Zone to begin fueling">
-			<input id="fuelStart" type="number" min="230" onchange="changeFuelStart(this.value)">&nbspFuel Start Zone
+			<input id="fuelStart" type="number" min="230" onchange="settings.fuelStart.update(this.value)">&nbspFuel
+			Start Zone
 		</label>
 		<br>
 		<div class="filler"></div>
 		<label title="Zone to end fueling">
-			<input id="fuelEnd" type="number" min="230" onchange="changeFuelEnd(this.value)">&nbspFuel End Zone
+			<input id="fuelEnd" type="number" min="230" onchange="settings.fuelEnd.update(this.value)">&nbspFuel End
+			Zone
 		</label>
 		<br>
 		<div class="filler"></div>
 		<label title="Number of zones to fuel">
-			<input id="fuelZones" type="number" min="0" onchange="changeFuelZones(this.value)">&nbspZones to Fuel
+			<input id="fuelZones" type="number" min="0" onchange="settings.fuelZones.update(this.value)">&nbspZones to
+			Fuel
 		</label>
 		<br>
 		<div class="filler"></div>
 		<label title="Zone you end the run on">
-			<input id="runEnd" type="number" min="0" onchange="changeRunEnd(this.value)">&nbspRun End Zone
+			<input id="runEnd" type="number" min="0" onchange="settings.runEnd.update(this.value)">&nbspRun End Zone
 		</label>
 		<br>
 		<div class="filler"></div>
 		<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8, or -20">
 			<input id="housingMod" type="number" step="0.01" max="1" min="0.4"
-				onchange="changeHousingMod(this.value)">&nbspHousing Mod
+				onchange="settings.housingMod.update(this.value)">&nbspHousing Mod
 		</label>
 		<br>
 		<div class="filler"></div>
 		<label title="Spires cleared *this run*">
 			<input id="spiresCleared" type="number" min="0" max="6"
-				onchange="changeSpiresCleared(this.value)">&nbsp#Spires Cleared
+				onchange="settings.spiresCleared.update(this.value)">&nbsp#Spires Cleared
 		</label>
 		<br><br>
 		Perk Levels<br>
-		<input id="carp" type="number" onchange="changeCarp(this.value)">&nbspCarpentry
+		<input id="carp" type="number" onchange="settings.carp.update(this.value)">&nbspCarpentry
 		<br>
 		<div class="filler"></div>
-		<input id="carp2" type="number" onchange="changeCarp2(this.value)">&nbspCarpentry II
+		<input id="carp2" type="number" onchange="settings.carp2.update(this.value)">&nbspCarpentry II
 		<br>
 		<div class="filler"></div>
-		<input id="coord" type="number" onchange="changeCoord(this.value)">&nbspCoordinated
+		<input id="coord" type="number" onchange="settings.coord.update(this.value)">&nbspCoordinated
 		<br><br>
 		Misc Upgrades<br>
-		<select class="select" id="randimp" onchange="changeRandimp(this.value)">
+		<select class="select" id="randimp" onchange="settings.randimp.update(this.value)">
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspRandimp
 		<div class="filler"></div>
-		<select class="select" id="magmaFlow" onchange="changeMagmaFlow(this.value)">
+		<select class="select" id="magmaFlow" onchange="settings.magmaFlow.update(this.value)">
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspMagma Flow
 		<br><br>
-		<input type="number" id="moreImports" onchange="changeImports(this.value)" min="0" , max="10">
+		<input type="number" id="moreImports" onchange="settings.moreImports.update(this.value)" min="0" , max="10">
 		&nbspMore Imports
 		<div class="filler"></div>
-		<input type="number" id="scaffolding" onchange="changeScaffolding(this.value)" min="0" , max="20">
+		<input type="number" id="scaffolding" onchange="settings.scaffolding.update(this.value)" min="0" , max="20">
 		&nbspScaffolding
 		<div class="filler"></div>
 		<br><br>
 		DG Levels<span class="efficiency">Next Upgrade</span><br>
-		<input id="efficiency" type="number" onchange="changeEfficiency(this.value)">&nbspEfficiency
+		<input id="efficiency" type="number" onchange="settings.efficiency.update(this.value)">&nbspEfficiency
 		<span class="efficiency" id="efficiencyEfficiency"></span>
 		<br>
 		<div class="filler"></div>
-		<input id="capacity" type="number" onchange="changeCapacity(this.value)">&nbspCapacity
+		<input id="capacity" type="number" onchange="settings.capacity.update(this.value)">&nbspCapacity
 		<span class="efficiency" id="capacityEfficiency"></span>
 		<br>
 		<div class="filler"></div>
-		<input id="supply" type="number" onchange="changeSupply(this.value)">&nbspSupply
+		<input id="supply" type="number" onchange="settings.supply.update(this.value)">&nbspSupply
 		<span class="efficiency" id="supplyEfficiency"></span>
 		<br>
 		<div class="filler"></div>
-		<input id="overclocker" type="number" onchange="changeOverclocker(this.value)">&nbspOverclocker
+		<input id="overclocker" type="number" onchange="settings.overclocker.update(this.value)">&nbspOverclocker
 		<span class="efficiency" id="overclockerEfficiency"></span>
 		<br>
 		<button class="hidden" id="checkDG" onclick="checkDGUpgrades()">Update</button>
-		<input class="efficiency" id="hze" type="number" onchange="changeHZE(this.value)"><span class="efficiency">Push
+		<input class="efficiency" id="hze" type="number" onchange="settings.hze.update(this.value)"><span
+			class="efficiency">Push
 			Run Goal:&nbsp</span>
 		<br><br>
 		DG Upgrades<br>
-		<select class="select" id="storage" onchange="changeStorage(this.value)">
+		<select class="select" id="storage" onchange="settings.storage.update(this.value)">
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspStorage
 		<div class="filler"></div>
-		<select class="select" id="slowburn" onchange="changeSlowburn(this.value)">
+		<select class="select" id="slowburn" onchange="settings.slowburn.update(this.value)">
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspSlowburn
@@ -124,22 +128,25 @@
 		<button class="macro" id="minimize-1" onclick="minimize(1)">Minimize - 1</button><br>
 		<div class="filler"></div>
 		<button class="macro" id="minimizeAtZone" onclick="minimize(0, 1)">Minimize At Zone:</button><br>
-		<input class="macroZone" id="minimizeZone" type="number" onchange="changeMinimizeZone(this.value)"><br>
+		<input class="macroZone" id="minimizeZone" type="number"
+			onchange="settings.minimizeZone.update(this.value)"><br>
 		<div class="filler"></div>
 		<button class="macro" id="minimizeCapacity" onclick="minimize(0, 2)">Minimize Capacity</button><br>
 		<div class="filler"></div>
 		<button class="macro" id="forceGator" onclick="forceGator()">Force Gator At Zone:</button><br>
-		<input class="macroZone" id="gatorZone" type="number" onchange="changeGatorZone(this.value)"><br>
+		<input class="macroZone" id="gatorZone" type="number" onchange="settings.gatorZone.update(this.value)"><br>
 		<div class="filler"></div>
 		<label title="Hold back on buying this many coordination upgrades throughout the run">
 			<span class="macroZone">Coords Withheld: </span></label><br>
-		<input class="macroZone" id="uncoords" value="0" type="number" onchange="changeUncoords(this.value)"><br>
+		<input class="macroZone" id="uncoords" value="0" type="number"
+			onchange="settings.uncoords.update(this.value)"><br>
 		<div class="filler"></div>
 		<label
 			title="Stop buying coordinations at the specified zone in order to hit the goal number of Amalgamators. Use -1 to not withhold any">
 			<span class="macroZone">Withhold Coords Zone/Goal: </span></label><br>
-		<input class="macroZone" id="uncoordsZone" value="" type="number" onchange="changeUncoordsZone(this.value)">
-		<select class="macroZone" id="uncoordsGoal" onchange="changeUncoordsGoal(this.value)">
+		<input class="macroZone" id="uncoordsZone" value="" type="number"
+			onchange="settings.uncoordsZone.update(this.value)">
+		<select class="macroZone" id="uncoordsGoal" onchange="settings.uncoordsGoal.update(this.value)">
 			<option value="1">1</option>
 			<option value="2">2</option>
 			<option value="3">3</option>
