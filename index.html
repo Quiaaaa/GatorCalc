@@ -26,30 +26,30 @@
 			Start Zone
 		</label>
 		<br>
-		<div class="filler"></div>
+
 		<label title="Zone to end fueling">
 			<input id="fuelEnd" type="number" min="230" onchange="settings.fuelEnd.update(this.value)">&nbspFuel End
 			Zone
 		</label>
 		<br>
-		<div class="filler"></div>
+
 		<label title="Number of zones to fuel">
 			<input id="fuelZones" type="number" min="0" onchange="settings.fuelZones.update(this.value)">&nbspZones to
 			Fuel
 		</label>
 		<br>
-		<div class="filler"></div>
+
 		<label title="Zone you end the run on">
 			<input id="runEnd" type="number" min="0" onchange="settings.runEnd.update(this.value)">&nbspRun End Zone
 		</label>
 		<br>
-		<div class="filler"></div>
+
 		<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8, or -20">
 			<input id="housingMod" type="number" step="0.01" max="1" min="0.4"
 				onchange="settings.housingMod.update(this.value)">&nbspHousing Mod
 		</label>
 		<br>
-		<div class="filler"></div>
+
 		<label title="Spires cleared *this run*">
 			<input id="spiresCleared" type="number" min="0" max="6"
 				onchange="settings.spiresCleared.update(this.value)">&nbsp#Spires Cleared
@@ -58,10 +58,10 @@
 		Perk Levels<br>
 		<input id="carp" type="number" onchange="settings.carp.update(this.value)">&nbspCarpentry
 		<br>
-		<div class="filler"></div>
+
 		<input id="carp2" type="number" onchange="settings.carp2.update(this.value)">&nbspCarpentry II
 		<br>
-		<div class="filler"></div>
+
 		<input id="coord" type="number" onchange="settings.coord.update(this.value)">&nbspCoordinated
 		<br><br>
 		Misc Upgrades<br>
@@ -69,7 +69,8 @@
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspRandimp
-		<div class="filler"></div>
+		<br>
+
 		<select class="select" id="magmaFlow" onchange="settings.magmaFlow.update(this.value)">
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
@@ -77,24 +78,24 @@
 		<br><br>
 		<input type="number" id="moreImports" onchange="settings.moreImports.update(this.value)" min="0" , max="10">
 		&nbspMore Imports
-		<div class="filler"></div>
+
 		<input type="number" id="scaffolding" onchange="settings.scaffolding.update(this.value)" min="0" , max="20">
 		&nbspScaffolding
-		<div class="filler"></div>
+
 		<br><br>
 		DG Levels<span class="efficiency">Next Upgrade</span><br>
 		<input id="efficiency" type="number" onchange="settings.efficiency.update(this.value)">&nbspEfficiency
 		<span class="efficiency" id="efficiencyEfficiency"></span>
 		<br>
-		<div class="filler"></div>
+
 		<input id="capacity" type="number" onchange="settings.capacity.update(this.value)">&nbspCapacity
 		<span class="efficiency" id="capacityEfficiency"></span>
 		<br>
-		<div class="filler"></div>
+
 		<input id="supply" type="number" onchange="settings.supply.update(this.value)">&nbspSupply
 		<span class="efficiency" id="supplyEfficiency"></span>
 		<br>
-		<div class="filler"></div>
+
 		<input id="overclocker" type="number" onchange="settings.overclocker.update(this.value)">&nbspOverclocker
 		<span class="efficiency" id="overclockerEfficiency"></span>
 		<br>
@@ -108,12 +109,12 @@
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspStorage
-		<div class="filler"></div>
+		<br>
 		<select class="select" id="slowburn" onchange="settings.slowburn.update(this.value)">
 			<option value="Yes">Yes</option>
 			<option value="No">No</option>
 		</select>&nbspSlowburn
-		<div class="filler"></div>
+
 	</div>
 	<div id="macros">
 		<br>
@@ -122,25 +123,25 @@
 		</center>
 		<br><br>
 		<button class="macro" id="optimize" onclick="optimize()">Optimize</button><br>
-		<div class="filler"></div>
+
 		<button class="macro" id="minimize" onclick="minimize(0)">Minimize</button><br>
-		<div class="filler"></div>
+
 		<button class="macro" id="minimize-1" onclick="minimize(1)">Minimize - 1</button><br>
-		<div class="filler"></div>
+
 		<button class="macro" id="minimizeAtZone" onclick="minimize(0, 1)">Minimize At Zone:</button><br>
 		<input class="macroZone" id="minimizeZone" type="number"
 			onchange="settings.minimizeZone.update(this.value)"><br>
-		<div class="filler"></div>
+
 		<button class="macro" id="minimizeCapacity" onclick="minimize(0, 2)">Minimize Capacity</button><br>
-		<div class="filler"></div>
+
 		<button class="macro" id="forceGator" onclick="forceGator()">Force Gator At Zone:</button><br>
 		<input class="macroZone" id="gatorZone" type="number" onchange="settings.gatorZone.update(this.value)"><br>
-		<div class="filler"></div>
+
 		<label title="Hold back on buying this many coordination upgrades throughout the run">
 			<span class="macroZone">Coords Withheld: </span></label><br>
 		<input class="macroZone" id="uncoords" value="0" type="number"
 			onchange="settings.uncoords.update(this.value)"><br>
-		<div class="filler"></div>
+
 		<label
 			title="Stop buying coordinations at the specified zone in order to hit the goal number of Amalgamators. Use -1 to not withhold any">
 			<span class="macroZone">Withhold Coords Zone/Goal: </span></label><br>
@@ -158,11 +159,11 @@
 			<option value="9">9</option>
 			<option value="10">10</option>
 		</select><br>
-		<div class="filler"></div>
+
 		<button class="macro hidden" id="minimizeCapacity-1" onclick="minimize(1, 2)">Minimize Capacity - 1</button><br>
-		<div class="filler"></div>
+
 		<button class="macro hidden" id="minimizeAtZone-1" onclick="minimize(1, 1)">Minimize At Zone - 1</button><br>
-		<div class="filler"></div>
+
 		<label id="offset5Label"
 			title="Check this to only have gators updated every 5 zones when you'd die from an omnipotrimp explosion">
 			<input id="offset5" type="checkbox">Use 5 zone breakpoints</label>
@@ -375,16 +376,16 @@
 			This calculator assumes no population before you begin fueling. The population received before your first DG
 			tick is inconsequential to your total population, and won't affect the results shown for the intended users
 			of this page.
-			<div class="filler"></div>
+
 			The calculator assumes exactly 2.97 tauntimps received per zone, or 3.366 with the Randimp mastery, and an
 			additional 0.0495 per level of More Imports. A 90% confidence interval is applied to ensure that the calc
 			never shorts you on population, but accordingly, 90% of your runs will overshoot the stated total pop.
-			<div class="filler"></div>
+
 			The calculator assumes all DG ticks made are overclocks. This slightly affects the final results, especially
 			for those with lower overclocker levels, as those non-OC ticks will be stronger that OC ticks, and happen
 			earlier, therefore benefitting more from tauntimp compounding. However, the differences are still small, and
 			largely unnoticable for fueling more than a couple of zones.
-			<div class="filler"></div>
+
 			This calculator assumes all fuel still in the tank after you stop fueling (and therefore stop overclocking)
 			disappears. This causes the calculator to underestimate your total population by a bit, especially for
 			fueling a smaller number
