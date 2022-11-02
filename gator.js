@@ -5,7 +5,6 @@ var offset = true; // 5 zone offset
 
 var carpMod = 0;
 var tauntimpFrequency = 2.97;
-
 var maxCapacity = 3;
 var maxSupply = 0.2;
 var magmaCells = 18;
@@ -13,8 +12,6 @@ var popPerTick = 0;
 var minTick = 0;
 var maxTick = 0;
 var tickRatio = 0;
-
-
 
 var totalPop = 0;
 var currentPop = [];
