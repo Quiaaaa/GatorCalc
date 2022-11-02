@@ -314,7 +314,7 @@ const settings = {
 		update: function (value = this.value, mod) {
 			this.value = parseInt(value);
 			elements[this.elementName].value = this.value;
-			this.cost = (this.value + 1) * 512;
+			this.cost = 512 + (this.value + 1) * 32;
 			this.bonus = (this.value < 1) ? 1 : 1 - (0.5 * Math.pow(0.99, this.value - 1));
 			calculateCurrentPop();
 			if (mod == undefined) checkDGUpgrades();
@@ -960,6 +960,7 @@ function pasteSave(save) {
 		settings.hze.value = game.global.highestLevelCleared;
 		settings.runEnd.value = game.global.lastPortal;
 		settings.spiresCleared.value = game.global.spiresCompleted;
+		// pull supervision settings
 		if (game.global.genStateConfig.length == 0) {
 			settings.fuelStart.value = 230;
 			settings.fuelEnd.value = settings.runEnd.value;
