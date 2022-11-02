@@ -118,22 +118,38 @@
 	</div>
 	<div id="macros">
 		<br>
-		<center><label title="Original by Nohmou, with further contributes by Zeralyos, Eredian, and Quia">Version <span
-					id="version"></label></span>
+		<center>
+			<label title="Original by Nohmou, with further contributes by Zeralyos, Eredian, and Quia">
+				Version <span id="version">
+			</label></span>
 		</center>
 		<br><br>
-		<button class="macro" id="optimize" onclick="optimize()">Optimize</button><br>
+		<label
+			title="Optimize fueling for Maximum Gators, or one less than max. Modifies Minimize, Minimize at Zone, and Minimize Capacity.">
+			<select class="macro" id="gatorTarget" onchange="settings.gatorTarget.update(this.value)"
+				style="height: 2rem">
+				<option value="Max">Max Gators</option>
+				<option value="-1">-1 Gators</option>
+			</select></label>
+		<br>
+		<label title="Optimizes the position of fueling zones, keeping the number of zones the same.">
+			<button class="macro" id="optimize" onclick="optimize()">Optimize</button></label>
+		<br>
+		<label title="Minimizes fueling zones to get the maximum gators possible.">
+			<button class="macro" id="minimize" onclick="minimize(0)">Minimize</button></label>
+		<br>
+		<label title="Minimizes, but ensures the last gator is picked up at the chosen zone.">
+			<button class="macro" id="minimizeAtZone" onclick="minimize(0, 1)">Minimize At Zone:</button>
+			<br>
+			<input class="macroZone" id="minimizeZone" type="number"
+				onchange="settings.minimizeZone.update(this.value)">
+		</label>
+		<br>
+		<label title="Minimizes your Capacity, if possible, to gain more MI per portal while keeping your gators.">
+			<button class="macro" id="minimizeCapacity" onclick="minimize(0, 2)">Minimize Capacity</button></label>
+		<br>
 
-		<button class="macro" id="minimize" onclick="minimize(0)">Minimize</button><br>
-
-		<button class="macro" id="minimize-1" onclick="minimize(1)">Minimize - 1</button><br>
-
-		<button class="macro" id="minimizeAtZone" onclick="minimize(0, 1)">Minimize At Zone:</button><br>
-		<input class="macroZone" id="minimizeZone" type="number"
-			onchange="settings.minimizeZone.update(this.value)"><br>
-
-		<button class="macro" id="minimizeCapacity" onclick="minimize(0, 2)">Minimize Capacity</button><br>
-
+		<!--
 		<button class="macro" id="forceGator" onclick="forceGator()">Force Gator At Zone:</button><br>
 		<input class="macroZone" id="gatorZone" type="number" onchange="settings.gatorZone.update(this.value)"><br>
 
@@ -163,10 +179,11 @@
 		<button class="macro hidden" id="minimizeCapacity-1" onclick="minimize(1, 2)">Minimize Capacity - 1</button><br>
 
 		<button class="macro hidden" id="minimizeAtZone-1" onclick="minimize(1, 1)">Minimize At Zone - 1</button><br>
-
+		
 		<label id="offset5Label"
 			title="Check this to only have gators updated every 5 zones when you'd die from an omnipotrimp explosion">
 			<input id="offset5" type="checkbox">Use 5 zone breakpoints</label>
+		-->
 		<br><br><br>
 		<center><span id="message"></span></center>
 	</div>

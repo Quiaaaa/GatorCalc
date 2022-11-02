@@ -15,6 +15,7 @@ textarea {
 input {
 	width: 40%;
 	height: 15px;
+	margin-bottom: .5%;
 }
 
 #invalid {
@@ -30,17 +31,14 @@ input {
 
 }
 
-.filler {
-	height: 5px;
-}
-
 .filler2 {
 	width: 100px;
 }
 
 .select {
-	width: 40%;
+	width: 42%;
 	text-align-last: center;
+	margin-bottom: .5%;
 }
 
 #inputs {
@@ -73,12 +71,14 @@ input {
 	width: 60%;
 	height: 5%;
 	left: 20%;
-	border-radius: 8px;
+	margin-top: .5%;
+	margin-bottom: .5%;
+	text-align: center;
 }
 
 .macroZone {
 	position: relative;
-	width: 58%;
+	width: 57%;
 	left: 20%;
 }
 

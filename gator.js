@@ -1,6 +1,8 @@
 window.onload = setup;
-var version = "1.7.1";
-var ticked = false;
+var version = "1.8";
+var ticked = false; // lock runstats
+var offset = true; // 5 zone offset
+
 var carpMod = 0;
 var tauntimpFrequency = 2.97;
 
@@ -54,7 +56,7 @@ var amalRatio = [];
 var adjustedRatio = [];
 var currentAmals = [];
 
-var offset = false;
+
 
 var eradMode = false;
 /*
@@ -89,11 +91,15 @@ bug that needs fixing: NaN error if you try to withhold more coords than you hav
 
 //TODO add in a toggle for max gators or -1, remove minimize -1 button, and HIDDEN SECRET capacity-1 and at zone-1 buttons.
 
-const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "fuelStart", "fuelEnd", "fuelZones", "runEnd", "housingMod", "spiresCleared", "carp", "carp2", "coord", "randimp", "scaffolding", "moreImports", "magmaFlow", "efficiency", "efficiencyEfficiency", "capacity", "capacityEfficiency", "supply", "supplyEfficiency", "overclocker", "overclockerEfficiency", "checkDG", "hze", "storage", "slowburn", "macros", "version", "optimize", "minimize", "minimize-1", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "forceGator", "gatorZone", "uncoords", "uncoordsZone", "uncoordsGoal", "minimizeCapacity-1", "minimizeAtZone-1", "offset5Label", "offset5", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
-let elements
+
+
+
+let elements;
 
 
 function setup() {
+	const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "efficiencyEfficiency", "capacityEfficiency", "supplyEfficiency", "overclockerEfficiency", "checkDG", "macros", "version", "optimize", "minimize", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
+	elementsToGet.push(...Object.values(settings).map(s => s.elementName)); // include all 
 	elements = Object.fromEntries(elementsToGet.map(element => [element, document.getElementById(element)]))
 	loadSettings();
 	elements["version"].innerText = version;
@@ -347,15 +353,28 @@ const settings = {
 		update: function (value = this.value) {
 			this.value = value < 231 ? 231 : value;
 			elements[this.elementName].value = this.value;
-
-			//WHAT THE FUCK 
-			//TODO put this in properly somewhere instead of under a stupid code value
-			if (settings.minimizeZone.value == 2151) {
-				elements["minimizeCapacity-1"].style.display = "inline";
-				elements["minimizeAtZone-1"].style.display = "inline";
-			}
 		}
 	},
+	gatorTarget: {
+		value: "Max",
+		elementName: "gatorTarget",
+		update: function (value = this.value) {
+			this.value = value;
+			elements[this.elementName].value = this.value;
+			if (this.value == "Max") {
+				elements["minimize"].setAttribute("onclick", "minimize(0)");
+				elements["minimizeAtZone"].setAttribute("onclick", "minimize(0, 1)");
+				elements["minimizeCapacity"].setAttribute("onclick", "minimize(0, 2)");
+			}
+			else {
+				elements["minimize"].setAttribute("onclick", "minimize(1)");
+				elements["minimizeAtZone"].setAttribute("onclick", "minimize(1, 1)");
+				elements["minimizeCapacity"].setAttribute("onclick", "minimize(1, 2)");
+			}
+		}
+	}
+
+	/*
 	gatorZone: {
 		value: 231,
 		elementName: "gatorZone",
@@ -364,8 +383,10 @@ const settings = {
 			elements[this.elementName].value = this.value;
 		}
 	},
+	*/
 }
 
+/*
 function changeUncoords(value) {
 	uncoords = parseInt(value);
 	if (uncoords <= 0) {
@@ -398,7 +419,7 @@ function changeUncoordsGoal(value) {
 	elements["uncoordsGoal"].selected = uncoordsGoal;
 	calculateCurrentPop();
 }
-
+*/
 
 function calculateTauntimpFrequency() {
 	// Non-round numbers are because you only get 99 random cells per zone
@@ -569,7 +590,7 @@ function calculateMaxTick() {
 }
 
 function calculateCurrentPop(confEndZone) {
-	offset = elements["offset5"].checked;
+	//offset = elements["offset5"].checked;
 	var sum = [];
 	var myHze = settings.runEnd.value;
 	if (settings.hze.value > myHze) myHze = settings.hze.value;
@@ -872,7 +893,7 @@ function minimize(dif, variant) {
 }
 
 
-
+/*
 function forceGator() {
 	var x1 = adjustedRatio[settings.gatorZone.value - 230];
 	var y1 = settings.gatorZone.value;
@@ -918,6 +939,7 @@ function forceGator() {
 	elements["message"].innerText = "Extra Gator box updated!";
 	if (settings.gatorZone.value <= finalAmalZone) elements["message"].innerText = "Zone too low!";
 }
+*/
 
 // Save and Load functions
 function clearText() {
@@ -927,7 +949,7 @@ function clearText() {
 function saveSettings() {
 	let saveObj = Object.fromEntries(Object.entries(settings).map(([name, data]) => [name, data.value]))
 	saveObj["ticked"] = ticked;
-	saveObj["offset"] = offset;
+	//saveObj["offset"] = offset;
 	localStorage.setItem("GatorSettings", JSON.stringify(saveObj));
 	//	uncoords: uncoords,
 	//	uncoordsZone: uncoordsZone,
@@ -986,7 +1008,7 @@ function loadSettings() {
 			if (settings[setting]) settings[setting].value = value;
 		}
 		ticked = loadedSettings.ticked;
-		offset = loadedSettings.offset;
+		//offset = loadedSettings.offset;
 		updateAfterLoad()
 		elements["message"].innerText = "Settings loaded!";
 	}
@@ -994,7 +1016,7 @@ function loadSettings() {
 
 function updateAfterLoad() {
 	elements["lockRun"].checked = ticked;
-	elements["offset5"].checked = offset;
+	//elements["offset5"].checked = offset;
 	Object.values(settings).forEach((setting) => setting.update());
 	//changeUncoords(uncoords);
 	//changeUncoordsZone(uncoordsZone);
