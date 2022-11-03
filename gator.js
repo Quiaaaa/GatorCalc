@@ -86,9 +86,6 @@ Grant 2 coords per zone
 bug that needs fixing: NaN error if you try to withhold more coords than you have at your starting zone
 */
 
-//TODO add in a toggle for max gators or -1, remove minimize -1 button, and HIDDEN SECRET capacity-1 and at zone-1 buttons.
-
-
 
 
 let elements;
@@ -109,39 +106,39 @@ const settings = {
 	fuelStart: {
 		value: 230,
 		elementName: "fuelStart",
-		update: function (value = this.value) {
+		update: function (value = this.value, show = true) {
 			this.value = parseInt(value);
 			if (this.value < 230) this.value = 230;
 			if (this.value > settings.fuelEnd.value) settings.fuelEnd.value = this.value;
 			if (this.value > settings.runEnd.value) settings.runEnd.value = this.value;
-			elements[this.elementName].value = this.value;
-			if (settings.fuelZones.value != (settings.fuelEnd.value - this.value)) settings.fuelZones.update(settings.fuelEnd.value - this.value);
+			if (show) elements[this.elementName].value = this.value;
+			settings.fuelZones.value = settings.fuelEnd.value - this.value;
 			calculateMagma();
-			calculateCurrentPop();
+			calculateCurrentPop(show);
 		},
 	},
 	fuelEnd: {
 		value: 235,
 		elementName: "fuelEnd",
-		update: function (value = this.value) {
+		update: function (value = this.value, show = true) {
 			this.value = parseInt(value);
 			if (this.value < settings.fuelStart.value) settings.fuelStart.value = this.value;
 			if (this.value > settings.runEnd.value) settings.runEnd.value = this.value;
-			elements[this.elementName].value = this.value;
-			if (settings.fuelZones.value != (this.value - settings.fuelStart.value)) settings.fuelZones.update(this.value - settings.fuelStart.value);
+			if (show) elements[this.elementName].value = this.value;
+			if (settings.fuelZones.value != (this.value - settings.fuelStart.value)) settings.fuelZones.update(this.value - settings.fuelStart.value, show);
 			calculateMagma();
-			calculateCurrentPop();
+			calculateCurrentPop(show);
 		},
 	},
 	fuelZones: {
 		value: 5,
 		elementName: "fuelZones",
-		update: function (value = this.value) {
+		update: function (value = this.value, show = true) {
 			this.value = parseInt(value);
-			elements[this.elementName].value = this.value;
-			if (settings.fuelEnd.value != (settings.fuelStart.value + this.value)) settings.fuelEnd.update(settings.fuelStart.value + this.value);
+			if (show) elements[this.elementName].value = this.value;
+			if (settings.fuelEnd.value != (settings.fuelStart.value + this.value)) settings.fuelEnd.update(settings.fuelStart.value + this.value, show);
 			calculateMagma();
-			calculateCurrentPop();
+			calculateCurrentPop(show);
 		}
 	},
 	runEnd: {
@@ -317,7 +314,7 @@ const settings = {
 		update: function (value = this.value, mod) {
 			this.value = parseInt(value);
 			elements[this.elementName].value = this.value;
-			this.cost = 512 + (this.value + 1) * 32;
+			this.cost = 512 + (this.value) * 32;
 			this.bonus = (this.value < 1) ? 1 : 1 - (0.5 * Math.pow(0.99, this.value - 1));
 			calculateCurrentPop();
 			if (mod == undefined) checkDGUpgrades();
@@ -586,14 +583,13 @@ function calculateMaxTick() {
 	if (minTick > 0) tickRatio = maxTick / minTick;
 }
 
-function calculateCurrentPop(confEndZone) {
+function calculateCurrentPop(show = true) {
 	//offset = elements["offset5"].checked;
 	var sum = [];
 	var myHze = settings.runEnd.value;
 	if (settings.hze.value > myHze) myHze = settings.hze.value;
-	// base CI on last gator (recursive)
-	if (!confEndZone) confEndZone = settings.runEnd.value;
-	var confInterval = (1 - (1.91 / Math.sqrt((confEndZone - settings.fuelStart.value) * tauntimpFrequency)))
+	// base CI on end zone
+	var confInterval = (1 - (1.91 / Math.sqrt((settings.runEnd.value - settings.fuelStart.value) * tauntimpFrequency)))
 	var useConf = true;
 	var skippedCoords = 0;
 	var goalReached = false;
@@ -680,14 +676,9 @@ function calculateCurrentPop(confEndZone) {
 		if (currentAmals[i] < 0) currentAmals[i] = 0;
 		adjustedRatio[i] = amalRatio[i] / Math.pow(1000, currentAmals[i]);
 	}
-	elements["zonesWithheld"].innerText = skippedCoords <= 0 ? '-' : skippedCoords;
 	totalPop = popWithTauntimp[settings.runEnd.value - 230] * settings.housingMod.value;
-	elements["totalPop"].innerText = totalPop.toPrecision(3);
-	//elements["totalPop"].innerText = enumerate(totalPop);
 	tauntimpPercent = (percentFromTauntimp[settings.runEnd.value - 230] * 100);
-	elements["tauntimpPercent"].innerText = tauntimpPercent.toFixed(2);
 	finalAmals = currentAmals[settings.runEnd.value - 230];
-	elements["finalAmals"].innerText = finalAmals;
 	maxAmals = 0;
 	for (i = 0; i <= (settings.runEnd.value - 230); i++) {
 		if (currentAmals[i] > maxAmals) {
@@ -695,122 +686,121 @@ function calculateCurrentPop(confEndZone) {
 			finalAmalZone = i + 230;
 		}
 	}
-	elements["maxAmals"].innerText = maxAmals;
-	elements["finalAmalZone"].innerText = finalAmalZone;
 	neededPop = coordPop[settings.runEnd.value - 230] / 3;
-	elements["neededPop"].innerText = neededPop.toPrecision(3);
-	//elements["neededPop"].innerText = enumerate(neededPop);
 	finalArmySize = neededPop * Math.pow(1000, finalAmals);
-	elements["finalArmySize"].innerText = finalArmySize.toPrecision(3);
-	//elements["finalArmySize"].innerText = enumerate(finalArmySize);
 	yourFinalRatio = totalPop / finalArmySize;
-	elements["yourFinalRatio"].innerText = Math.ceil(yourFinalRatio);
-
-	var x = -1;
-	var y = "N/A";
-	var z = "N/A";
-	for (i = 0; i <= 70; i++) {
-		if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
-			if (adjustedRatio[i] > x) {
-				x = adjustedRatio[i];
-				y = i + 230;
-				z = Math.ceil(Math.log(ar1 / x) / Math.log(1 + (coordIncrease / 100)));
-			}
-		}
-	}
-	if (x == -1) elements["npm1"].innerText = "N/A";
-	else elements["npm1"].innerText = (ar1 / x).toPrecision(5);
-	elements["ex1"].innerText = y;
-	elements["uc1"].innerText = z;
-
-	x = -1;
-	y = "N/A";
-	z = "N/A";
-	for (i = 71; i <= 170; i++) {
-		if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
-			if (adjustedRatio[i] > x) {
-				x = adjustedRatio[i];
-				y = i + 230;
-				z = Math.ceil(Math.log(ar2 / x) / Math.log(1 + (coordIncrease / 100)));
-			}
-		}
-	}
-	if (x == -1) elements["npm2"].innerText = "N/A";
-	else elements["npm2"].innerText = (ar2 / x).toPrecision(5);
-	elements["ex2"].innerText = y;
-	elements["uc2"].innerText = z;
-
-	x = -1;
-	y = "N/A";
-	z = "N/A";
-	for (i = 171; i <= 270; i++) {
-		if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
-			if (adjustedRatio[i] > x) {
-				x = adjustedRatio[i];
-				y = i + 230;
-				z = Math.ceil(Math.log(ar3 / x) / Math.log(1 + (coordIncrease / 100)));
-			}
-		}
-	}
-	if (x == -1) elements["npm3"].innerText = "N/A";
-	else elements["npm3"].innerText = (ar3 / x).toPrecision(5);
-	elements["ex3"].innerText = y;
-	elements["uc3"].innerText = z;
-
-	x = -1;
-	y = "N/A";
-	z = "N/A";
-	for (i = 271; i <= 370; i++) {
-		if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
-			if (adjustedRatio[i] > x) {
-				x = adjustedRatio[i];
-				y = i + 230;
-				z = Math.ceil(Math.log(ar4 / x) / Math.log(1 + (coordIncrease / 100)));
-			}
-		}
-	}
-	if (x == -1) elements["npm4"].innerText = "N/A";
-	else elements["npm4"].innerText = (ar4 / x).toPrecision(5);
-	elements["ex4"].innerText = y;
-	elements["uc4"].innerText = z;
-
-	x = -1;
-	y = "N/A";
-	z = "N/A";
-	for (i = 371; i <= 470; i++) {
-		if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
-			if (adjustedRatio[i] > x) {
-				x = adjustedRatio[i];
-				y = i + 230;
-				z = Math.ceil(Math.log(ar5 / x) / Math.log(1 + (coordIncrease / 100)));
-			}
-		}
-	}
-	if (x == -1) elements["npm5"].innerText = "N/A";
-	else elements["npm5"].innerText = (ar5 / x).toPrecision(5);
-	elements["ex5"].innerText = y;
-	elements["uc5"].innerText = z;
-
 	saveSettings();
-	elements["message"].innerText = "";
-	if (finalAmalZone < confEndZone && finalAmals > 0) {
-		// This makes for weird and buggy results, oh well
-		// rerun calcs for highly uncertain gators
-		//calculateCurrentPop(finalAmalZone);
-		return;
+
+	if (show) {
+		elements["zonesWithheld"].innerText = skippedCoords <= 0 ? '-' : skippedCoords;
+		elements["totalPop"].innerText = totalPop.toPrecision(3);
+		elements["tauntimpPercent"].innerText = tauntimpPercent.toFixed(2);
+		elements["finalAmals"].innerText = finalAmals;
+		elements["maxAmals"].innerText = maxAmals;
+		elements["finalAmalZone"].innerText = finalAmalZone;
+		elements["neededPop"].innerText = neededPop.toPrecision(3);
+		elements["finalArmySize"].innerText = finalArmySize.toPrecision(3);
+		elements["yourFinalRatio"].innerText = Math.ceil(yourFinalRatio);
+
+		var x = -1;
+		var y = "N/A";
+		var z = "N/A";
+		for (i = 0; i <= 70; i++) {
+			if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
+				if (adjustedRatio[i] > x) {
+					x = adjustedRatio[i];
+					y = i + 230;
+					z = Math.ceil(Math.log(ar1 / x) / Math.log(1 + (coordIncrease / 100)));
+				}
+			}
+		}
+		if (x == -1) elements["npm1"].innerText = "N/A";
+		else elements["npm1"].innerText = (ar1 / x).toPrecision(5);
+		elements["ex1"].innerText = y;
+		elements["uc1"].innerText = z;
+
+		x = -1;
+		y = "N/A";
+		z = "N/A";
+		for (i = 71; i <= 170; i++) {
+			if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
+				if (adjustedRatio[i] > x) {
+					x = adjustedRatio[i];
+					y = i + 230;
+					z = Math.ceil(Math.log(ar2 / x) / Math.log(1 + (coordIncrease / 100)));
+				}
+			}
+		}
+		if (x == -1) elements["npm2"].innerText = "N/A";
+		else elements["npm2"].innerText = (ar2 / x).toPrecision(5);
+		elements["ex2"].innerText = y;
+		elements["uc2"].innerText = z;
+
+		x = -1;
+		y = "N/A";
+		z = "N/A";
+		for (i = 171; i <= 270; i++) {
+			if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
+				if (adjustedRatio[i] > x) {
+					x = adjustedRatio[i];
+					y = i + 230;
+					z = Math.ceil(Math.log(ar3 / x) / Math.log(1 + (coordIncrease / 100)));
+				}
+			}
+		}
+		if (x == -1) elements["npm3"].innerText = "N/A";
+		else elements["npm3"].innerText = (ar3 / x).toPrecision(5);
+		elements["ex3"].innerText = y;
+		elements["uc3"].innerText = z;
+
+		x = -1;
+		y = "N/A";
+		z = "N/A";
+		for (i = 271; i <= 370; i++) {
+			if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
+				if (adjustedRatio[i] > x) {
+					x = adjustedRatio[i];
+					y = i + 230;
+					z = Math.ceil(Math.log(ar4 / x) / Math.log(1 + (coordIncrease / 100)));
+				}
+			}
+		}
+		if (x == -1) elements["npm4"].innerText = "N/A";
+		else elements["npm4"].innerText = (ar4 / x).toPrecision(5);
+		elements["ex4"].innerText = y;
+		elements["uc4"].innerText = z;
+
+		x = -1;
+		y = "N/A";
+		z = "N/A";
+		for (i = 371; i <= 470; i++) {
+			if (currentAmals[i] >= maxAmals && (i + 230) > finalAmalZone) {
+				if (adjustedRatio[i] > x) {
+					x = adjustedRatio[i];
+					y = i + 230;
+					z = Math.ceil(Math.log(ar5 / x) / Math.log(1 + (coordIncrease / 100)));
+				}
+			}
+		}
+		if (x == -1) elements["npm5"].innerText = "N/A";
+		else elements["npm5"].innerText = (ar5 / x).toPrecision(5);
+		elements["ex5"].innerText = y;
+		elements["uc5"].innerText = z;
+		elements["message"].innerText = "";
 	}
+
 }
 
 
 function optimize() {
 	var myFuelZones = settings.fuelZones.value;
 	var bestAmals = maxAmals;
-	settings.fuelStart.update(230);
+	settings.fuelStart.update(230, false);
 	var bestPop = 0;
 	var myFuelStart = 230;
 	for (f = 230; f <= (settings.runEnd.value - myFuelZones); f++) {
-		settings.fuelStart.update(f);
-		settings.fuelZones.update(myFuelZones);
+		settings.fuelStart.update(f, false);
+		settings.fuelZones.update(myFuelZones, false);
 		if (totalPop > bestPop && maxAmals >= bestAmals) {
 			bestPop = totalPop;
 			myFuelStart = f;
@@ -824,23 +814,23 @@ function optimize() {
 
 function minimize(dif, variant) {
 	if (variant == 2) elements["message"].innerText = "Calculating...";
-	settings.fuelStart.update(230);
+	settings.fuelStart.update(230, false);
 	var myEnd = settings.runEnd.value;
-	if (variant == 1) settings.runEnd.update(settings.minimizeZone.value);
-	settings.fuelEnd.update(settings.runEnd.value);
+	if (variant == 1) settings.runEnd.update(settings.minimizeZone.value, false);
+	settings.fuelEnd.update(settings.runEnd.value, false);
 	var bestAmals = finalAmals - dif;
 	var bestJ = settings.fuelZones.value;
 	var maxedAmals = false;
 	if (variant == 1) {
 		settings.runEnd.update(settings.minimizeZone.value - 1);
-		settings.fuelStart.update(settings.minimizeZone.value - 1);
+		settings.fuelStart.update(settings.minimizeZone.value - 1, false);
 	}
-	else settings.fuelStart.update(settings.runEnd.value);
-	settings.fuelZones.update(0);
+	else settings.fuelStart.update(settings.runEnd.value, false);
+	settings.fuelZones.update(0, false);
 	if (variant == 2) var myCapacity = settings.capacity.value;
 
 	while (settings.fuelStart.value >= 230) {
-		while (finalAmals >= bestAmals && settings.fuelZones.value >= 0) {
+		while (finalAmals > 0 && finalAmals >= bestAmals && settings.fuelZones.value > 0) {
 			// minimize capacity
 			if (variant == 2) {
 				var myPop = totalPop;
@@ -855,20 +845,24 @@ function minimize(dif, variant) {
 			}
 			bestJ = settings.fuelZones.value;
 			settings.fuelZones.value -= 1;
-			settings.fuelZones.update(settings.fuelZones.value);
+			settings.fuelZones.update(settings.fuelZones.value, false);
 			maxedAmals = true;
 		}
+		settings.fuelZones.update(settings.fuelZones.value, false);
 		settings.fuelStart.value -= 1;
-		if (settings.fuelStart.value >= 230) settings.fuelStart.update(settings.fuelStart.value);
-		if (variant == 1) settings.fuelZones.update(Math.min(settings.minimizeZone.value - settings.fuelStart.value, bestJ)); // minimize at zone
-		else settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ));
+		if (settings.fuelStart.value >= 230) settings.fuelStart.update(settings.fuelStart.value, false);
+		if (variant == 1) settings.fuelZones.update(Math.min(settings.minimizeZone.value - settings.fuelStart.value, bestJ), false); // minimize at zone
+		else settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ), false);
 		if (maxedAmals == true && finalAmals < bestAmals) break;
 	}
 	// if ratios are dropping per zone, fuel a little extra for safety's sake
 	if (amalRatio[finalAmalZone] > amalRatio[finalAmalZone + 1]) {
 		bestJ += Math.ceil(bestJ * .1)
 	}
-	settings.fuelZones.update(bestJ);
+	if (finalAmals === 0) {
+		bestJ = Math.min(Math.max(10, bestJ * .1), settings.runEnd.value - 230);
+	}
+	settings.fuelZones.update(bestJ, true);
 	optimize();
 	if (variant == 1) {
 		settings.runEnd.update(myEnd);
