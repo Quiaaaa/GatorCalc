@@ -859,8 +859,9 @@ function minimize(dif, variant) {
 	if (amalRatio[finalAmalZone] > amalRatio[finalAmalZone + 1]) {
 		bestJ += Math.ceil(bestJ * .1)
 	}
+	// handwaving a less useless value here
 	if (finalAmals === 0) {
-		bestJ = Math.min(Math.max(10, bestJ * .1), settings.runEnd.value - 230);
+		bestJ = Math.min(10, settings.runEnd.value - 230);
 	}
 	settings.fuelZones.update(bestJ, true);
 	optimize();
