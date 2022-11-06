@@ -155,11 +155,11 @@ const settings = {
 		value: 1,
 		elementName: "housingMod",
 		update: function (value = this.value) {
-			this.value = parseInt(value);
+			this.value = parseFloat(value);
 			if (this.value < 0) {
 				this.value = 1 + (this.value / 100);
-				elements[this.elementName].value = this.value.toFixed(2);
 			}
+			elements[this.elementName].value = this.value.toFixed(2);
 			calculateCurrentPop();
 		}
 	},
