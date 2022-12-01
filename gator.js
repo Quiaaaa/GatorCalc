@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "1.8";
+var version = "1.8.1";
 var ticked = false; // lock runstats
 var offset = true; // 5 zone offset
 
@@ -137,18 +137,22 @@ const settings = {
 			this.value = parseInt(value);
 			if (show) elements[this.elementName].value = this.value;
 			if (settings.fuelEnd.value != (settings.fuelStart.value + this.value)) settings.fuelEnd.update(settings.fuelStart.value + this.value, show);
+			if (show) checkDGUpgrades();
 			calculateMagma();
 			calculateCurrentPop(show);
+
 		}
 	},
 	runEnd: {
 		value: 0,
 		elementName: "runEnd",
-		update: function (value = this.value) {
+		update: function (value = this.value, show = true) {
 			this.value = parseInt(value);
 			elements[this.elementName].value = this.value;
+			if (show) checkDGUpgrades();
 			calculateMagma();
 			calculateCurrentPop();
+
 		}
 	},
 	housingMod: {
@@ -350,21 +354,11 @@ const settings = {
 		}
 	},
 	gatorTarget: {
-		value: "Max",
+		value: 0,
 		elementName: "gatorTarget",
 		update: function (value = this.value) {
 			this.value = value;
 			elements[this.elementName].value = this.value;
-			if (this.value == "Max") {
-				elements["minimize"].setAttribute("onclick", "minimize(0)");
-				elements["minimizeAtZone"].setAttribute("onclick", "minimize(0, 1)");
-				elements["minimizeCapacity"].setAttribute("onclick", "minimize(0, 2)");
-			}
-			else {
-				elements["minimize"].setAttribute("onclick", "minimize(1)");
-				elements["minimizeAtZone"].setAttribute("onclick", "minimize(1, 1)");
-				elements["minimizeCapacity"].setAttribute("onclick", "minimize(1, 2)");
-			}
 		}
 	}
 
@@ -428,13 +422,13 @@ function checkDGUpgrades() {
 	var myRunEnd = settings.runEnd.value;
 	var myMI = totalMI;
 	if (myMI == 0) return;
-	settings.fuelStart.update(230);
+	settings.fuelStart.update(230, false);
 	if (settings.hze.value > 0) {
-		settings.runEnd.update(settings.hze.value);
-		settings.fuelEnd.update(settings.hze.value);
+		settings.runEnd.update(settings.hze.value, false);
+		settings.fuelEnd.update(settings.hze.value, false);
 	}
 	else {
-		settings.fuelEnd.update(settings.runEnd.value);
+		settings.fuelEnd.update(settings.runEnd.value, false);
 	}
 	var myPop = totalPop;
 
@@ -535,9 +529,9 @@ function checkDGUpgrades() {
 	if (settings.overclocker.cost < 0) elements["overclockerEfficiency"].innerText = "-----";
 	else elements["overclockerEfficiency"].innerText = (overclockerEfficiency / efficiencyEfficiency).toFixed(4);
 
-	settings.runEnd.update(myRunEnd);
-	settings.fuelStart.update(myStart);
-	settings.fuelEnd.update(myEnd);
+	settings.runEnd.update(myRunEnd, false);
+	settings.fuelStart.update(myStart, false);
+	settings.fuelEnd.update(myEnd, false);
 }
 
 
@@ -809,10 +803,12 @@ function optimize() {
 	}
 	settings.fuelStart.update(myFuelStart);
 	settings.fuelZones.update(myFuelZones);
+	checkDGUpgrades();
 	elements["message"].innerText = "Starting fuel zone optimized!";
 }
 
-function minimize(dif, variant) {
+function minimize(variant) {
+	var dif = settings.gatorTarget.value;
 	if (variant == 2) elements["message"].innerText = "Calculating...";
 	settings.fuelStart.update(230, false);
 	var myEnd = settings.runEnd.value;
@@ -822,7 +818,7 @@ function minimize(dif, variant) {
 	var bestJ = settings.fuelZones.value;
 	var maxedAmals = false;
 	if (variant == 1) {
-		settings.runEnd.update(settings.minimizeZone.value - 1);
+		settings.runEnd.update(settings.minimizeZone.value - 1, false);
 		settings.fuelStart.update(settings.minimizeZone.value - 1, false);
 	}
 	else settings.fuelStart.update(settings.runEnd.value, false);
@@ -863,12 +859,13 @@ function minimize(dif, variant) {
 	if (finalAmals === 0) {
 		bestJ = Math.min(10, settings.runEnd.value - 230);
 	}
-	settings.fuelZones.update(bestJ, true);
+	settings.fuelZones.update(bestJ, true); // real output
 	optimize();
-	if (variant == 1) {
+	if (variant == 1) { // minimize at zone
 		settings.runEnd.update(myEnd);
+		checkDGUpgrades();
 	}
-	if (variant == 2) {
+	if (variant == 2) { // minimize capacity
 		myPop = totalPop;
 		for (b = 0; b < 4; b++) { //run this a bunch or something
 			settings.capacity.update(settings.capacity.value + 1, 2);
@@ -985,7 +982,10 @@ function pasteSave(save) {
 		}
 		if (game.global.dailyChallenge.large != undefined) {
 			settings.housingMod.value = 1 - (game.global.dailyChallenge.large.strength / 100)
-		} else settings.housingMod.value = 1;
+		} else if (game.global.challengeActive == "Size") {
+			settings.housingMod.value = .5;
+		}
+		else settings.housingMod.value = 1;
 	}
 	checkDGUpgrades();
 	updateAfterLoad();
