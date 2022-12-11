@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "1.8.1";
+var version = "1.8.2";
 var ticked = false; // lock runstats
 var offset = true; // 5 zone offset
 
@@ -99,6 +99,17 @@ function setup() {
 	elements["version"].innerText = version;
 }
 
+function updateUI(show) {
+	// TODO why is this buggy if we don't always calc pop?
+	calculateCurrentPop(true);
+	if (show) {
+		calculateMagma();
+		checkDGUpgrades();
+	}
+
+}
+
+
 
 // All user inputs, UI updates, and recalculations required on change
 const settings = {
@@ -112,9 +123,8 @@ const settings = {
 			if (this.value > settings.fuelEnd.value) settings.fuelEnd.value = this.value;
 			if (this.value > settings.runEnd.value) settings.runEnd.value = this.value;
 			if (show) elements[this.elementName].value = this.value;
-			settings.fuelZones.value = settings.fuelEnd.value - this.value;
-			calculateMagma();
-			calculateCurrentPop(show);
+			settings.fuelZones.update(settings.fuelEnd.value - this.value, show);
+			updateUI(show)
 		},
 	},
 	fuelEnd: {
@@ -126,8 +136,7 @@ const settings = {
 			if (this.value > settings.runEnd.value) settings.runEnd.value = this.value;
 			if (show) elements[this.elementName].value = this.value;
 			if (settings.fuelZones.value != (this.value - settings.fuelStart.value)) settings.fuelZones.update(this.value - settings.fuelStart.value, show);
-			calculateMagma();
-			calculateCurrentPop(show);
+			updateUI(show)
 		},
 	},
 	fuelZones: {
@@ -137,9 +146,7 @@ const settings = {
 			this.value = parseInt(value);
 			if (show) elements[this.elementName].value = this.value;
 			if (settings.fuelEnd.value != (settings.fuelStart.value + this.value)) settings.fuelEnd.update(settings.fuelStart.value + this.value, show);
-			if (show) checkDGUpgrades();
-			calculateMagma();
-			calculateCurrentPop(show);
+			updateUI(show)
 
 		}
 	},
@@ -149,9 +156,7 @@ const settings = {
 		update: function (value = this.value, show = true) {
 			this.value = parseInt(value);
 			elements[this.elementName].value = this.value;
-			if (show) checkDGUpgrades();
-			calculateMagma();
-			calculateCurrentPop();
+			updateUI(show)
 
 		}
 	},
@@ -191,7 +196,8 @@ const settings = {
 		update: function (value = this.value) {
 			this.value = parseInt(value);
 			elements[this.elementName].value = this.value;
-			checkDGUpgrades();
+			updateUI(true)
+
 		}
 	},
 	//perks
@@ -276,10 +282,13 @@ const settings = {
 			this.value = parseInt(value);
 			elements[this.elementName].value = this.value;
 			this.cost = (this.value + 1) * 8;
-			calculateMinTick();
-			calculateMaxTick();
-			calculateCurrentPop();
+
 			if (mod == undefined) checkDGUpgrades();
+			else {
+				calculateMinTick();
+				calculateMaxTick();
+				calculateCurrentPop();
+			}
 		}
 	},
 	capacity: {
@@ -291,9 +300,11 @@ const settings = {
 			elements[this.elementName].value = this.value;
 			this.cost = (this.value + 1) * 32;
 			maxCapacity = 3 + (settings.capacity.value * 0.4);
-			calculateMaxTick();
-			calculateCurrentPop();
 			if (mod == undefined) checkDGUpgrades();
+			else {
+				calculateCurrentPop();
+				calculateMaxTick();
+			}
 		}
 	},
 	supply: {
@@ -306,8 +317,8 @@ const settings = {
 			this.cost = (this.value + 1) * 64;
 			maxSupply = 0.2 + (this.value * 0.02);
 			elements["maxSupplyZone"].innerText = (230 + (2 * this.value));
-			calculateCurrentPop();
 			if (mod == undefined) checkDGUpgrades();
+			else calculateCurrentPop();
 		}
 	},
 	overclocker: {
@@ -320,8 +331,8 @@ const settings = {
 			elements[this.elementName].value = this.value;
 			this.cost = 512 + (this.value) * 32;
 			this.bonus = (this.value < 1) ? 1 : 1 - (0.5 * Math.pow(0.99, this.value - 1));
-			calculateCurrentPop();
 			if (mod == undefined) checkDGUpgrades();
+			else calculateCurrentPop();
 		}
 	},
 	//perm dg upgrades
@@ -374,41 +385,6 @@ const settings = {
 	*/
 }
 
-/*
-function changeUncoords(value) {
-	uncoords = parseInt(value);
-	if (uncoords <= 0) {
-		uncoords = 0;
-		elements["uncoords"].value = uncoords;
-		calculateCurrentPop();
-		return;
-	} else if (uncoords > 100 + settings.runEnd.value) {
-		uncoords = 100 + settings.runEnd.value;
-		elements["uncoords"].value = uncoords;
-	}
-	changeUncoordsZone(-1);
-	calculateCurrentPop();
-}
-
-function changeUncoordsZone(value) {
-	uncoordsZone = parseInt(value);
-	if (uncoordsZone <= -1) {
-		uncoordsZone = -1;
-		elements["uncoordsZone"].value = "";
-	} else if (uncoordsZone > settings.runEnd.value) {
-		uncoordsZone = settings.runEnd.value;
-		elements["uncoordsZone"].value = settings.runEnd.value;
-	} else changeUncoords(0);
-	calculateCurrentPop();
-}
-
-function changeUncoordsGoal(value) {
-	uncoordsGoal = parseInt(value);
-	elements["uncoordsGoal"].selected = uncoordsGoal;
-	calculateCurrentPop();
-}
-*/
-
 function calculateTauntimpFrequency() {
 	// Non-round numbers are because you only get 99 random cells per zone
 	tauntimpFrequency = 2.97;
@@ -421,6 +397,7 @@ function checkDGUpgrades() {
 	var myEnd = settings.fuelEnd.value;
 	var myRunEnd = settings.runEnd.value;
 	var myMI = totalMI;
+	var myPop = totalPop;
 	if (myMI == 0) return;
 	settings.fuelStart.update(230, false);
 	if (settings.hze.value > 0) {
@@ -430,7 +407,6 @@ function checkDGUpgrades() {
 	else {
 		settings.fuelEnd.update(settings.runEnd.value, false);
 	}
-	var myPop = totalPop;
 
 	settings.efficiency.update(settings.efficiency.value + 1, 1);
 	var efficiencyEfficiency = totalPop - myPop;
@@ -803,7 +779,7 @@ function optimize() {
 	}
 	settings.fuelStart.update(myFuelStart);
 	settings.fuelZones.update(myFuelZones);
-	checkDGUpgrades();
+	updateUI(true)
 	elements["message"].innerText = "Starting fuel zone optimized!";
 }
 
@@ -846,8 +822,12 @@ function minimize(variant) {
 		}
 		settings.fuelZones.update(settings.fuelZones.value, false);
 		settings.fuelStart.value -= 1;
-		if (settings.fuelStart.value >= 230) settings.fuelStart.update(settings.fuelStart.value, false);
-		if (variant == 1) settings.fuelZones.update(Math.min(settings.minimizeZone.value - settings.fuelStart.value, bestJ), false); // minimize at zone
+		if (settings.fuelStart.value >= 230) {
+			settings.fuelStart.update(settings.fuelStart.value, false);
+		}
+		if (variant == 1) { // minimize at zone
+			settings.fuelZones.update(Math.min(settings.minimizeZone.value - settings.fuelStart.value, bestJ), false);
+		}
 		else settings.fuelZones.update(Math.min(settings.runEnd.value - settings.fuelStart.value, bestJ), false);
 		if (maxedAmals == true && finalAmals < bestAmals) break;
 	}
@@ -860,10 +840,8 @@ function minimize(variant) {
 		bestJ = Math.min(10, settings.runEnd.value - 230);
 	}
 	settings.fuelZones.update(bestJ, true); // real output
-	optimize();
 	if (variant == 1) { // minimize at zone
 		settings.runEnd.update(myEnd);
-		checkDGUpgrades();
 	}
 	if (variant == 2) { // minimize capacity
 		myPop = totalPop;
@@ -877,6 +855,7 @@ function minimize(variant) {
 			optimize();
 		}
 	}
+	optimize();
 	elements["message"].innerText = "Zones to fuel minimized!";
 	if (variant == 2) elements["message"].innerText = "Ideal slider setting: " + (3 + settings.capacity.value * settings.slowburn.value) + " max fuel";
 }
@@ -987,7 +966,6 @@ function pasteSave(save) {
 		}
 		else settings.housingMod.value = 1;
 	}
-	checkDGUpgrades();
 	updateAfterLoad();
 	elements["message"].innerText = "Stats populated!";
 	//console.log(game);
@@ -1013,8 +991,10 @@ function updateAfterLoad() {
 	//changeUncoords(uncoords);
 	//changeUncoordsZone(uncoordsZone);
 	//changeUncoordsGoal(uncoordsGoal);
+	calculateMinTick()
+	calculateMaxTick()
+	updateUI(true)
 
-	checkDGUpgrades();
 }
 
 function goFaq() {
