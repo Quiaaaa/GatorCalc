@@ -495,6 +495,12 @@ function checkDGUpgrades() {
 	capacityEfficiency /= settings.capacity.cost;
 	supplyEfficiency /= settings.supply.cost;
 	overclockerEfficiency /= settings.overclocker.cost;
+	
+	
+	elements['inputs'].style.setProperty('--efficiency', 1)
+	elements['inputs'].style.setProperty('--capacity', (capacityEfficiency / efficiencyEfficiency).toFixed(4))
+	elements['inputs'].style.setProperty('--supply', (supplyEfficiency / efficiencyEfficiency).toFixed(4))
+	elements['inputs'].style.setProperty('--overclocker', (overclockerEfficiency / efficiencyEfficiency).toFixed(4))
 
 	if (settings.efficiency.cost < 0) elements["efficiencyEfficiency"].innerText = "-----";
 	else elements["efficiencyEfficiency"].innerText = "1";

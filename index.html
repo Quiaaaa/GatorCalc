@@ -84,20 +84,36 @@
 
 		<br><br>
 		DG Levels<span class="efficiency">Next Upgrade</span><br>
-		<input id="efficiency" type="number" onchange="settings.efficiency.update(this.value)">&nbspEfficiency
-		<span class="efficiency" id="efficiencyEfficiency"></span>
+		<div class="efficiencyContainer">
+			<input id="efficiency" type="number" onchange="settings.efficiency.update(this.value)">
+			<span class="efficiencyColour">&nbspEfficiency
+				<span class="efficiency" id="efficiencyEfficiency"></span>
+			</span>
+		</div>
 		<br>
 
-		<input id="capacity" type="number" onchange="settings.capacity.update(this.value)">&nbspCapacity
-		<span class="efficiency" id="capacityEfficiency"></span>
+		<span class="efficiencyContainer">
+			<input id="capacity" type="number" onchange="settings.capacity.update(this.value)">
+			<span class="efficiencyColour">&nbspCapacity
+				<span class="efficiency" id="capacityEfficiency"></span>
+			</span>
+		</span>
 		<br>
 
-		<input id="supply" type="number" onchange="settings.supply.update(this.value)">&nbspSupply
-		<span class="efficiency" id="supplyEfficiency"></span>
+		<span class="efficiencyContainer">
+			<input id="supply" type="number" onchange="settings.supply.update(this.value)">
+			<span class="efficiencyColour">&nbspSupply
+				<span class="efficiency" id="supplyEfficiency"></span>
+			</span>
+		</span>
 		<br>
 
-		<input id="overclocker" type="number" onchange="settings.overclocker.update(this.value)">&nbspOverclocker
-		<span class="efficiency" id="overclockerEfficiency"></span>
+		<span class="efficiencyContainer">
+			<input id="overclocker" type="number" onchange="settings.overclocker.update(this.value)">
+			<span class="efficiencyColour">&nbspOverclocker
+				<span class="efficiency" id="overclockerEfficiency"></span>
+			</span>
+		</span>
 		<br>
 		<button class="hidden" id="checkDG" onclick="checkDGUpgrades()">Update</button>
 		<input class="efficiency" id="hze" type="number" onchange="settings.hze.update(this.value)"><span
