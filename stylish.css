@@ -53,6 +53,43 @@ input {
 	padding-right: 1px;
 }
 
+.efficiencyContainer {
+	width: 100%;
+	display: inline-flex;
+}
+
+/* https://css-tricks.com/mixing-colors-in-pure-css/ */
+
+.efficiencyColour {
+	animation: kf-color-mix 1s linear forwards paused;
+	flex-grow: 99;
+}
+
+@keyframes kf-color-mix {
+	0% { background-color: red }
+	100% { background-color: green }
+}
+
+#efficiency ~ .efficiencyColour {
+	animation-delay: calc(-1s * var(--efficiency) / var(--max));
+}
+
+#capacity ~ .efficiencyColour {
+	animation-delay: calc(-1s * var(--capacity) / var(--max));
+}
+
+#supply ~ .efficiencyColour {
+	animation-delay: calc(-1s * var(--supply) / var(--max));
+}
+
+#overclocker ~ .efficiencyColour {
+	animation-delay: calc(-1s * var(--overclocker) / var(--max));
+}
+
+#inputs {
+	--max: max(var(--efficiency), var(--capacity), var(--supply), var(--overclocker));
+}
+
 #hze {
 	width: 10%;
 }
