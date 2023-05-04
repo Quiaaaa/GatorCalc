@@ -2,176 +2,181 @@
 <html>
 
 <head>
-	<title>Fueling and Amalgamator Calculator</title>
-	<script src="lz-string.js"></script>
-	<script type="text/javascript" src="gator.js"></script>
-	<link rel="stylesheet" type="text/css" href="stylish.css" />
-	<meta charset="utf-8" />
+  <title>Fueling and Amalgamator Calculator</title>
+  <script src="lz-string.js"></script>
+  <script type="text/javascript" src="gator.js"></script>
+  <link rel="stylesheet" type="text/css" href="stylish.css" />
+  <meta charset="utf-8" />
 </head>
 
 <body>
-	<div id="inputs">
-		<br>
-		<textarea id="saveBox" placeholder="Paste your save here" onpaste="pasteSave(event)" onclick="clearText()"
-			type="text"></textarea>
-		<button class="hidden" id="calculate" onclick="calculateCurrentPop()">Calculate</button>
-		<br>
-		<label title="Check this to keep your run stats the same, only updating perks and DG levels">
-			<input id="lockRun" type="checkbox">Lock Run Stats</label>
-		<span id="invalid"></span>
-		<br><br>
-		Run Stats<br>
-		<label title="Zone to begin fueling">
-			<input id="fuelStart" type="number" min="230" onchange="settings.fuelStart.update(this.value)">&nbspFuel
-			Start Zone
-		</label>
-		<br>
+  <div id="inputs">
+    <br>
+    <textarea id="saveBox" placeholder="Paste your save here" onpaste="pasteSave(event)" onclick="clearText()"
+      type="text"></textarea>
+    <button class="hidden" id="calculate" onclick="calculateCurrentPop()">Calculate</button>
+    <br>
+    <label title="Check this to keep your run stats the same, only updating perks and DG levels">
+      <input id="lockRun" type="checkbox">Lock Run Stats</label>
+    <span id="invalid"></span>
+    <br><br>
+    Run Stats<br>
+    <label title="Zone to begin fueling">
+      <input id="fuelStart" type="number" min="230" onchange="settings.fuelStart.update(this.value)">&nbspFuel
+      Start Zone
+    </label>
+    <br>
 
-		<label title="Zone to end fueling">
-			<input id="fuelEnd" type="number" min="230" onchange="settings.fuelEnd.update(this.value)">&nbspFuel End
-			Zone
-		</label>
-		<br>
+    <label title="Zone to end fueling">
+      <input id="fuelEnd" type="number" min="230" onchange="settings.fuelEnd.update(this.value)">&nbspFuel End
+      Zone
+    </label>
+    <br>
 
-		<label title="Number of zones to fuel">
-			<input id="fuelZones" type="number" min="0" onchange="settings.fuelZones.update(this.value)">&nbspZones to
-			Fuel
-		</label>
-		<br>
+    <label title="Number of zones to fuel">
+      <input id="fuelZones" type="number" min="0" onchange="settings.fuelZones.update(this.value)">&nbspZones to
+      Fuel
+    </label>
+    <br>
 
-		<label title="Zone you end the run on">
-			<input id="runEnd" type="number" min="0" onchange="settings.runEnd.update(this.value)">&nbspRun End Zone
-		</label>
-		<br>
+    <label title="Zone you end the run on">
+      <input id="runEnd" type="number" min="0" onchange="settings.runEnd.update(this.value)">&nbspRun End Zone
+    </label>
+    <br>
 
-		<label title="Default is 1; if a daily gives 20% reduced housing, use 0.8, or -20">
-			<input id="housingMod" type="number" step="0.01" max="1" min="0.4"
-				onchange="settings.housingMod.update(this.value)">&nbspHousing Mod
-		</label>
-		<br>
+    <label title="Default is 1; if a daily gives 20% reduced housing, use 0.8, or -20">
+      <input id="housingMod" type="number" step="0.01" max="1" min="0.4"
+        onchange="settings.housingMod.update(this.value)">&nbspHousing Mod
+    </label>
+    <br>
 
-		<label title="Spires cleared *this run*">
-			<input id="spiresCleared" type="number" min="0" max="6"
-				onchange="settings.spiresCleared.update(this.value)">&nbsp#Spires Cleared
-		</label>
-		<br><br>
-		Perk Levels<br>
-		<input id="carp" type="number" onchange="settings.carp.update(this.value)">&nbspCarpentry
-		<br>
+    <label title="Spires cleared *this run*">
+      <input id="spiresCleared" type="number" min="0" max="6"
+        onchange="settings.spiresCleared.update(this.value)">&nbsp#Spires Cleared
+    </label>
+    <label title="Void maps this run (for MI)">
+      <input id="voids" type="number" min="0" onchange="settings.voids.update(this.value)">&nbspVoid Maps
+    </label>
+    <br><br>
+    Perk Levels<br>
+    <input id="carp" type="number" onchange="settings.carp.update(this.value)">&nbspCarpentry
+    <br>
 
-		<input id="carp2" type="number" onchange="settings.carp2.update(this.value)">&nbspCarpentry II
-		<br>
+    <input id="carp2" type="number" onchange="settings.carp2.update(this.value)">&nbspCarpentry II
+    <br>
 
-		<input id="coord" type="number" onchange="settings.coord.update(this.value)">&nbspCoordinated
-		<br><br>
-		Misc Upgrades<br>
-		<select class="select" id="randimp" onchange="settings.randimp.update(this.value)">
-			<option value="Yes">Yes</option>
-			<option value="No">No</option>
-		</select>&nbspRandimp
-		<br>
+    <input id="coord" type="number" onchange="settings.coord.update(this.value)">&nbspCoordinated
+    <br><br>
+    Misc Upgrades<br>
+    <select class="select" id="randimp" onchange="settings.randimp.update(this.value)">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>&nbspRandimp
+    <br>
 
-		<select class="select" id="magmaFlow" onchange="settings.magmaFlow.update(this.value)">
-			<option value="Yes">Yes</option>
-			<option value="No">No</option>
-		</select>&nbspMagma Flow
-		<br><br>
-		<input type="number" id="moreImports" onchange="settings.moreImports.update(this.value)" min="0" , max="10">
-		&nbspMore Imports
+    <select class="select" id="magmaFlow" onchange="settings.magmaFlow.update(this.value)">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>&nbspMagma Flow
+    <select class="select" id="expertGen" onchange="settings.expertGen.update(this.value)">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>&nbspExpert Gen
+    <br><br>
+    <input type="number" id="moreImports" onchange="settings.moreImports.update(this.value)" min="0" , max="10">
+    &nbspMore Imports
 
-		<input type="number" id="scaffolding" onchange="settings.scaffolding.update(this.value)" min="0" , max="20">
-		&nbspScaffolding
+    <input type="number" id="scaffolding" onchange="settings.scaffolding.update(this.value)" min="0" , max="20">
+    &nbspScaffolding
 
-		<br><br>
-		DG Levels<span class="efficiency">Next Upgrade</span><br>
-		<div class="efficiencyContainer">
-			<input id="efficiency" type="number" onchange="settings.efficiency.update(this.value)">
-			<span class="efficiencyColour">&nbspEfficiency
-				<span class="efficiency" id="efficiencyEfficiency"></span>
-			</span>
-		</div>
-		<br>
+    <br><br>
+    DG Levels<span class="efficiency">Next Upgrade</span><br>
+    <div class="efficiencyContainer">
+      <input id="efficiency" type="number" onchange="settings.efficiency.update(this.value)">
+      <span class="efficiencyColour">&nbspEfficiency
+        <span class="efficiency" id="efficiencyEfficiency"></span>
+      </span>
+    </div>
+    <br>
 
-		<span class="efficiencyContainer">
-			<input id="capacity" type="number" onchange="settings.capacity.update(this.value)">
-			<span class="efficiencyColour">&nbspCapacity
-				<span class="efficiency" id="capacityEfficiency"></span>
-			</span>
-		</span>
-		<br>
+    <span class="efficiencyContainer">
+      <input id="capacity" type="number" onchange="settings.capacity.update(this.value)">
+      <span class="efficiencyColour">&nbspCapacity
+        <span class="efficiency" id="capacityEfficiency"></span>
+      </span>
+    </span>
+    <br>
 
-		<span class="efficiencyContainer">
-			<input id="supply" type="number" onchange="settings.supply.update(this.value)">
-			<span class="efficiencyColour">&nbspSupply
-				<span class="efficiency" id="supplyEfficiency"></span>
-			</span>
-		</span>
-		<br>
+    <span class="efficiencyContainer">
+      <input id="supply" type="number" onchange="settings.supply.update(this.value)">
+      <span class="efficiencyColour">&nbspSupply
+        <span class="efficiency" id="supplyEfficiency"></span>
+      </span>
+    </span>
+    <br>
 
-		<span class="efficiencyContainer">
-			<input id="overclocker" type="number" onchange="settings.overclocker.update(this.value)">
-			<span class="efficiencyColour">&nbspOverclocker
-				<span class="efficiency" id="overclockerEfficiency"></span>
-			</span>
-		</span>
-		<br>
-		<button class="hidden" id="checkDG" onclick="checkDGUpgrades()">Update</button>
-		<input class="efficiency" id="hze" type="number" onchange="settings.hze.update(this.value)"><span
-			class="efficiency">Push
-			Run Goal:&nbsp</span>
-		<br><br>
-		DG Upgrades<br>
-		<select class="select" id="storage" onchange="settings.storage.update(this.value)">
-			<option value="Yes">Yes</option>
-			<option value="No">No</option>
-		</select>&nbspStorage
-		<br>
-		<select class="select" id="slowburn" onchange="settings.slowburn.update(this.value)">
-			<option value="Yes">Yes</option>
-			<option value="No">No</option>
-		</select>&nbspSlowburn
+    <span class="efficiencyContainer">
+      <input id="overclocker" type="number" onchange="settings.overclocker.update(this.value)">
+      <span class="efficiencyColour">&nbspOverclocker
+        <span class="efficiency" id="overclockerEfficiency"></span>
+      </span>
+    </span>
+    <br>
+    <button class="hidden" id="checkDG" onclick="checkDGUpgrades()">Update</button>
+    <input class="efficiency" id="hze" type="number" onchange="settings.hze.update(this.value)"><span
+      class="efficiency">Push
+      Run Goal:&nbsp</span>
+    <br><br>
+    DG Upgrades<br>
+    <select class="select" id="storage" onchange="settings.storage.update(this.value)">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>&nbspStorage
+    <br>
+    <select class="select" id="slowburn" onchange="settings.slowburn.update(this.value)">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>&nbspSlowburn
 
-	</div>
-	<div id="macros">
-		<br>
-		<center>
-			<label title="Original by Nohmou, with further contributes by Zeralyos, Eredian, and Quia">
-				Version <span id="version">
-			</label></span>
-		</center>
-		<br><br>
-		<label
-			title="Optimize fueling for Maximum Gators, or one less than max. Modifies Minimize, Minimize at Zone, and Minimize Capacity.">
-			<select class="macro" id="gatorTarget" onchange="settings.gatorTarget.update(this.value)"
-				style="height: 2rem">
-				<option value=0>Max Gators</option>
-				<option value=1>-1 Gators</option>
-			</select></label>
-		<br>
-		<label
-			title="Optimizes the position of fueling zones for maximum population, keeping the number of zones the same.">
-			<button class="macro" id="optimize" onclick="optimize()">Optimize</button></label>
-		<br>
-		<label
-			title="Minimizes fueling zones required to get the maximum gators possible. Fuels for (an entirely arbitrary) 10 zones if you can't get a gator.">
-			<button class="macro" id="minimize" onclick="minimize()">Minimize</button></label>
-		<br>
-		<label title="Minimizes, but ensures the last gator is picked up by the chosen zone.">
-			<button class="macro" id="minimizeAtZone" onclick="minimize(1)">Minimize At Zone:</button>
-			<br>
-			<input class="macroZone" id="minimizeZone" type="number"
-				onchange="settings.minimizeZone.update(this.value)">
-		</label>
-		<br>
-		<label title="Minimizes your Capacity, if possible, to gain more MI per portal while keeping your gators.">
-			<button class="macro" id="minimizeCapacity" onclick="minimize(2)">Minimize Capacity</button></label>
-		<br><br>
-		<!--<input id="eradMode" type="checkbox">Erad Mode<br>
+  </div>
+  <div id="macros">
+    <br>
+    <center>
+      <label title="Original by Nohmou, with further contributes by Zeralyos, Eredian, and Quia">
+        Version <span id="version">
+      </label></span>
+    </center>
+    <br><br>
+    <label
+      title="Optimize fueling for Maximum Gators, or one less than max. Modifies Minimize, Minimize at Zone, and Minimize Capacity.">
+      <select class="macro" id="gatorTarget" onchange="settings.gatorTarget.update(this.value)" style="height: 2rem">
+        <option value=0>Max Gators</option>
+        <option value=1>-1 Gators</option>
+      </select></label>
+    <br>
+    <label
+      title="Optimizes the position of fueling zones for maximum population, keeping the number of zones the same.">
+      <button class="macro" id="optimize" onclick="optimize()">Optimize</button></label>
+    <br>
+    <label
+      title="Minimizes fueling zones required to get the maximum gators possible. Fuels for (an entirely arbitrary) 10 zones if you can't get a gator.">
+      <button class="macro" id="minimize" onclick="minimize()">Minimize</button></label>
+    <br>
+    <label title="Minimizes, but ensures the last gator is picked up by the chosen zone.">
+      <button class="macro" id="minimizeAtZone" onclick="minimize(1)">Minimize At Zone:</button>
+      <br>
+      <input class="macroZone" id="minimizeZone" type="number" onchange="settings.minimizeZone.update(this.value)">
+    </label>
+    <br>
+    <label title="Minimizes your Capacity, if possible, to gain more MI per portal while keeping your gators.">
+      <button class="macro" id="minimizeCapacity" onclick="minimize(2)">Minimize Capacity</button></label>
+    <br><br>
+    <!--<input id="eradMode" type="checkbox">Erad Mode<br>
 		<input class="macroZone" id="eradZone" value="" type="number" onchange="settings.eradZone.update(this.value)">
 		-->
 
 
-		<!--
+    <!--
 		<button class="macro" id="forceGator" onclick="forceGator()">Force Gator At Zone:</button><br>
 		<input class="macroZone" id="gatorZone" type="number" onchange="settings.gatorZone.update(this.value)"><br>
 
@@ -202,251 +207,251 @@
 			title="Check this to only have gators updated every 5 zones when you'd die from an omnipotrimp explosion">
 			<input id="offset5" type="checkbox">Use 5 zone breakpoints</label>
 		-->
-		<br><br><br>
-		<center><span id="message"></span></center>
-	</div>
-	<div id="results">
-		<br><br>Results<br>
-		<table class="table" id="resultsTable" cellSpacing="5" cellPadding="0">
-			<tr>
-				<td>Total Population</td>
-				<td id="totalPop">0</td>
-				<td class="filler2"></td>
-				<td>Final Amals</td>
-				<td id="finalAmals">0</td>
-			</tr>
-			<tr>
-				<td>% from Tauntimps</td>
-				<td id="tauntimpPercent">0</td>
-				<td></td>
-				<td>Max Amals</td>
-				<td id="maxAmals">0</td>
-			</tr>
-			<tr>
-				<td>Last Coord</td>
-				<td id="lastCoord">-</td>
-				<td></td>
-				<td>@ Zone</td>
-				<td id="finalAmalZone">0</td>
-			</tr>
-			<tr>
-				<td>Needed Pop</td>
-				<td id="neededPop">0</td>
-				<td></td>
-				<td>Final Army Size</td>
-				<td id="finalArmySize">0</td>
-			</tr>
-			<tr>
-				<td>Increase per Coord</td>
-				<td id="coordIncrease">0</td>
-				<td></td>
-				<td>Final Amal Ratio</td>
-				<td id="finalAmalRatio">0</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td>Your Final Ratio</td>
-				<td id="yourFinalRatio">0</td>
-			</tr>
-			<tr>
-				<td>Magma Zones</td>
-				<td id="zonesOfMagma">0</td>
-				<td></td>
-				<td>Zones Withheld</td>
-				<td id="zonesWithheld">-</td>
-			</tr>
-			<tr>
-				<td>Fuel Zones</td>
-				<td id="zonesOfFuel">0</td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Magmite Zones</td>
-				<td id="zonesOfMI">0</td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Magmite Earned</td>
-				<td id="totalMI">0</td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Max Supply @ Zone</td>
-				<td id="maxSupplyZone">0</td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</table>
-		<br>
-		<table class="table" id="extraGators" cellSpacing="5">
-			<tr>
-				<td>Range</td>
-				<td>Extra Gator</td>
-				<td>Needed Pop Mult</td>
-				<td>Unbought Coords</td>
-			</tr>
-			<tr>
-				<td>230-300</td>
-				<td id="ex1"></td>
-				<td id="npm1"></td>
-				<td id="uc1"></td>
-			</tr>
-			<tr>
-				<td>301-400</td>
-				<td id="ex2"></td>
-				<td id="npm2"></td>
-				<td id="uc2"></td>
-			</tr>
-			<tr>
-				<td>401-500</td>
-				<td id="ex3"></td>
-				<td id="npm3"></td>
-				<td id="uc3"></td>
-			</tr>
-			<tr>
-				<td>501-600</td>
-				<td id="ex4"></td>
-				<td id="npm4"></td>
-				<td id="uc4"></td>
-			</tr>
-			<tr>
-				<td>601+</td>
-				<td id="ex5"></td>
-				<td id="npm5"></td>
-				<td id="uc5"></td>
-			</tr>
-		</table>
-	</div>
-	<button id="faq" onclick="goFaq()">FAQ</button>
-	<div class="hidden" id="faqScreen" tabindex="0">
-		<br>
-		<center>FAQ</center><br>
-		What does this do?<br>
-		<span class="answer">
-			You can use this calculator to determine the number of amalgamators that are obtainable depending on how
-			much, and when you fuel.
-			Since each Gator grants up to 1.5x attack along with a 40x health boost, it can be beneficial to get as many
-			as are easily obtainable.
-		</span>
-		<br><br>
-		How do I use this?<br>
-		<span class="answer">
-			Simply enter your stats or paste your save file to fill in the left-hand side of the screen. The right side
-			results will automatically be calculated.
-			The most important value will likely be the Max number of Amals you can get in a run.
-		</span>
-		<br><br>
-		What do the numbers to the right of the DG levels mean?<br>
-		<span class="answer">
-			The numbers represent the efficiency of the next DG purchase. A higher number means you should purchase that
-			upgrade first. This calculation uses your current run stats to
-			determine how much MI is gained per run in order to determine how many runs are needed to afford each
-			upgrade, and how much MI is lost through decay in the process. It then considers
-			how much population gain each upgrade is worth on a push run (where population is fully utilized) and
-			determines a Population gain per MI spent value for each upgrade. Results are
-			finally each divided by the value of the Efficiency value for a normalized result.
-		</span>
-		<br><br>
-		What does the table below the Results table mean?<br>
-		<span class="answer">
-			This table lists how many coordinations you would have to hold off buying in order to squeeze out an extra
-			Amalgamator.
-			So if the upper table told you to expect hitting 5 Amals at zone 501, it may be possible to keep your
-			population:army ratio lower by withholding coordinations in order to get a 6th gator in the 501-600 range,
-			or in the 600+ range.
-			Keep in mind that this uses the "#Spires Cleared" value to determine if the needed ratio decreases after
-			each spire.
-		</span>
-		<br><br>
-		What do the buttons in the middle column do?<br>
-		<span class="answer">
-			These buttons are used to determine when it is optimal to fuel. They each provide sightly different bits of
-			information that you can tailor your fueling preferences to.
-			<br>The "Optimize" button will take the number of zones to fuel currently shown, and figure out the best
-			starting zone to fuel in order to maximize population.
-			<br>The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order
-			to get the maximum number of Amalgamators possible, thus maximizing MI gains. <br>The "Minimize - 1" button
-			will do the same thing,
-			but with getting 1 less Gator. This can be useful if you'd need to fuel for an entire run in order to get
-			your Max number of gators, and you'd rather keep the MI gains.
-			<br>The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by
-			the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run
-			otherwise, as you will
-			get the benefit of the extra Gator earlier.
-			<br>The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel.
-			You'll need to use the in-game capacity slider to adjust to the recommended value.
-			<br>The "Force Gator At Zone" button will determine how many coordinations you'd need to withhold from
-			buying in order to get an extra gator on the zone specified. This will update the row of the corresponding
-			zone in the table below the
-			results table, but won't change anything else.
-			<br>The "Coords Withheld" option allows you to set a certain number of coordination upgrades to refrain from
-			buying, in order to get an extra amalgamator earlier or with less fueling than otherwise would be possible.
-			<br>The "Withhold Coords Zone/Goal" option allows you to specify a certain zone to stop buying coordinations
-			in order to reach the chosen goal number of amalgamators. These last two options can only be used
-			separately, not together. This will
-			also update the "Zones Withheld" result with the number of zones you have to hold off on buying
-			coordinations, and therefore the number of coordinations behind you will be.
-			<br>Finally, the "Use 5 zone breakpoints" tick will calculate updates to your Amalgamators only after every
-			5th zone when they would die from an Omnipotrimp explosion. Without this option
-			checked, most of the time new Amalgamators will show up on the zone after a spire, due to the ratio needed
-			decreasing. However, as Gators are only updated on trimp death, if you survive after beating a spire for the
-			next 5 zones (which
-			you are likely to do if you're strong enough to have beaten it), then you would get 5 more coordination
-			upgrades before your next death, which will increase your army size, and therefore the needed population for
-			your next Gator, possibly
-			pushing it beyond the population you've amassed.
-		</span>
-		<br><br>
-		What assumptions are being made?<br>
-		<span class="answer">
-			This calculator assumes no population before you begin fueling. The population received before your first DG
-			tick is inconsequential to your total population, and won't affect the results shown for the intended users
-			of this page.
+    <br><br><br>
+    <center><span id="message"></span></center>
+  </div>
+  <div id="results">
+    <br><br>Results<br>
+    <table class="table" id="resultsTable" cellSpacing="5" cellPadding="0">
+      <tr>
+        <td>Total Population</td>
+        <td id="totalPop">0</td>
+        <td class="filler2"></td>
+        <td>Final Amals</td>
+        <td id="finalAmals">0</td>
+      </tr>
+      <tr>
+        <td>% from Tauntimps</td>
+        <td id="tauntimpPercent">0</td>
+        <td></td>
+        <td>Max Amals</td>
+        <td id="maxAmals">0</td>
+      </tr>
+      <tr>
+        <td>Last Coord</td>
+        <td id="lastCoord">-</td>
+        <td></td>
+        <td>@ Zone</td>
+        <td id="finalAmalZone">0</td>
+      </tr>
+      <tr>
+        <td>Needed Pop</td>
+        <td id="neededPop">0</td>
+        <td></td>
+        <td>Final Army Size</td>
+        <td id="finalArmySize">0</td>
+      </tr>
+      <tr>
+        <td>Increase per Coord</td>
+        <td id="coordIncrease">0</td>
+        <td></td>
+        <td>Final Amal Ratio</td>
+        <td id="finalAmalRatio">0</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Your Final Ratio</td>
+        <td id="yourFinalRatio">0</td>
+      </tr>
+      <tr>
+        <td>Magma Zones</td>
+        <td id="zonesOfMagma">0</td>
+        <td></td>
+        <td>Zones Withheld</td>
+        <td id="zonesWithheld">-</td>
+      </tr>
+      <tr>
+        <td>Fuel Zones</td>
+        <td id="zonesOfFuel">0</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Magmite Zones</td>
+        <td id="zonesOfMI">0</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Magmite Earned</td>
+        <td id="totalMI">0</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Max Supply @ Zone</td>
+        <td id="maxSupplyZone">0</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+    <br>
+    <table class="table" id="extraGators" cellSpacing="5">
+      <tr>
+        <td>Range</td>
+        <td>Extra Gator</td>
+        <td>Needed Pop Mult</td>
+        <td>Unbought Coords</td>
+      </tr>
+      <tr>
+        <td>230-300</td>
+        <td id="ex1"></td>
+        <td id="npm1"></td>
+        <td id="uc1"></td>
+      </tr>
+      <tr>
+        <td>301-400</td>
+        <td id="ex2"></td>
+        <td id="npm2"></td>
+        <td id="uc2"></td>
+      </tr>
+      <tr>
+        <td>401-500</td>
+        <td id="ex3"></td>
+        <td id="npm3"></td>
+        <td id="uc3"></td>
+      </tr>
+      <tr>
+        <td>501-600</td>
+        <td id="ex4"></td>
+        <td id="npm4"></td>
+        <td id="uc4"></td>
+      </tr>
+      <tr>
+        <td>601+</td>
+        <td id="ex5"></td>
+        <td id="npm5"></td>
+        <td id="uc5"></td>
+      </tr>
+    </table>
+  </div>
+  <button id="faq" onclick="goFaq()">FAQ</button>
+  <div class="hidden" id="faqScreen" tabindex="0">
+    <br>
+    <center>FAQ</center><br>
+    What does this do?<br>
+    <span class="answer">
+      You can use this calculator to determine the number of amalgamators that are obtainable depending on how
+      much, and when you fuel.
+      Since each Gator grants up to 1.5x attack along with a 40x health boost, it can be beneficial to get as many
+      as are easily obtainable.
+    </span>
+    <br><br>
+    How do I use this?<br>
+    <span class="answer">
+      Simply enter your stats or paste your save file to fill in the left-hand side of the screen. The right side
+      results will automatically be calculated.
+      The most important value will likely be the Max number of Amals you can get in a run.
+    </span>
+    <br><br>
+    What do the numbers to the right of the DG levels mean?<br>
+    <span class="answer">
+      The numbers represent the efficiency of the next DG purchase. A higher number means you should purchase that
+      upgrade first. This calculation uses your current run stats to
+      determine how much MI is gained per run in order to determine how many runs are needed to afford each
+      upgrade, and how much MI is lost through decay in the process. It then considers
+      how much population gain each upgrade is worth on a push run (where population is fully utilized) and
+      determines a Population gain per MI spent value for each upgrade. Results are
+      finally each divided by the value of the Efficiency value for a normalized result.
+    </span>
+    <br><br>
+    What does the table below the Results table mean?<br>
+    <span class="answer">
+      This table lists how many coordinations you would have to hold off buying in order to squeeze out an extra
+      Amalgamator.
+      So if the upper table told you to expect hitting 5 Amals at zone 501, it may be possible to keep your
+      population:army ratio lower by withholding coordinations in order to get a 6th gator in the 501-600 range,
+      or in the 600+ range.
+      Keep in mind that this uses the "#Spires Cleared" value to determine if the needed ratio decreases after
+      each spire.
+    </span>
+    <br><br>
+    What do the buttons in the middle column do?<br>
+    <span class="answer">
+      These buttons are used to determine when it is optimal to fuel. They each provide sightly different bits of
+      information that you can tailor your fueling preferences to.
+      <br>The "Optimize" button will take the number of zones to fuel currently shown, and figure out the best
+      starting zone to fuel in order to maximize population.
+      <br>The "Minimize" button will try to determine the fewest number of zones you'd need to fuel for in order
+      to get the maximum number of Amalgamators possible, thus maximizing MI gains. <br>The "Minimize - 1" button
+      will do the same thing,
+      but with getting 1 less Gator. This can be useful if you'd need to fuel for an entire run in order to get
+      your Max number of gators, and you'd rather keep the MI gains.
+      <br>The "Minimize at Zone" button will attempt to minimize, while ensuring you get your last Amalgamator by
+      the specified zone. This is useful if you normally wouldn't get your final Gator until late in your run
+      otherwise, as you will
+      get the benefit of the extra Gator earlier.
+      <br>The "Minimize Capacity" button also adjusts your capacity value to minimize number of zones to fuel.
+      You'll need to use the in-game capacity slider to adjust to the recommended value.
+      <br>The "Force Gator At Zone" button will determine how many coordinations you'd need to withhold from
+      buying in order to get an extra gator on the zone specified. This will update the row of the corresponding
+      zone in the table below the
+      results table, but won't change anything else.
+      <br>The "Coords Withheld" option allows you to set a certain number of coordination upgrades to refrain from
+      buying, in order to get an extra amalgamator earlier or with less fueling than otherwise would be possible.
+      <br>The "Withhold Coords Zone/Goal" option allows you to specify a certain zone to stop buying coordinations
+      in order to reach the chosen goal number of amalgamators. These last two options can only be used
+      separately, not together. This will
+      also update the "Zones Withheld" result with the number of zones you have to hold off on buying
+      coordinations, and therefore the number of coordinations behind you will be.
+      <br>Finally, the "Use 5 zone breakpoints" tick will calculate updates to your Amalgamators only after every
+      5th zone when they would die from an Omnipotrimp explosion. Without this option
+      checked, most of the time new Amalgamators will show up on the zone after a spire, due to the ratio needed
+      decreasing. However, as Gators are only updated on trimp death, if you survive after beating a spire for the
+      next 5 zones (which
+      you are likely to do if you're strong enough to have beaten it), then you would get 5 more coordination
+      upgrades before your next death, which will increase your army size, and therefore the needed population for
+      your next Gator, possibly
+      pushing it beyond the population you've amassed.
+    </span>
+    <br><br>
+    What assumptions are being made?<br>
+    <span class="answer">
+      This calculator assumes no population before you begin fueling. The population received before your first DG
+      tick is inconsequential to your total population, and won't affect the results shown for the intended users
+      of this page.
 
-			The calculator assumes exactly 2.97 tauntimps received per zone, or 3.366 with the Randimp mastery, and an
-			additional 0.0495 per level of More Imports. A 90% confidence interval is applied to ensure that the calc
-			never shorts you on population, but accordingly, 90% of your runs will overshoot the stated total pop.
+      The calculator assumes exactly 2.97 tauntimps received per zone, or 3.366 with the Randimp mastery, and an
+      additional 0.0495 per level of More Imports. A 90% confidence interval is applied to ensure that the calc
+      never shorts you on population, but accordingly, 90% of your runs will overshoot the stated total pop.
 
-			The calculator assumes all DG ticks made are overclocks. This slightly affects the final results, especially
-			for those with lower overclocker levels, as those non-OC ticks will be stronger that OC ticks, and happen
-			earlier, therefore benefitting more from tauntimp compounding. However, the differences are still small, and
-			largely unnoticable for fueling more than a couple of zones.
+      The calculator assumes all DG ticks made are overclocks. This slightly affects the final results, especially
+      for those with lower overclocker levels, as those non-OC ticks will be stronger that OC ticks, and happen
+      earlier, therefore benefitting more from tauntimp compounding. However, the differences are still small, and
+      largely unnoticable for fueling more than a couple of zones.
 
-			This calculator assumes all fuel still in the tank after you stop fueling (and therefore stop overclocking)
-			disappears. This causes the calculator to underestimate your total population by a bit, especially for
-			fueling a smaller number
-			of zones. This can be useful, as it provides a small cushion of extra pop to help ensure you get all the
-			Gators you expect, even with poor tauntimp luck. However, with higher capacity values, it may determine that
-			you need to fuel for longer
-			in order to begin overclocking, in which case it may be best to use the in-game capacity slider to limit
-			your max fuel and adjust the values of the calculator accordingly. Players with very high capacity levels
-			may find the Minimize Capacity
-			function useful, as this will suggest a setting for the fuel slider in order to maximize MI.
-		</span>
-		<br><br>
-		I found an error, what can I do?<br>
-		<span class="answer">
-			Support is available on the Trimps Discord, you may be able to find some of the current and previous
-			contributors there.
-			Screenshots of your settings are helpful in diagnosing any technical issues.
-		</span>
-		<br><br>
-		Is this up to date?<br>
-		<span class="answer">
-			This was last updated on October 19, 2022 and is up to date with Trimps patch 5.8.0
-		</span>
-		<br>
-		<br>
-	</div>
+      This calculator assumes all fuel still in the tank after you stop fueling (and therefore stop overclocking)
+      disappears. This causes the calculator to underestimate your total population by a bit, especially for
+      fueling a smaller number
+      of zones. This can be useful, as it provides a small cushion of extra pop to help ensure you get all the
+      Gators you expect, even with poor tauntimp luck. However, with higher capacity values, it may determine that
+      you need to fuel for longer
+      in order to begin overclocking, in which case it may be best to use the in-game capacity slider to limit
+      your max fuel and adjust the values of the calculator accordingly. Players with very high capacity levels
+      may find the Minimize Capacity
+      function useful, as this will suggest a setting for the fuel slider in order to maximize MI.
+    </span>
+    <br><br>
+    I found an error, what can I do?<br>
+    <span class="answer">
+      Support is available on the Trimps Discord, you may be able to find some of the current and previous
+      contributors there.
+      Screenshots of your settings are helpful in diagnosing any technical issues.
+    </span>
+    <br><br>
+    Is this up to date?<br>
+    <span class="answer">
+      This was last updated on October 19, 2022 and is up to date with Trimps patch 5.8.0
+    </span>
+    <br>
+    <br>
+  </div>
 </body>
 
 <!-- Copyright Nohmou, 2018 -->
