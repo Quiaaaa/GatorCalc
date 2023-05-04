@@ -548,6 +548,7 @@ function calculateMagma() {
   else totalMI = zonesOfMI * 16;
   // TODO add in Expert Gen to UI
   totalMI += 10 * settings.voids.value * settings.expertGen.value
+  totalMI = Math.max(totalMI, game.global.magmite)
   elements["totalMI"].innerText = totalMI;
 }
 
