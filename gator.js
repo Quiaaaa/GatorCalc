@@ -53,7 +53,7 @@ var amalRatio = [];
 var adjustedRatio = [];
 var currentAmals = [];
 
-var ingameMI = 0
+//var ingameMI = 0
 
 var eradMode = false;
 /*
@@ -546,9 +546,7 @@ function calculateMagma() {
   elements["zonesOfMagma"].innerText = settings.runEnd.value - 230;
   if (settings.magmaFlow.value) totalMI = zonesOfMI * 18;
   else totalMI = zonesOfMI * 16;
-  // TODO add in Expert Gen to UI
   totalMI += 10 * settings.voids.value * settings.expertGen.value
-  totalMI = Math.max(totalMI, ingameMI)
   elements["totalMI"].innerText = totalMI;
 }
 
@@ -980,7 +978,7 @@ function pasteSave(save) {
   settings.overclocker.value = game.generatorUpgrades.Overclocker.upgrades;
   settings.storage.value = game.permanentGeneratorUpgrades.Storage.owned ? 2 : 1;
   settings.slowburn.value = game.permanentGeneratorUpgrades.Slowburn.owned ? .4 : .5;
-  ingameMI = game.global.magmite;
+  //ingameMI = game.global.magmite;
   if (!ticked) {
     settings.hze.value = game.global.highestLevelCleared;
     settings.runEnd.value = game.global.lastPortal;
