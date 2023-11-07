@@ -124,8 +124,14 @@
     <br>
     <button class="hidden" id="checkDG" onclick="checkDGUpgrades()">Update</button>
     <input class="efficiency" id="hze" type="number" onchange="settings.hze.update(this.value)"><span
-      class="efficiency">Push
-      Run Goal:&nbsp</span>
+      class="efficiency">Push Run Goal:&nbsp</span>
+    <br>
+    <label title="Check this to show upgrade efficiencies regardless of your MI income">
+      <span class="efficiency">Ignore Decay</span>
+      <span class="efficiency"><input id="overrideMI" type="checkbox" onchange="checkDGUpgrades()"></label>
+    </span>
+
+
     <br><br>
     DG Upgrades<br>
     <select class="select" id="storage" onchange="settings.storage.update(this.value)">
@@ -447,7 +453,7 @@
     <br><br>
     Is this up to date?<br>
     <span class="answer">
-      This was last updated on October 19, 2022 and is up to date with Trimps patch 5.8.0
+      This was last updated on 2023-11-7 and is up to date with Trimps patch 5.9.2
     </span>
     <br>
     <br>

@@ -1,5 +1,5 @@
 window.onload = setup;
-var version = "1.8.3";
+var version = "1.8.4";
 var ticked = false; // lock runstats
 var offset = true; // 5 zone offset
 
@@ -92,7 +92,7 @@ let elements;
 
 
 function setup() {
-  const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "efficiencyEfficiency", "capacityEfficiency", "supplyEfficiency", "overclockerEfficiency", "checkDG", "macros", "version", "optimize", "minimize", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen"]
+  const elementsToGet = ["inputs", "saveBox", "calculate", "lockRun", "invalid", "efficiencyEfficiency", "capacityEfficiency", "supplyEfficiency", "overclockerEfficiency", "checkDG", "macros", "version", "optimize", "minimize", "minimizeAtZone", "minimizeZone", "minimizeCapacity", "message", "results", "resultsTable", "totalPop", "finalAmals", "tauntimpPercent", "maxAmals", "lastCoord", "finalAmalZone", "neededPop", "finalArmySize", "coordIncrease", "finalAmalRatio", "yourFinalRatio", "zonesOfMagma", "zonesWithheld", "zonesOfFuel", "zonesOfMI", "totalMI", "maxSupplyZone", "extraGators", "ex1", "npm1", "uc1", "ex2", "npm2", "uc2", "ex3", "npm3", "uc3", "ex4", "npm4", "uc4", "ex5", "npm5", "uc5", "faq", "faqScreen", "overrideMI"]
   elementsToGet.push(...Object.values(settings).map(s => s.elementName)); // include all 
   elements = Object.fromEntries(elementsToGet.map(element => [element, document.getElementById(element)]))
   loadSettings();
@@ -415,10 +415,12 @@ function calculateTauntimpFrequency() {
 }
 
 function checkDGUpgrades() {
+  // BUGS there is something horribly wrong with this, reducing to a level gives different results than increasing to a level
   var myStart = settings.fuelStart.value;
   var myEnd = settings.fuelEnd.value;
   var myRunEnd = settings.runEnd.value;
   var myMI = totalMI;
+  if (elements["overrideMI"].checked) myMI = 999999;
   var myPop = totalPop;
   if (myMI == 0) return;
   settings.fuelStart.update(230, false);
@@ -448,6 +450,7 @@ function checkDGUpgrades() {
   var sCost = settings.supply.cost;
   var oCost = settings.overclocker.cost;
 
+  // MI decay calcs
   if (eCost > myMI * 4.9) settings.efficiency.cost = -1;
   else if ((eCost * 2) + 8 <= myMI);
   else if (eCost <= myMI) {
@@ -994,7 +997,7 @@ function pasteSave(save) {
     }
     if (game.global.dailyChallenge.large != undefined) {
       settings.housingMod.value = 1 - (game.global.dailyChallenge.large.strength / 100)
-    } else if (game.global.challengeActive == "Size") {
+    } else if (game.global.challengeActive == "Size" || game.global.challengeActive == "Waze") {
       settings.housingMod.value = .5;
     }
     else settings.housingMod.value = 1;
